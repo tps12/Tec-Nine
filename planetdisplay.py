@@ -87,7 +87,7 @@ class PlanetDisplay(object):
                         xo += len(self._sim.tiles[y])
                     h = self._sim.tiles[y][xo][2]
 
-                    color = 128, 128, 128
+                    color = (128, 128, 128) if h else (255, 255, 255)
                     block.fill(color)
                    
                     self._screen.blit(block,
