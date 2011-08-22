@@ -5,6 +5,8 @@ import random
 from numpy import *
 from numpy.linalg import *
 
+from sphericalpolygon import *
+
 def distance(c1, c2):
     lat1, lon1 = [c * pi/180 for c in c1]
     lat2, lon2 = [c * pi/180 for c in c2]
@@ -122,6 +124,7 @@ class PlanetSimulation(object):
         latrange, lonrange = [[f([c[i] for c in coords]) for f in [min, max]]
                               for i in range(2)]
 
+        shape = SphericalPolygon(coords)
         for y in range(len(self.tiles)):
             if latrange[0] <= self.tiles[y][0][0] <= latrange[1]:
                 for x in range(len(self.tiles[y])):
