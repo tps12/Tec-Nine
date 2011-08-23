@@ -62,7 +62,7 @@ class PlanetDisplay(object):
     def draw(self, surface):
         self._sim.update()
         
-        if self._screen == None or self._screen.get_size() != surface.get_size():
+        if self.dirty or self._screen == None or self._screen.get_size() != surface.get_size():
             self._screen = pygame.Surface(surface.get_size(), 0, 32)
             
             self.size = self._screen.get_size()
