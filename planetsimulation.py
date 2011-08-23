@@ -121,14 +121,11 @@ class PlanetSimulation(object):
             lon = atan2(p[1], p[0]) * 180/pi
             coords.append((lat,lon))
 
-        latrange, lonrange = [[f([c[i] for c in coords]) for f in [min, max]]
-                              for i in range(2)]
-
         shape = SphericalPolygon(coords)
         for y in range(len(self.tiles)):
-            if latrange[0] <= self.tiles[y][0][0] <= latrange[1]:
+            if shape.latrange.min <= self.tiles[y][0][0] * 180/pi <= shape.latrange.max:
                 for x in range(len(self.tiles[y])):
-                    if lonrange[0] <= self.tiles[y][x][1] <= lonrange[1]:
+                    if shape.lonrange.min <= self.tiles[y][x][1] * 180/pi <= shape.lonrange.max:
                         self.tiles[y][x] = (self.tiles[y][x][0],
                                             self.tiles[y][x][1],
                                             1)

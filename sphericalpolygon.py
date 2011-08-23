@@ -3,7 +3,8 @@ from greatcirclearc import *
 class SphericalPolygon(object):
     def __init__(self, points):
         self._points = [p for p in points]
-        self._externalpoint = self._guessexternal(*self._getranges(self._points))
+        self.latrange, self.lonrange = self._getranges(self._points)
+        self._externalpoint = self._guessexternal(self.latrange, self.lonrange)
 
     @staticmethod
     def _getranges(points):
@@ -13,10 +14,11 @@ class SphericalPolygon(object):
         for i in range(1, len(points)-1):
             arc = GreatCircleArc(points[i], points[i+1])
             if not latrange.meld(arc.latrange):
-                raise Exception("Can't meld lat range: " + str(arc))
+                raise Exception(' '.join(["Can't meld", str(arc.latrange),
+                                          'into', str(latrange)]))
             if not lonrange.meld(arc.lonrange):
-                import pdb; pdb.set_trace()
-                raise Exception("Can't meld lon range: " + str(arc))
+                raise Exception(' '.join(["Can't meld", str(arc.lonrange),
+                                          'into', str(lonrange)]))
         return latrange, lonrange
 
     @staticmethod

@@ -6,12 +6,15 @@ class LonRange(object):
             minlon -= 360
             maxlon -= 360
 
-        while -180 > minlon or 180 > maxlon:
+        while -180 > minlon or -180 > maxlon:
             minlon += 360
             maxlon += 360
         
         self.min = minlon
         self.max = maxlon
+
+    def __str__(self):
+        return ' '.join(['LonRange:', str(self.min), '-', str(self.max)])
 
     def contains(self, lon):
         while lon < -180: lon += 360
@@ -24,7 +27,7 @@ class LonRange(object):
         if self.min <= lon <= self.max:
             return True
 
-        return False        
+        return False
 
     def overlaps(self, other):
         if self.max - self.min >= 360 or other.max - other.min >= 360:

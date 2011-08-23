@@ -1,7 +1,10 @@
 class LatRange(object):
-    def __init__(self, minlat, maxlat):
-        self.min = minlat
-        self.max = maxlat
+    def __init__(self, lat1, lat2):
+        self.min = min(lat1, lat2)
+        self.max = max(lat1, lat2)
+
+    def __str__(self):
+        return ' '.join(['LatRange:', str(self.min), '-', str(self.max)])
 
     def overlaps(self, other):
         if self.max - self.min >= 180 or other.max - other.min >= 180:
