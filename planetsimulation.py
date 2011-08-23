@@ -123,9 +123,9 @@ class PlanetSimulation(object):
 
         shape = SphericalPolygon(coords)
         for y in range(len(self.tiles)):
-            if shape.latrange.min <= self.tiles[y][0][0] * 180/pi <= shape.latrange.max:
+            if shape.latrange.min <= self.tiles[y][0][0] <= shape.latrange.max:
                 for x in range(len(self.tiles[y])):
-                    if shape.lonrange.min <= self.tiles[y][x][1] * 180/pi <= shape.lonrange.max:
+                    if shape.lonrange.min <= self.tiles[y][x][1] <= shape.lonrange.max:
                         self.tiles[y][x] = (self.tiles[y][x][0],
                                             self.tiles[y][x][1],
                                             1)
