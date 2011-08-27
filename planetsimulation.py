@@ -93,7 +93,6 @@ class PlanetSimulation(object):
         (o, ov) = apply_velocity(p, 0.05 * rotate(v / norm(v),
                                                   p,
                                                   random.uniform(0, 2*pi)))
-    
         self.shape = [(.1,.23),(.12,.43),(.13,.52),(.25,.54),
                       (.3,.43),(.43,.48),(.53,.31),(.48,.14),
                       (.5,.1)]
@@ -118,14 +117,10 @@ class PlanetSimulation(object):
 
             # and then around point by -theta
             rp = rotate(rp, p, -th)
-            print rp
 
             lat = atan2(rp[2], sqrt(rp[0]*rp[0] + rp[1]*rp[1])) * 180/pi
             lon = atan2(rp[1], rp[0]) * 180/pi
             coords.append((lat,lon))
-
-        for c in coords:
-            print c
 
         shape = SphericalPolygon(coords)
         for y in range(len(self.tiles)):

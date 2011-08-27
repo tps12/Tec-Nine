@@ -49,7 +49,7 @@ class SphericalPolygon(object):
         count = 0
         arc = GreatCircleArc(point, self._externalpoint)
 
-        for i in range(len(self._points)-1):
+        for i in range(-1, len(self._points)-1):
             if arc.intersects(GreatCircleArc(self._points[i],
                                              self._points[i+1])):
                 count += 1
