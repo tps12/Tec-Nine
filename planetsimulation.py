@@ -104,7 +104,7 @@ class PlanetSimulation(object):
             # find distance from centroid
             d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
                           for i in range(2)]))
-            d *= 1
+            d *= 10
             # find angle from local north
             th = atan2(vertex[0]-c[0],vertex[1]-c[1])
 
