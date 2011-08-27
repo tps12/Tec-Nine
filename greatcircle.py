@@ -38,8 +38,8 @@ class GreatCircle(object):
         den = ob * sa - oa * sb
         g = num/den
 
-        num = -g * sb - c
-        h = num / a
+        num = -g * sb - sc
+        h = num / sa
 
         den = pow(h, 2) + pow(g, 2) + 1
         w = sqrt(1/den)

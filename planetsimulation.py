@@ -104,6 +104,7 @@ class PlanetSimulation(object):
             # find distance from centroid
             d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
                           for i in range(2)]))
+            d *= 20
             # find angle from local north
             th = atan2(vertex[0]-c[0],vertex[1]-c[1])
 
@@ -126,9 +127,10 @@ class PlanetSimulation(object):
             if shape.latrange.min <= self.tiles[y][0][0] <= shape.latrange.max:
                 for x in range(len(self.tiles[y])):
                     if shape.lonrange.min <= self.tiles[y][x][1] <= shape.lonrange.max:
-                        self.tiles[y][x] = (self.tiles[y][x][0],
-                                            self.tiles[y][x][1],
-                                            1)
+                        if shape.contains(self.tiles[y][x][0:2]):
+                            self.tiles[y][x] = (self.tiles[y][x][0],
+                                                self.tiles[y][x][1],
+                                                1)
 
     def update(self):
         pass

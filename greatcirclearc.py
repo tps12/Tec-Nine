@@ -73,7 +73,7 @@ class GreatCircleArc(object):
             else:
                 return False
 
-        intersections = GreatCircle(self._start, self._end).intersect(
+        intersections = GreatCircle(self._start, self._end).intersects(
             GreatCircle(other._start, other._end))
 
         def meridian_intersects(arc, intersection):
@@ -91,7 +91,7 @@ class GreatCircleArc(object):
 
         for intersection in intersections:
             if (self.lonrange.contains(intersection[1]) and
-                other.lonrange.contains(intersectian[1])):
+                other.lonrange.contains(intersection[1])):
                 return True
 
         return False
