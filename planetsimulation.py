@@ -67,9 +67,10 @@ class PlanetSimulation(object):
             d = 2 / r
             lon = d/2
             while lon <= 180:
-                row = ([(lat, -lon, 0)] +
+                flat = float(lat)
+                row = ([(flat, -lon, 0)] +
                        row +
-                       [(lat, lon, 0)])
+                       [(flat, lon, 0)])
                 lon += d
             self.tiles.append(row)
         
@@ -104,7 +105,7 @@ class PlanetSimulation(object):
             # find distance from centroid
             d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
                           for i in range(2)]))
-            d *= 20
+            d *= 1
             # find angle from local north
             th = atan2(vertex[0]-c[0],vertex[1]-c[1])
 
@@ -113,14 +114,18 @@ class PlanetSimulation(object):
             u = u / norm(u)
 
             # rotate point around it by d
-            p = rotate(p, u, d)
+            rp = rotate(p, u, d)
 
             # and then around point by -theta
-            p = rotate(p, p, -th)
+            rp = rotate(rp, p, -th)
+            print rp
 
-            lat = atan2(p[2], sqrt(p[0]*p[0] + p[1]*p[1])) * 180/pi
-            lon = atan2(p[1], p[0]) * 180/pi
+            lat = atan2(rp[2], sqrt(rp[0]*rp[0] + rp[1]*rp[1])) * 180/pi
+            lon = atan2(rp[1], rp[0]) * 180/pi
             coords.append((lat,lon))
+
+        for c in coords:
+            print c
 
         shape = SphericalPolygon(coords)
         for y in range(len(self.tiles)):
@@ -131,6 +136,10 @@ class PlanetSimulation(object):
                             self.tiles[y][x] = (self.tiles[y][x][0],
                                                 self.tiles[y][x][1],
                                                 1)
+                        else:
+                            self.tiles[y][x] = (self.tiles[y][x][0],
+                                                self.tiles[y][x][1],
+                                                2)
 
     def update(self):
         pass
