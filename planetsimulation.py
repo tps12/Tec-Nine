@@ -131,10 +131,6 @@ class PlanetSimulation(object):
                             self.tiles[y][x] = (self.tiles[y][x][0],
                                                 self.tiles[y][x][1],
                                                 1)
-                        else:
-                            self.tiles[y][x] = (self.tiles[y][x][0],
-                                                self.tiles[y][x][1],
-                                                2)
 
     def update(self):
         pass
