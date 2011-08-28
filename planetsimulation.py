@@ -131,12 +131,19 @@ class PlanetSimulation(object):
         latrange = [180/pi * asin(l[2]) for l in vrange]
         lonrange = [180/pi * atan2(l[1],l[0]) for l in vrange]
 
+        def inlonrange(lon):
+            if lonrange[0] <= lonrange[1]:
+                return lonrange[0] <= lon <= lonrange[1]
+            else:
+                return (lonrange[0] <= lon <= 180 or
+                        0 <= lon <= lonrange[1])
+
         for y in range(len(self.tiles)):
             if latrange[0] <= self.tiles[y][0][0] <= latrange[1]:
                 cos_lat = cos(self.tiles[y][0][0] * pi/180)
                 z = sin(self.tiles[y][0][0] * pi/180)
                 for x in range(len(self.tiles[y])):
-                    if lonrange[0] <= self.tiles[y][x][1] <= lonrange[1]:
+                    if inlonrange(self.tiles[y][x][1]):
                         v = (cos_lat * cos(self.tiles[y][x][1] * pi/180),
                              cos_lat * sin(self.tiles[y][x][1] * pi/180),
                              z)
