@@ -1,3 +1,7 @@
+from math import acos
+
+from numpy import dot
+
 from greatcircle import *
 
 class GreatCircleArc(object):
@@ -19,6 +23,6 @@ class GreatCircleArc(object):
         return False
 
     def contains(self, v):
-        es = self._start, self._end
-        h2 = sum([(es[1][i] - es[0][i])**2 for i in range(3)])
-        return all([sum([(v[i] - e[i])**2 for i in range(3)]) < h2 for e in es])
+        th = acos(dot(self._start, self._end))
+	return (acos(dot(self._start, v)) <= th and
+		acos(dot(v, self._end)) <= th)
