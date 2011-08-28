@@ -131,11 +131,14 @@ class PlanetSimulation(object):
             if not latrange.meld(LatRange(points[i][0], points[i+1][0])):
                 raise Exception("Can't meld ranges")
 
+        print latrange
+
         shape = SphericalPolygon(vectors)
+        print shape.range()
         for y in range(len(self.tiles)):
             if latrange.min <= self.tiles[y][0][0] <= latrange.max:
                 cos_lat = cos(self.tiles[y][0][0] * pi/180)
-		z = sin(self.tiles[y][0][0] * pi/180)
+                z = sin(self.tiles[y][0][0] * pi/180)
                 for x in range(len(self.tiles[y])):
                     v = (cos_lat * cos(self.tiles[y][x][1] * pi/180),
                          cos_lat * sin(self.tiles[y][x][1] * pi/180),

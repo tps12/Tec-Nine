@@ -5,6 +5,16 @@ class GreatCircle(object):
         self._start = start
         self._end = end
 
+    def inflection(self):
+        a, b, c = self.plane()
+
+        a2b2 = a*a + b*b
+        maxz = sqrt(a2b2/(a2b2 + c*c))
+
+        return (-a*c*maxz/a2b2,
+                (-c*maxz + (a*a*c*maxz)/a2b2)/b,
+                maxz)
+
     def intersects(self, other):
         sa, sb, sc = self.plane()
         oa, ob, oc = other.plane()
