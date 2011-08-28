@@ -29,7 +29,7 @@ class GreatCircle(object):
         den = pow(h, 2) + pow(g, 2) + 1
         w = sqrt(1/den)
 
-        return (h*w, g*w, w), (-h*w, -g*w, w)
+        return (h*w, g*w, w), (-h*w, -g*w, -w)
 
     def plane(self):
         vs = self._start, self._end
