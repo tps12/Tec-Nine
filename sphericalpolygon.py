@@ -7,10 +7,6 @@ class SphericalPolygon(object):
     def __init__(self, vectors):
         self._vectors = [v for v in vectors]
         self._externalvector = self._guessexternal(self._vectors)
-        for v in self._vectors:
-            print v
-        print '--'
-        print self._externalvector
 
     @staticmethod
     def _guessexternal(vs):

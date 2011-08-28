@@ -136,10 +136,10 @@ class PlanetSimulation(object):
         for y in range(len(self.tiles)):
             if latrange.min <= self.tiles[y][0][0] <= latrange.max:
                 for x in range(len(self.tiles[y])):
-                    cos_lat = cos(self.tiles[y][x][0])
-                    v = (cos_lat * cos(self.tiles[y][x][1]),
-                         cos_lat * sin(self.tiles[y][x][1]),
-                         sin(self.tiles[y][x][0]))
+                    cos_lat = cos(self.tiles[y][x][0] * pi/180)
+                    v = (cos_lat * cos(self.tiles[y][x][1] * pi/180),
+                         cos_lat * sin(self.tiles[y][x][1] * pi/180),
+                         sin(self.tiles[y][x][0] * pi/180))
                     if shape.contains(v):
                         self.tiles[y][x] = (self.tiles[y][x][0],
                                             self.tiles[y][x][1],
