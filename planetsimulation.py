@@ -126,22 +126,28 @@ class PlanetSimulation(object):
             points.append((lat,lon))
 
         shape = SphericalPolygon(vectors)
-        rmin, rmax = shape.range()
+        vrange = shape.range()
 
-        latrange = [180/pi * asin(l[2]) for l in rmin, rmax]
+        latrange = [180/pi * asin(l[2]) for l in vrange]
+        lonrange = [180/pi * atan2(l[1],l[0]) for l in vrange]
 
         for y in range(len(self.tiles)):
             if latrange[0] <= self.tiles[y][0][0] <= latrange[1]:
                 cos_lat = cos(self.tiles[y][0][0] * pi/180)
                 z = sin(self.tiles[y][0][0] * pi/180)
                 for x in range(len(self.tiles[y])):
-                    v = (cos_lat * cos(self.tiles[y][x][1] * pi/180),
-                         cos_lat * sin(self.tiles[y][x][1] * pi/180),
-                         z)
-                    if shape.contains(v):
-                        self.tiles[y][x] = (self.tiles[y][x][0],
-                                            self.tiles[y][x][1],
-                                            1)
+                    if lonrange[0] <= self.tiles[y][x][1] <= lonrange[1]:
+                        v = (cos_lat * cos(self.tiles[y][x][1] * pi/180),
+                             cos_lat * sin(self.tiles[y][x][1] * pi/180),
+                             z)
+                        if shape.contains(v):
+                            self.tiles[y][x] = (self.tiles[y][x][0],
+                                                self.tiles[y][x][1],
+                                                1)
+                        else:
+                            self.tiles[y][x] = (self.tiles[y][x][0],
+                                                self.tiles[y][x][1],
+                                                2)
 
     def update(self):
         pass
