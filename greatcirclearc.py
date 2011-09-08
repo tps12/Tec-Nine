@@ -1,6 +1,7 @@
-from math import acos
+from math import acos, pi
 
-from numpy import dot
+from numpy import dot, cross
+from numpy.linalg import norm
 
 from greatcircle import *
 
@@ -30,7 +31,17 @@ class GreatCircleArc(object):
 
         return False
 
+    @staticmethod
+    def _angleaxis(v1, v2):
+        return acos(dot(v1, v2)), cross(v1, v2)
+
     def contains(self, v):
-        th = acos(dot(self._start, self._end))
-        return (acos(dot(self._start, v)) <= th and
-                acos(dot(v, self._end)) <= th)
+        th, ax = self._angleaxis(self._start, self._end)
+        th1, ax1 = self._angleaxis(self._start, v)
+        th2, ax2 = self._angleaxis(v, self._end)
+        if ax1[0] * ax[0] < 0:
+            th1 += pi
+        if ax2[0] * ax[0] < 0:
+            th2 += pi
+        
+        return th1 < th and th2 < th
