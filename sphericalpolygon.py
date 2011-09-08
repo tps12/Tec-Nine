@@ -1,56 +1,37 @@
+from numpy import *
+from numpy.linalg import *
+
 from greatcirclearc import *
 
 class SphericalPolygon(object):
-    def __init__(self, points):
-        self._points = [p for p in points]
-        self.latrange, self.lonrange = self._getranges(self._points)
-        self._externalpoint = self._guessexternal(self.latrange, self.lonrange)
+    def __init__(self, vectors):
+        self._vectors = [v for v in vectors]
+        self._externalvector = self._guessexternal(self._vectors)
 
     @staticmethod
-    def _getranges(points):
-        lonrange = GreatCircleArc(points[0], points[1]).lonrange
-        latrange = LatRange(points[0][0], points[1][0])
+    def _guessexternal(vs):
+        s = [0,0,0]
+        for v in vs:
+            for i in range(3):
+                s[i] += v[i]
+        e = array([-s[i]/len(vs) for i in range(3)])
+        return e/norm(e)
 
-        for i in range(1, len(points)-1):
-            arc = GreatCircleArc(points[i], points[i+1])
-            if not latrange.meld(arc.latrange):
-                raise Exception(' '.join(["Can't meld", str(arc.latrange),
-                                          'into', str(latrange)]))
-            if not lonrange.meld(arc.lonrange):
-                raise Exception(' '.join(["Can't meld", str(arc.lonrange),
-                                          'into', str(lonrange)]))
-        return latrange, lonrange
+    def _eacharc(self, f):
+        for i in range(-1, len(self._vectors)-1):
+            yield f(GreatCircleArc(self._vectors[i], self._vectors[i+1]))
 
-    @staticmethod
-    def _guessexternal(latrange, lonrange):
-        if lonrange.max - lonrange.min >= 360:
-            externallon = 90.0
-            if latrange.max < 0:
-                externallat = 45.0
-            elif latrange.min > 0:
-                externallat = -45.0
-            elif abs(latrange.max) > abs(latrange.min):
-                externallat = latrange.min - (90 + latrange.min)/2.0
-            else:
-                externallat = latrange.max + (90 - latrange.max)/2.0
-        else:
-            externallon = (lonrange.max + lonrange.min)/2.0 - 180
-            while externallon < -180: externallon += 360
-            while externallon > 180: externallon -= 360
+    def range(self):
+        def meld(a, b):
+            return ([min(a[0][i], b[0][i]) for i in range(3)],
+                    [max(a[1][i], b[1][i]) for i in range(3)])
 
-            if abs(latrange.max) >= abs(latrange.min):
-                externallat = latrange.min + (-90 - latrange.min)/2.0
-            else:
-                externallat = latrange.max + (90 - latrange.max)/2.0
+        return reduce(meld, self._eacharc(lambda a: a.range()))
 
-        return externallat, externallon
-
-    def contains(self, point):
+    def contains(self, vector):
         count = 0
-        arc = GreatCircleArc(point, self._externalpoint)
+        arc = GreatCircleArc(vector, self._externalvector)
 
-        for i in range(-1, len(self._points)-1):
-            if arc.intersects(GreatCircleArc(self._points[i],
-                                             self._points[i+1])):
-                count += 1
+        count = len([isects for isects in self._eacharc(lambda a: arc.intersects(a)) if isects])
+
         return (count % 2) == 1

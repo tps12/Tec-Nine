@@ -5,6 +5,7 @@ import random
 from numpy import *
 from numpy.linalg import *
 
+from latrange import *
 from sphericalpolygon import *
 
 def distance(c1, c2):
@@ -99,7 +100,8 @@ class PlanetSimulation(object):
 
         c = 0.25, 0.25
 
-        coords = []
+        vectors = []
+        points = []
         for vertex in self.shape: 
             # find distance from centroid
             d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
@@ -118,19 +120,39 @@ class PlanetSimulation(object):
             # and then around point by -theta
             rp = rotate(rp, p, -th)
 
+            vectors.append(rp)
             lat = atan2(rp[2], sqrt(rp[0]*rp[0] + rp[1]*rp[1])) * 180/pi
             lon = atan2(rp[1], rp[0]) * 180/pi
-            coords.append((lat,lon))
+            points.append((lat,lon))
 
-        shape = SphericalPolygon(coords)
+        shape = SphericalPolygon(vectors)
+        rmin, rmax = shape.range()
+
+        latrange = [180/pi * asin(l[2]) for l in rmin, rmax]
+
+        def inlonrange(cos_lat, lon):
+            v = cos_lat * cos(lon * pi/180), cos_lat * sin(lon * pi/180)
+            return all([rmin[i] <= v[i] <= rmax[i] for i in range(2)])
+
+        ev = shape._externalvector
+
         for y in range(len(self.tiles)):
-            if shape.latrange.min <= self.tiles[y][0][0] <= shape.latrange.max:
+            if latrange[0] <= self.tiles[y][0][0] <= latrange[1]:
+                cos_lat = cos(self.tiles[y][0][0] * pi/180)
+                z = sin(self.tiles[y][0][0] * pi/180)
                 for x in range(len(self.tiles[y])):
-                    if shape.lonrange.min <= self.tiles[y][x][1] <= shape.lonrange.max:
-                        if shape.contains(self.tiles[y][x][0:2]):
+                    if inlonrange(cos_lat, self.tiles[y][x][1]):
+                        v = (cos_lat * cos(self.tiles[y][x][1] * pi/180),
+                             cos_lat * sin(self.tiles[y][x][1] * pi/180),
+                             z)
+                        if shape.contains(v):
                             self.tiles[y][x] = (self.tiles[y][x][0],
                                                 self.tiles[y][x][1],
                                                 1)
+                        else:
+                            self.tiles[y][x] = (self.tiles[y][x][0],
+                                                self.tiles[y][x][1],
+                                                2)
 
     def update(self):
         pass

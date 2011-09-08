@@ -87,7 +87,9 @@ class PlanetDisplay(object):
                         xo += len(self._sim.tiles[y])
                     h = self._sim.tiles[y][xo][2]
 
-                    if h:
+                    if h == 1:
+                        color = (64, 64, 64)
+                    elif h == 2:
                         color = (128, 128, 128)
                     else:
                         color = (255, 255, 255)
