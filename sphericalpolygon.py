@@ -23,8 +23,11 @@ class SphericalPolygon(object):
 
     def range(self):
         def meld(a, b):
-            return ([min(a[0][i], b[0][i]) for i in range(3)],
-                    [max(a[1][i], b[1][i]) for i in range(3)])
+            alat, alon = a
+            blat, blon = b
+            alat.meld(blat)
+            alon.meld(blon)
+            return alat, alon
 
         return reduce(meld, self._eacharc(lambda a: a.range()))
 

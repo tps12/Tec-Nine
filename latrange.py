@@ -6,6 +6,9 @@ class LatRange(object):
     def __str__(self):
         return ' '.join(['LatRange:', str(self.min), '-', str(self.max)])
 
+    def contains(self, lat):
+        return self.min <= lat <= self.max
+
     def overlaps(self, other):
         if self.max - self.min >= 180 or other.max - other.min >= 180:
             return True

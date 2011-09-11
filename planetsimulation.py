@@ -126,22 +126,16 @@ class PlanetSimulation(object):
             points.append((lat,lon))
 
         shape = SphericalPolygon(vectors)
-        rmin, rmax = shape.range()
+        latrange, lonrange = shape.range()
         print shape._vectors
         print '--'
         for a in shape._eacharc(lambda a: a):
             print a
         print '--'
         for r in shape._eacharc(lambda a: a.range()):
-            print r
+            print r[0], r[1]
         print '--'
-        self._range = rmin, rmax
-
-        latrange = [180/pi * asin(l[2]) for l in rmin, rmax]
-
-        def inlonrange(cos_lat, lon):
-            v = cos_lat * cos(lon * pi/180), cos_lat * sin(lon * pi/180)
-            return all([rmin[i] <= v[i] <= rmax[i] for i in range(2)])
+        self._range = latrange, lonrange
 
         ev = shape._externalvector
 
@@ -157,8 +151,8 @@ class PlanetSimulation(object):
                         value = 0
                         if shape.contains(v):
                             value += 1
-                        if (latrange[0] <= self.tiles[y][0][0] <= latrange[1] and
-                            inlonrange(cos_lat, self.tiles[y][x][1])):
+                        if (latrange.contains(self.tiles[y][0][0]) and
+                            lonrange.contains(self.tiles[y][x][1])):
                             value += 2
                         self.tiles[y][x] = (self.tiles[y][x][0],
                                             self.tiles[y][x][1],
@@ -166,22 +160,17 @@ class PlanetSimulation(object):
 
     def coordsinrange(self, p):
         x, y = p
-        rmin, rmax = self._range
+        latrange, lonrange = self._range
 
-        latrange = [180/pi * asin(l[2]) for l in rmin, rmax]
-        if latrange[0] <= self.tiles[y][0][0] <= latrange[1]:
+        if latrange.contains(self.tiles[y][0][0]):
             print 'in lat range'
         else:
             print 'out of lat range'
 
-        def inlonrange(cos_lat, lon):
-            v = cos_lat * cos(lon * pi/180), cos_lat * sin(lon * pi/180)
-            result = all([rmin[i] <= v[i] <= rmax[i] for i in range(2)])
-            print ('in lon range' if result else 'out of lon range')
-            print rmin, rmax, v
-
-        cos_lat = cos(self.tiles[y][0][0] * pi/180)
-        inlonrange(cos_lat, self.tiles[y][x][1])
+        if lonrange.contains(self.tiles[y][0][1]):
+            print 'in lon range'
+        else:
+            print 'out of lon range'
 
     def update(self):
         pass

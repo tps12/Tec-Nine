@@ -17,16 +17,20 @@ class LonRange(object):
         return ' '.join(['LonRange:', str(self.min), '-', str(self.max)])
 
     def contains(self, lon):
+        print 'does', self, 'contain', lon
         while lon < -180: lon += 360
 
         if self.min <= lon <= self.max:
+            print 'yep'
             return True
 
         lon += 360
 
         if self.min <= lon <= self.max:
+            print 'yeah'
             return True
 
+        print 'nope'
         return False
 
     def overlaps(self, other):
@@ -48,6 +52,7 @@ class LonRange(object):
         return False
 
     def meld(self, other):
+        print 'melding', self, other
         if other is None:
             return True
 
