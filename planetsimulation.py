@@ -104,7 +104,7 @@ class PlanetSimulation(object):
         points = []
         for vertex in self.shape: 
             # find distance from centroid
-            d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
+            d = 5*sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
                           for i in range(2)]))
 
             # find angle from local north
@@ -127,6 +127,15 @@ class PlanetSimulation(object):
 
         shape = SphericalPolygon(vectors)
         rmin, rmax = shape.range()
+        print shape._vectors
+        print '--'
+        for a in shape._eacharc(lambda a: a):
+            print a
+        print '--'
+        for r in shape._eacharc(lambda a: a.range()):
+            print r
+        print '--'
+        self._range = rmin, rmax
 
         latrange = [180/pi * asin(l[2]) for l in rmin, rmax]
 
@@ -137,22 +146,42 @@ class PlanetSimulation(object):
         ev = shape._externalvector
 
         for y in range(len(self.tiles)):
-            if latrange[0] <= self.tiles[y][0][0] <= latrange[1]:
+            if True:#latrange[0] <= self.tiles[y][0][0] <= latrange[1]:
                 cos_lat = cos(self.tiles[y][0][0] * pi/180)
                 z = sin(self.tiles[y][0][0] * pi/180)
                 for x in range(len(self.tiles[y])):
-                    if inlonrange(cos_lat, self.tiles[y][x][1]):
+                    if True:#inlonrange(cos_lat, self.tiles[y][x][1]):
                         v = (cos_lat * cos(self.tiles[y][x][1] * pi/180),
                              cos_lat * sin(self.tiles[y][x][1] * pi/180),
                              z)
+                        value = 0
                         if shape.contains(v):
-                            self.tiles[y][x] = (self.tiles[y][x][0],
-                                                self.tiles[y][x][1],
-                                                1)
-                        else:
-                            self.tiles[y][x] = (self.tiles[y][x][0],
-                                                self.tiles[y][x][1],
-                                                2)
+                            value += 1
+                        if (latrange[0] <= self.tiles[y][0][0] <= latrange[1] and
+                            inlonrange(cos_lat, self.tiles[y][x][1])):
+                            value += 2
+                        self.tiles[y][x] = (self.tiles[y][x][0],
+                                            self.tiles[y][x][1],
+                                            value)
+
+    def coordsinrange(self, p):
+        x, y = p
+        rmin, rmax = self._range
+
+        latrange = [180/pi * asin(l[2]) for l in rmin, rmax]
+        if latrange[0] <= self.tiles[y][0][0] <= latrange[1]:
+            print 'in lat range'
+        else:
+            print 'out of lat range'
+
+        def inlonrange(cos_lat, lon):
+            v = cos_lat * cos(lon * pi/180), cos_lat * sin(lon * pi/180)
+            result = all([rmin[i] <= v[i] <= rmax[i] for i in range(2)])
+            print ('in lon range' if result else 'out of lon range')
+            print rmin, rmax, v
+
+        cos_lat = cos(self.tiles[y][0][0] * pi/180)
+        inlonrange(cos_lat, self.tiles[y][x][1])
 
     def update(self):
         pass

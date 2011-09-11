@@ -46,6 +46,7 @@ class PlanetDisplay(object):
     def __init__(self, sim):
         self._sim = sim
         self._screen = None
+        self.selected = None
 
     @property
     def rotate(self):
@@ -57,6 +58,34 @@ class PlanetDisplay(object):
         self.dirty = True
     
     def handle(self, e):
+        if e.type == MOUSEBUTTONUP:
+            mx, my = e.pos
+
+            res = max([len(r) for r in self._sim.tiles]), len(self._sim.tiles)
+
+            y = my / (self.size[1]/res[1])
+            x = mx / (self.size[0]/res[0]) - (res[0] - len(self._sim.tiles[y]))/2
+
+            r = self.rotate
+            o = r * len(self._sim.tiles[y])/360
+
+            xo = x + o
+            if xo > len(self._sim.tiles[y])-1:
+                xo -= len(self._sim.tiles[y])
+            elif xo < 0:
+                xo += len(self._sim.tiles[y])
+            
+            if 0 <= y < len(self._sim.tiles) and 0 <= xo < len(self._sim.tiles[y]):
+                if self.selected == (xo,y):
+                    self.selected = None
+                else:
+                    self.selected = (xo,y)
+                    self._sim.coordsinrange(self.selected)
+       
+                self.dirty = True
+
+                return True
+
         return False
     
     def draw(self, surface):
@@ -87,10 +116,14 @@ class PlanetDisplay(object):
                         xo += len(self._sim.tiles[y])
                     h = self._sim.tiles[y][xo][2]
 
-                    if h == 1:
-                        color = (64, 64, 64)
+                    if self.selected == (xo,y):
+                        color = (255, 255, 0)
+                    elif h == 1:
+                        color = (255, 0, 0)
                     elif h == 2:
-                        color = (128, 128, 128)
+                        color = (0, 0, 255)
+                    elif h == 3:
+                         color = (255, 0, 255)
                     else:
                         color = (255, 255, 255)
                     block.fill(color)
