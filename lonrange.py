@@ -1,6 +1,11 @@
 class LonRange(object):
     def __init__(self, minlon, maxlon):
         while maxlon < minlon: maxlon += 360
+        if maxlon - minlon > 180:
+            temp = maxlon
+            maxlon = minlon
+            minlon = temp
+            while maxlon < minlon: maxlon += 360
 
         while 540 < minlon or 540 < maxlon:
             minlon -= 360
@@ -53,20 +58,26 @@ class LonRange(object):
             return True
 
         if self.max - self.min >= 360:
+            print '360'
             return True
 
         if other.max - other.min >= 360:
             self.min = -180.0
             self.max = 180.0
+            print 'other 360'
             return True
 
         if (self.min <= other.min + 360 <= self.max or
-            self.min <= other.max + 360 <= self.max):
+            self.min <= other.max + 360 <= self.max or
+            other.min <= self.min - 360 <= other.max or
+            other.min <= self.max - 360 <= other.max):
             other.min += 360
             other.max += 360
 
         if (other.min <= self.min + 360 <= other.max or
-            other.min <= self.max + 360 <= other.max):
+            other.min <= self.max + 360 <= other.max or
+            self.min <= other.min - 360 <= self.max or
+            self.min <= other.max - 360 <= self.max):
             other.min -= 360
             other.max -= 360
 
@@ -80,6 +91,7 @@ class LonRange(object):
             if self.max - self.min >= 360:
                 self.min = -180.0
                 self.max = 180.0
+            print self
             return True
 
         import pdb; pdb.set_trace()
