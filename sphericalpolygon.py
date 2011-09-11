@@ -4,8 +4,9 @@ from numpy.linalg import *
 from greatcirclearc import *
 
 class SphericalPolygon(object):
-    def __init__(self, vectors):
+    def __init__(self, vectors, centroid):
         self._vectors = [v for v in vectors]
+        self._centroid = centroid
         self._externalvector = self._guessexternal(self._vectors)
 
     @staticmethod
@@ -29,7 +30,14 @@ class SphericalPolygon(object):
             alon.meld(blon)
             return alat, alon
 
-        return reduce(meld, self._eacharc(lambda a: a.range()))
+        latrange, lonrange = reduce(meld, self._eacharc(lambda a: a.range()))
+        if lonrange.min == -180 and lonrange.max == 180:
+            print 'cap'
+            if self._centroid[2] < 0:
+                latrange.min = -90.0
+            else:
+                latrange.max = 90.0
+        return latrange, lonrange
 
     def contains(self, vector):
         count = 0

@@ -125,7 +125,7 @@ class PlanetSimulation(object):
             lon = atan2(rp[1], rp[0]) * 180/pi
             points.append((lat,lon))
 
-        shape = SphericalPolygon(vectors)
+        shape = SphericalPolygon(vectors, p)
         latrange, lonrange = shape.range()
         print shape._vectors
         print '--'
