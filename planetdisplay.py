@@ -80,7 +80,6 @@ class PlanetDisplay(object):
                     self.selected = None
                 else:
                     self.selected = (xo,y)
-                    self._sim.coordsinrange(self.selected)
        
                 self.dirty = True
 
@@ -119,11 +118,7 @@ class PlanetDisplay(object):
                     if self.selected == (xo,y):
                         color = (255, 255, 0)
                     elif h == 1:
-                        color = (255, 0, 0)
-                    elif h == 2:
-                        color = (0, 0, 255)
-                    elif h == 3:
-                         color = (255, 0, 255)
+                        color = (64, 64, 64)
                     else:
                         color = (255, 255, 255)
                     block.fill(color)

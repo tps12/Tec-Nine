@@ -55,18 +55,15 @@ class LonRange(object):
         return False
 
     def meld(self, other):
-        print 'melding', self, other
         if other is None:
             return True
 
         if self.max - self.min + epsilon >= 360:
-            print '360'
             return True
 
         if other.max - other.min + epsilon >= 360:
             self.min = -180.0
             self.max = 180.0
-            print 'other 360'
             return True
 
         if (self.min - epsilon <= other.min + 360 <= self.max + epsilon or
@@ -93,7 +90,6 @@ class LonRange(object):
             if self.max - self.min >= 360:
                 self.min = -180.0
                 self.max = 180.0
-            print self
             return True
 
         import pdb; pdb.set_trace()

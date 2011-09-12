@@ -31,8 +31,8 @@ class SphericalPolygon(object):
             return alat, alon
 
         latrange, lonrange = reduce(meld, self._eacharc(lambda a: a.range()))
+        # extend latitude range to pole if wraps all the way around
         if lonrange.min == -180 and lonrange.max == 180:
-            print 'cap'
             if self._centroid[2] < 0:
                 latrange.min = -90.0
             else:

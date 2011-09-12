@@ -24,10 +24,8 @@ class GreatCircleArc(object):
 
         inflection = self._coords(GreatCircle(self._start, self._end).inflection())
         if lonrange.contains(inflection[1]):
-            print 'inflection max', inflection, latrange.max
             latrange.max = inflection[0]
         if lonrange.contains(inflection[1] - 180):
-            print 'inflection min', inflection, latrange.min
             latrange.min = -inflection[0]
 
         return latrange, lonrange
