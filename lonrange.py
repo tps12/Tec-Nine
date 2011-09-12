@@ -1,3 +1,5 @@
+epsilon = 1/3600.0/100 # 1/100th of a second
+
 class LonRange(object):
     def __init__(self, minlon, maxlon):
         while maxlon < minlon: maxlon += 360
@@ -38,16 +40,16 @@ class LonRange(object):
         if self.max - self.min >= 360 or other.max - other.min >= 360:
             return True
 
-        if ((self.min <= other.min <= self.max) or
-            (self.min <= other.max <= self.max) or
-            (other.min <= self.min <= other.max) or
-            (other.min <= self.max <= other.max)):
+        if ((self.min + epsilon <= other.min <= self.max - epsilon) or
+            (self.min + epsilon <= other.max <= self.max - epsilon) or
+            (other.min + epsilon <= self.min <= other.max - epsilon) or
+            (other.min + epsilon <= self.max <= other.max - epsilon)):
             return True
 
-        if ((self.min <= other.min + 360 <= self.max) or
-            (self.min <= other.max + 360 <= self.max) or
-            (other.min <= self.min + 360 <= other.max) or
-            (other.min <= self.max + 360 <= other.max)):
+        if ((self.min + epsilon <= other.min + 360 <= self.max - epsilon) or
+            (self.min + epsilon <= other.max + 360 <= self.max - epsilon) or
+            (other.min + epsilon <= self.min + 360 <= other.max - epsilon) or
+            (other.min + epsilon <= self.max + 360 <= other.max - epsilon)):
             return True
 
         return False
@@ -57,34 +59,34 @@ class LonRange(object):
         if other is None:
             return True
 
-        if self.max - self.min >= 360:
+        if self.max - self.min + epsilon >= 360:
             print '360'
             return True
 
-        if other.max - other.min >= 360:
+        if other.max - other.min + epsilon >= 360:
             self.min = -180.0
             self.max = 180.0
             print 'other 360'
             return True
 
-        if (self.min <= other.min + 360 <= self.max or
-            self.min <= other.max + 360 <= self.max or
-            other.min <= self.min - 360 <= other.max or
-            other.min <= self.max - 360 <= other.max):
+        if (self.min - epsilon <= other.min + 360 <= self.max + epsilon or
+            self.min - epsilon <= other.max + 360 <= self.max + epsilon or
+            other.min - epsilon <= self.min - 360 <= other.max + epsilon or
+            other.min - epsilon <= self.max - 360 <= other.max + epsilon):
             other.min += 360
             other.max += 360
 
-        if (other.min <= self.min + 360 <= other.max or
-            other.min <= self.max + 360 <= other.max or
-            self.min <= other.min - 360 <= self.max or
-            self.min <= other.max - 360 <= self.max):
+        if (other.min - epsilon <= self.min + 360 <= other.max + epsilon or
+            other.min - epsilon <= self.max + 360 <= other.max + epsilon or
+            self.min - epsilon <= other.min - 360 <= self.max + epsilon or
+            self.min - epsilon <= other.max - 360 <= self.max + epsilon):
             other.min -= 360
             other.max -= 360
 
-        if ((self.min <= other.min <= self.max) or
-            (self.min <= other.max <= self.max) or
-            (other.min <= self.min <= other.max) or
-            (other.min <= self.max <= other.max)):
+        if ((self.min - epsilon <= other.min <= self.max + epsilon) or
+            (self.min - epsilon <= other.max <= self.max + epsilon) or
+            (other.min - epsilon <= self.min <= other.max + epsilon) or
+            (other.min - epsilon <= self.max <= other.max + epsilon)):
             self.min = min(self.min, other.min)
             self.max = max(self.max, other.max)
 
