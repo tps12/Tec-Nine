@@ -8,6 +8,8 @@ from numpy.linalg import *
 from latrange import *
 from sphericalpolygon import *
 
+from shape import *
+
 def distance(c1, c2):
     lat1, lon1 = [c * pi/180 for c in c1]
     lat2, lon2 = [c * pi/180 for c in c2]
@@ -100,8 +102,7 @@ class PlanetSimulation(object):
 
         c = 0.25, 0.25
 
-        vectors = []
-        points = []
+        coords = []
         for vertex in self.shape: 
             # find distance from centroid
             d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
@@ -109,26 +110,12 @@ class PlanetSimulation(object):
 
             # find angle from local north
             th = atan2(vertex[0]-c[0],vertex[1]-c[1])
+            
+            coords.append((d, th))
 
-            # axis of rotation separating point from orientation point
-            u = cross(p, o)
-            u = u / norm(u)
+        shape = Shape(coords, p, o).projection()
 
-            # rotate point around it by d
-            rp = rotate(p, u, d)
-
-            # and then around point by -theta
-            rp = rotate(rp, p, -th)
-
-            vectors.append(rp)
-            lat = atan2(rp[2], sqrt(rp[0]*rp[0] + rp[1]*rp[1])) * 180/pi
-            lon = atan2(rp[1], rp[0]) * 180/pi
-            points.append((lat,lon))
-
-        shape = SphericalPolygon(vectors, p)
         latrange, lonrange = shape.range()
-
-        ev = shape._externalvector
 
         for y in range(len(self.tiles)):
             if latrange.contains(self.tiles[y][0][0]):
