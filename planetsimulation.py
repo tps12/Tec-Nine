@@ -113,23 +113,30 @@ class PlanetSimulation(object):
             
             coords.append((d, th))
 
-        shape = Shape(coords, p, o).projection()
+        self._shape = Shape(coords, p, o, v)
+
+    def update(self):
+        self._shape.apply_velocity(0.01)
+
+        shape = self._shape.projection()
 
         latrange, lonrange = shape.range()
 
         for y in range(len(self.tiles)):
+            inlatrange = False
             if latrange.contains(self.tiles[y][0][0]):
                 cos_lat = cos(self.tiles[y][0][0] * pi/180)
                 z = sin(self.tiles[y][0][0] * pi/180)
-                for x in range(len(self.tiles[y])):
-                    if lonrange.contains(self.tiles[y][x][1]):
-                        v = (cos_lat * cos(self.tiles[y][x][1] * pi/180),
-                             cos_lat * sin(self.tiles[y][x][1] * pi/180),
-                             z)
-                        if shape.contains(v):
-                            self.tiles[y][x] = (self.tiles[y][x][0],
-                                            self.tiles[y][x][1],
-                                            1)
-
-    def update(self):
-        pass
+                inlatrange = True
+            for x in range(len(self.tiles[y])):
+                value = 0
+                if inlatrange and lonrange.contains(self.tiles[y][x][1]):
+                    v = (cos_lat * cos(self.tiles[y][x][1] * pi/180),
+                         cos_lat * sin(self.tiles[y][x][1] * pi/180),
+                         z)
+                    if shape.contains(v):
+                        value = 1
+                self.tiles[y][x] = (self.tiles[y][x][0],
+                                self.tiles[y][x][1],
+                                value)
+        self.dirty = True

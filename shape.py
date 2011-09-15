@@ -6,10 +6,11 @@ from numpy.linalg import norm
 from sphericalpolygon import *
 
 class Shape(object):
-    def __init__(self, polarcoords, location, orientation):
+    def __init__(self, polarcoords, location, orientation, velocity):
         self._coords = [c for c in polarcoords]
         self._location = location
         self._orientation = orientation
+        self._velocity = velocity
 
     @staticmethod
     def _rotate(p, axis, theta):
@@ -35,3 +36,18 @@ class Shape(object):
         vectors = [self._rotate(self._rotate(self._location, u, r), self._location, -th)
                    for (r,th) in self._coords]
         return SphericalPolygon(vectors, self._location)
+
+    def apply_velocity(self, dt):
+        d = norm(self._velocity) * dt
+
+        if d:
+            axis = cross(self._location, self._velocity)
+            axis = axis / norm(axis)
+
+            self._location, self._orientation, self._velocity = [self._rotate(i, axis, d)
+                                                                 for i in
+                                                                 self._location,
+                                                                 self._orientation,
+                                                                 self._velocity]
+
+

@@ -47,6 +47,7 @@ class PlanetDisplay(object):
         self._sim = sim
         self._screen = None
         self.selected = None
+        self.dirty = True
 
     @property
     def rotate(self):
@@ -55,7 +56,7 @@ class PlanetDisplay(object):
     @rotate.setter
     def rotate(self, value):
         self._rotate = value
-        self.dirty = True
+        self._dirty = True
     
     def handle(self, e):
         if e.type == MOUSEBUTTONUP:
@@ -81,7 +82,7 @@ class PlanetDisplay(object):
                 else:
                     self.selected = (xo,y)
        
-                self.dirty = True
+                self._dirty = True
 
                 return True
 
@@ -90,7 +91,8 @@ class PlanetDisplay(object):
     def draw(self, surface):
         self._sim.update()
         
-        if self.dirty or self._screen == None or self._screen.get_size() != surface.get_size():
+        if (self._sim.dirty or self._dirty or
+            self._screen == None or self._screen.get_size() != surface.get_size()):
             self._screen = pygame.Surface(surface.get_size(), 0, 32)
             
             self.size = self._screen.get_size()
@@ -127,6 +129,6 @@ class PlanetDisplay(object):
                                       ((x + (res[0] - len(self._sim.tiles[y]))/2)*block.get_width(),
                                        y*block.get_height()))
 
-            self.dirty = False
+            self._dirty = False
                     
         surface.blit(self._screen, (0,0))
