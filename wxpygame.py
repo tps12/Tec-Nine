@@ -22,6 +22,7 @@ class PygameDisplay(wx.Window):
     def Update(self, event):
         # Any update tasks would go here (moving sprites, advancing animation frames etc.)        
 	self.Redraw()
+        wx.Yield()
 
     def OnClick(self, event):
         self.display.handle(pygame.event.Event(pygame.locals.MOUSEBUTTONUP,
