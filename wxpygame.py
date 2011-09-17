@@ -7,8 +7,7 @@ class PygameDisplay(wx.Window):
         pygame.font.init()
                 
         self.display = display
-        self.hwnd = self.GetHandle()
-       
+
         self.size = self.GetSizeTuple()
         self.size_dirty = True
        
