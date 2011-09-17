@@ -80,63 +80,67 @@ class PlanetSimulation(object):
         xmax = max([len(self.tiles[i]) for i in range(len(self.tiles))])
 
         dimensions = xmax, len(self.tiles)
-    
-        # random location
-        a = array([random.uniform(-1) for i in range(3)])
-        p = a / norm(a)
+   
+        self._shapes = []
+        for i in range(10):
+            # random location
+            a = array([random.uniform(-1) for i in range(3)])
+            p = a / norm(a)
 
-        # best unit vector
-        u = zeros(3)
-        u[min(range(len(a)), key=lambda i: abs(p[i]))] = 1
+            # best unit vector
+            u = zeros(3)
+            u[min(range(len(a)), key=lambda i: abs(p[i]))] = 1
 
-        # random velocity vector
-        v = cross(p, u)
+            # random velocity vector
+            v = cross(p, u) * random.uniform(0.9, 1.4)
 
-        # random orienting point
-        (o, ov) = apply_velocity(p, 0.05 * rotate(v / norm(v),
-                                                  p,
-                                                  random.uniform(0, 2*pi)))
-        self.shape = [(.1,.23),(.12,.43),(.13,.52),(.25,.54),
-                      (.3,.43),(.43,.48),(.53,.31),(.48,.14),
-                      (.5,.1)]
+            # random orienting point
+            (o, ov) = apply_velocity(p, 0.05 * rotate(v / norm(v),
+                                                      p,
+                                                      random.uniform(0, 2*pi)))
+            shape = [(.1,.23),(.12,.43),(.13,.52),(.25,.54),
+                     (.3,.43),(.43,.48),(.53,.31),(.48,.14),
+                     (.5,.1)]
 
-        c = 0.25, 0.25
+            c = 0.25, 0.25
 
-        coords = []
-        for vertex in self.shape: 
-            # find distance from centroid
-            d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
-                          for i in range(2)]))
+            scale = random.uniform(1, 1.5)
 
-            # find angle from local north
-            th = atan2(vertex[0]-c[0],vertex[1]-c[1])
-            
-            coords.append((d, th))
+            coords = []
+            for vertex in shape: 
+                # find distance from centroid
+                d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
+                              for i in range(2)])) * scale
 
-        self._shape = Shape(coords, p, o, v)
+                # find angle from local north
+                th = atan2(vertex[0]-c[0],vertex[1]-c[1])
+                
+                coords.append((d * (0.75 + random.uniform(0.5)), th))
+
+            self._shapes.append(Shape(coords, p, o, v))
 
     def update(self):
-        self._shape.apply_velocity(0.01)
+        for s in self._shapes:
+            s.apply_velocity(0.01)
 
-        shape = self._shape.projection()
-
-        latrange, lonrange = shape.range()
+        shapes = [s.projection() for s in self._shapes]
 
         for y in range(len(self.tiles)):
-            inlatrange = False
-            if latrange.contains(self.tiles[y][0][0]):
+            inlatrange = [s for s in shapes
+                          if s.latrange.contains(self.tiles[y][0][0])]
+            if inlatrange:
                 cos_lat = cos(self.tiles[y][0][0] * pi/180)
                 z = sin(self.tiles[y][0][0] * pi/180)
-                inlatrange = True
             for x in range(len(self.tiles[y])):
                 value = 0
-                if inlatrange and lonrange.contains(self.tiles[y][x][1]):
+                for s in [s for s in inlatrange
+                          if s.lonrange.contains(self.tiles[y][x][1])]:
                     v = (cos_lat * cos(self.tiles[y][x][1] * pi/180),
                          cos_lat * sin(self.tiles[y][x][1] * pi/180),
                          z)
-                    if shape.contains(v):
-                        value = 1
+                    if s.contains(v):
+                        value += 1
                 self.tiles[y][x] = (self.tiles[y][x][0],
-                                self.tiles[y][x][1],
-                                value)
+                                    self.tiles[y][x][1],
+                                    value)
         self.dirty = True

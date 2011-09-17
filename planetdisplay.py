@@ -119,8 +119,9 @@ class PlanetDisplay(object):
 
                     if self.selected == (xo,y):
                         color = (255, 255, 0)
-                    elif h == 1:
-                        color = (64, 64, 64)
+                    elif h > 0:
+                        value = 255 - 25 * h
+                        color = (value, value, value)
                     else:
                         color = (255, 255, 255)
                     block.fill(color)

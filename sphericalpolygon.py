@@ -8,6 +8,7 @@ class SphericalPolygon(object):
         self._vectors = [v for v in vectors]
         self._centroid = centroid
         self._externalvector = self._guessexternal(self._vectors)
+        self.latrange, self.lonrange = self._range()
 
     @staticmethod
     def _guessexternal(vs):
@@ -22,7 +23,7 @@ class SphericalPolygon(object):
         for i in range(-1, len(self._vectors)-1):
             yield f(GreatCircleArc(self._vectors[i], self._vectors[i+1]))
 
-    def range(self):
+    def _range(self):
         def meld(a, b):
             alat, alon = a
             blat, blon = b
