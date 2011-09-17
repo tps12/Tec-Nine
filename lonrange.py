@@ -54,43 +54,38 @@ class LonRange(object):
 
         return False
 
-    def meld(self, other):
-        if other is None:
-            return True
+    @staticmethod
+    def meld(a, b):
+        amin, amax, bmin, bmax = a.min, a.max, b.min, b.max
 
-        if self.max - self.min + epsilon >= 360:
-            return True
+        if amax - amin + epsilon >= 360 or bmax - bmin + epsilon >= 360:
+            return LonRange(-180, 180)
 
-        if other.max - other.min + epsilon >= 360:
-            self.min = -180.0
-            self.max = 180.0
-            return True
+        if (amin - epsilon <= bmin + 360 <= amax + epsilon or
+            amin - epsilon <= bmax + 360 <= amax + epsilon or
+            bmin - epsilon <= amin - 360 <= bmax + epsilon or
+            bmin - epsilon <= amax - 360 <= bmax + epsilon):
+            bmin += 360
+            bmax += 360
 
-        if (self.min - epsilon <= other.min + 360 <= self.max + epsilon or
-            self.min - epsilon <= other.max + 360 <= self.max + epsilon or
-            other.min - epsilon <= self.min - 360 <= other.max + epsilon or
-            other.min - epsilon <= self.max - 360 <= other.max + epsilon):
-            other.min += 360
-            other.max += 360
+        if (bmin - epsilon <= amin + 360 <= bmax + epsilon or
+            bmin - epsilon <= amax + 360 <= bmax + epsilon or
+            amin - epsilon <= bmin - 360 <= amax + epsilon or
+            amin - epsilon <= bmax - 360 <= amax + epsilon):
+            bmin -= 360
+            bmax -= 360
 
-        if (other.min - epsilon <= self.min + 360 <= other.max + epsilon or
-            other.min - epsilon <= self.max + 360 <= other.max + epsilon or
-            self.min - epsilon <= other.min - 360 <= self.max + epsilon or
-            self.min - epsilon <= other.max - 360 <= self.max + epsilon):
-            other.min -= 360
-            other.max -= 360
+        if ((amin - epsilon <= bmin <= amax + epsilon) or
+            (amin - epsilon <= bmax <= amax + epsilon) or
+            (bmin - epsilon <= amin <= bmax + epsilon) or
+            (bmin - epsilon <= amax <= bmax + epsilon)):
+            amin = min(amin, bmin)
+            amax = max(amax, bmax)
 
-        if ((self.min - epsilon <= other.min <= self.max + epsilon) or
-            (self.min - epsilon <= other.max <= self.max + epsilon) or
-            (other.min - epsilon <= self.min <= other.max + epsilon) or
-            (other.min - epsilon <= self.max <= other.max + epsilon)):
-            self.min = min(self.min, other.min)
-            self.max = max(self.max, other.max)
-
-            if self.max - self.min >= 360:
-                self.min = -180.0
-                self.max = 180.0
-            return True
+            if amax - amin >= 360:
+                amin = -180.0
+                amax = 180.0
+            return LonRange(amin, amax)
 
         import pdb; pdb.set_trace()
-        return False
+        return None

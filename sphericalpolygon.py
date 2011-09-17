@@ -2,6 +2,7 @@ from numpy import *
 from numpy.linalg import *
 
 from greatcirclearc import *
+from latrange import *
 
 class SphericalPolygon(object):
     def __init__(self, vectors, centroid):
@@ -27,9 +28,7 @@ class SphericalPolygon(object):
         def meld(a, b):
             alat, alon = a
             blat, blon = b
-            alat.meld(blat)
-            alon.meld(blon)
-            return alat, alon
+            return LatRange.meld(alat, blat), LonRange.meld(alon, blon)
 
         latrange, lonrange = reduce(meld, self._eacharc(lambda a: a.range()))
         # extend latitude range to pole if wraps all the way around

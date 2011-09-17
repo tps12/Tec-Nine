@@ -20,28 +20,21 @@ class LatRange(object):
             return True
         return False
 
-    def meld(self, other):
-        if other is None:
-            return True
+    @staticmethod
+    def meld(a, b):
+        if a.max - a.min >= 180 or b.max - b.min >= 180:
+            return LatRange(-90, 90)
 
-        if self.max - self.min >= 180:
-            return True
+        if ((a.min <= b.min <= a.max) or
+            (a.min <= b.max <= a.max) or
+            (b.min <= a.min <= b.max) or
+            (b.min <= a.max <= b.max)):
+            mmin = min(a.min, b.min)
+            mmax = max(a.max, b.max)
 
-        if other.max - other.min >= 180:
-            self.min = -90.0
-            self.max = 90.0
-            return True
+            if mmax - mmin >= 180:
+                mmin = -90.0
+                mmax = 90.0
+            return LatRange(mmin, mmax)
 
-        if ((self.min <= other.min <= self.max) or
-            (self.min <= other.max <= self.max) or
-            (other.min <= self.min <= other.max) or
-            (other.min <= self.max <= other.max)):
-            self.min = min(self.min, other.min)
-            self.max = max(self.max, other.max)
-
-            if self.max - self.min >= 180:
-                self.min = -90.0
-                self.max = 90.0
-            return True
-
-        return False
+        return None
