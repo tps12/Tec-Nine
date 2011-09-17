@@ -12,6 +12,7 @@ class GreatCircleArc(object):
         self._start = start
         self._end = end
         self._initrange()
+        self._circle = GreatCircle(self._start, self._end)
 
     @staticmethod
     def _coords(v):
@@ -38,8 +39,7 @@ class GreatCircleArc(object):
         return ' '.join(['GreatCircleArc:', str(self._start), str(self._end)])
 
     def intersects(self, other):
-        intersections = GreatCircle(self._start, self._end).intersects(
-            GreatCircle(other._start, other._end))
+        intersections = self._circle.intersects(other._circle)
 
         for intersection in intersections:
             if self.contains(intersection) and other.contains(intersection):

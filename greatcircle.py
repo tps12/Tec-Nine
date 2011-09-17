@@ -4,9 +4,10 @@ class GreatCircle(object):
     def __init__(self, start, end):
         self._start = start
         self._end = end
+        self.plane = self._plane()
 
     def inflection(self):
-        a, b, c = self.plane()
+        a, b, c = self.plane
 
         a2b2 = a*a + b*b
         maxz = sqrt(a2b2/(a2b2 + c*c))
@@ -16,8 +17,8 @@ class GreatCircle(object):
                 maxz)
 
     def intersects(self, other):
-        sa, sb, sc = self.plane()
-        oa, ob, oc = other.plane()
+        sa, sb, sc = self.plane
+        oa, ob, oc = other.plane
 
         num = oa * sc - oc * sa
         den = ob * sa - oa * sb
@@ -26,12 +27,12 @@ class GreatCircle(object):
         num = -g * sb - sc
         h = num / sa
 
-        den = pow(h, 2) + pow(g, 2) + 1
+        den = h*h + g*g + 1
         w = sqrt(1/den)
 
         return (h*w, g*w, w), (-h*w, -g*w, -w)
 
-    def plane(self):
+    def _plane(self):
         vs = self._start, self._end
         return (vs[0][1] * vs[1][2] - vs[1][1] * vs[0][2],
                 vs[1][0] * vs[0][2] - vs[0][0] * vs[1][2],
