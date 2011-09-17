@@ -44,16 +44,16 @@ class GreatCircleArc(object):
         return False
 
     @staticmethod
-    def _angleaxis(v1, v2):
-        return acos(dot(v1, v2)), cross(v1, v2)
+    def _anglea(v1, v2):
+        return acos(dot(v1, v2)), v1[1]*v2[2] - v1[2]*v2[1]
 
     def contains(self, v):
-        th, ax = self._angleaxis(self._start, self._end)
-        th1, ax1 = self._angleaxis(self._start, v)
-        th2, ax2 = self._angleaxis(v, self._end)
-        if ax1[0] * ax[0] < 0:
+        th, a = self._anglea(self._start, self._end)
+        th1, a1 = self._anglea(self._start, v)
+        th2, a2 = self._anglea(v, self._end)
+        if a1 * a < 0:
             th1 += pi
-        if ax2[0] * ax[0] < 0:
+        if a2 * a < 0:
             th2 += pi
         
         return th1 < th and th2 < th

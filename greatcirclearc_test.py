@@ -9,17 +9,6 @@ from greatcirclearc import *
 
 class GreatCircleArcTestCase(TestCase):
 
-    def test_only_intersect_one_meridian(self):
-        count = 0
-
-        arc = GreatCircleArc((0, 0, -1), (0,0,1))
-        for other in (GreatCircleArc((1,0,0),(-1,0,0)),
-                      GreatCircleArc((-1, 0, 0), (1, 0, 0))):
-            if arc.intersects(other):
-                count += 1
-        
-        self.assertEqual(count, 1)
-
     def test_only_one_of_these_should_intersect(self):
         count = 0
 
