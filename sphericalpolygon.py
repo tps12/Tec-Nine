@@ -7,6 +7,8 @@ from latrange import *
 class SphericalPolygon(object):
     def __init__(self, vectors, centroid):
         self._vectors = [v for v in vectors]
+        self._arcs = [GreatCircleArc(self._vectors[i], self._vectors[i+1])
+                      for i in range(-1, len(self._vectors)-1)]
         self._centroid = centroid
         self._externalvector = self._guessexternal(self._vectors)
         self.latrange, self.lonrange = self._range()
@@ -21,8 +23,8 @@ class SphericalPolygon(object):
         return e/norm(e)
 
     def _eacharc(self, f):
-        for i in range(-1, len(self._vectors)-1):
-            yield f(GreatCircleArc(self._vectors[i], self._vectors[i+1]))
+        for arc in self._arcs:
+            yield f(arc)
 
     def _range(self):
         def meld(a, b):
