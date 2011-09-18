@@ -101,43 +101,38 @@ class PlanetSimulation(object):
 
         dimensions = xmax, len(self.tiles)
    
-        self._shapes = []
-        for i in range(10):
-            # random location
-            a = array([random.uniform(-1) for i in range(3)])
-            p = a / norm(a)
+        # initial location
+        p = (0, 1, 0)
 
-            # best unit vector
-            u = zeros(3)
-            u[min(range(len(a)), key=lambda i: abs(p[i]))] = 1
+        # unit vector
+        u = (0, 0, 1)
 
-            # random velocity vector
-            v = cross(p, u) * random.uniform(0.9, 1.4)
+        # 0 velocity vector
+        v = (0, 0, 0)
 
-            # random orienting point
-            (o, ov) = apply_velocity(p, 0.05 * rotate(v / norm(v),
-                                                      p,
-                                                      random.uniform(0, 2*pi)))
-            shape = [(.1,.23),(.12,.43),(.13,.52),(.25,.54),
-                     (.3,.43),(.43,.48),(.53,.31),(.48,.14),
-                     (.5,.1)]
+        # orienting point
+        o = (1, 0, 0)
 
-            c = 0.25, 0.25
+        r = 1.145
+        shape = [(r*cos(th), r*sin(th))
+                 for th in [i*pi/8 for i in range(16)]]
 
-            scale = random.uniform(1, 1.5)
+        c = 0, 0
 
-            coords = []
-            for vertex in shape: 
-                # find distance from centroid
-                d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
-                              for i in range(2)])) * scale
+        scale = 1
 
-                # find angle from local north
-                th = atan2(vertex[0]-c[0],vertex[1]-c[1])
-                
-                coords.append((d * (0.75 + random.uniform(0.5)), th))
+        coords = []
+        for vertex in shape: 
+            # find distance from centroid
+            d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
+                          for i in range(2)])) * scale
 
-            self._shapes.append(Shape(coords, p, o, v))
+            # find angle from local north
+            th = atan2(vertex[0]-c[0],vertex[1]-c[1])
+            
+            coords.append((d, th))
+
+        self._shapes = [Shape(coords, p, o, v)]
 
         self._pool = Pool(processes=cpu_count())
 
