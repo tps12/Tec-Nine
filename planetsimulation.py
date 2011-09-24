@@ -118,22 +118,7 @@ class PlanetSimulation(object):
                   r*random.uniform(0.9,1.1)*sin(th))
                  for th in [random.uniform(0.9,1.1)*i*pi/8 for i in range(16)]]
 
-        c = 0, 0
-
-        scale = 1
-
-        coords = []
-        for vertex in shape: 
-            # find distance from centroid
-            d = sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
-                          for i in range(2)])) * scale
-
-            # find angle from local north
-            th = atan2(vertex[0]-c[0],vertex[1]-c[1])
-            
-            coords.append((d, th))
-
-        self._shapes = [Shape(coords, p, o, v)]
+        self._shapes = [Shape(shape, p, o, v)]
 
         self._pool = Pool(processes=cpu_count())
 

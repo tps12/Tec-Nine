@@ -6,8 +6,8 @@ from numpy.linalg import norm
 from sphericalpolygon import *
 
 class Shape(object):
-    def __init__(self, polarcoords, location, orientation, velocity):
-        self._coords = [c for c in polarcoords]
+    def __init__(self, coords, location, orientation, velocity):
+        self._coords = [c for c in coords]
         self._location = location
         self._orientation = orientation
         self._velocity = velocity
@@ -33,8 +33,12 @@ class Shape(object):
         u = cross(self._location, self._orientation)
         u = u / norm(u)
 
-        vectors = [self._rotate(self._rotate(self._location, u, r), self._location, -th)
-                   for (r,th) in self._coords]
+        vectors = []
+        for (x,y) in self._coords:
+            py = self._rotate(self._location, u, y)
+            uy = cross(py, u)
+            uy = uy / norm(uy)
+            vectors.append(self._rotate(py, uy, x))
         return SphericalPolygon(vectors, self._location)
 
     def apply_velocity(self, dt):
