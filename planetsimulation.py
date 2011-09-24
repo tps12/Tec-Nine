@@ -114,8 +114,9 @@ class PlanetSimulation(object):
         o = (1, 0, 0)
 
         r = 1.145
-        shape = [(r*cos(th), r*sin(th))
-                 for th in [i*pi/8 for i in range(16)]]
+        shape = [(r*random.uniform(0.9,1.1)*cos(th),
+                  r*random.uniform(0.9,1.1)*sin(th))
+                 for th in [random.uniform(0.9,1.1)*i*pi/8 for i in range(16)]]
 
         c = 0, 0
 
