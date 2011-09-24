@@ -55,8 +55,8 @@ class Shape(object):
             va = -va
         vb = -va
 
-        return (Shape(acs, self._location, self._orientation, va),
-                Shape(bcs, self._location, self._orientation, vb))
+        return (Shape(acs, self._location, self._orientation, self._velocity + va),
+                Shape(bcs, self._location, self._orientation, self._velocity + vb))
 
     @staticmethod
     def _orthogonal(v, n):
