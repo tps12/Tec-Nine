@@ -1,7 +1,7 @@
 from math import cos, sin, pi
 from random import randint
 
-from numpy import cross
+from numpy import array, cross
 from numpy.linalg import norm
 
 from shapely.geometry import Polygon
@@ -47,19 +47,36 @@ class Shape(object):
         acs = [c] + [cs[k] for k in range(j, l)] + [cs[k] for k in range(i+1)]
         bcs = [c] + [cs[k] for k in range(i, j+1)]
 
-        return (Shape(acs, self._location, self._orientation, self._velocity),
-                Shape(bcs, self._location, self._orientation, self._velocity))
+        u = self._u()
+        p = array(self._location)
+        va = self._orthogonal(self._project(cs[i], u) + self._project(cs[j], u), p)
+        acdir = self._orthogonal(self._project(Polygon(acs).centroid.coords[0], u), p)
+        if dot(va, acdir) < 0:
+            va = -va
+        vb = -va
+
+        return (Shape(acs, self._location, self._orientation, va),
+                Shape(bcs, self._location, self._orientation, vb))
+
+    @staticmethod
+    def _orthogonal(v, n):
+        return v - n * dot(v, n)
+
+    def _u(self):
+        u = cross(self._location, self._orientation)
+        return u / norm(u)
+
+    def _project(self, c, u):
+        x, y = c
+        py = self._rotate(self._location, u, y)
+        uy = cross(py, u)
+        uy = uy / norm(uy)
+        return self._rotate(py, uy, x)
 
     def projection(self):
-        u = cross(self._location, self._orientation)
-        u = u / norm(u)
+        u = self._u()
 
-        vectors = []
-        for (x,y) in self._polygon.exterior.coords:
-            py = self._rotate(self._location, u, y)
-            uy = cross(py, u)
-            uy = uy / norm(uy)
-            vectors.append(self._rotate(py, uy, x))
+        vectors = [self._project(c, u) for c in self._polygon.exterior.coords]
         return SphericalPolygon(vectors, self._location)
 
     def apply_velocity(self, dt):
