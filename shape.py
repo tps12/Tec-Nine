@@ -17,6 +17,7 @@ class Shape(object):
 
     @staticmethod
     def _rotate(p, axis, theta):
+        """Rotate a vector about an axis by a specified amount."""
         # http://inside.mines.edu/~gmurray/ArbitraryAxisRotation/ArbitraryAxisRotation.html
         L2 = sum([i*i for i in axis])
         return array([(axis[0]*sum(p * axis) +
@@ -33,6 +34,7 @@ class Shape(object):
                        sqrt(L2)*(-axis[1]*p[0]+axis[0]*p[1]) * sin(theta))/L2])
 
     def split(self):
+        """Split the shape into two child shapes."""
         c = self._polygon.centroid.coords[0]
         cs = self._polygon.exterior.coords
         l = len(cs)
@@ -60,13 +62,16 @@ class Shape(object):
 
     @staticmethod
     def _orthogonal(v, n):
+        """Orthogonal projection of a vector in the given plane."""
         return v - n * dot(v, n)
 
     def _u(self):
+        """Unit vector determined by the orientation point."""
         u = cross(self._location, self._orientation)
         return u / norm(u)
 
     def _project(self, c, u):
+        """Project the given coordinate pair onto the sphere using the given unit vector."""
         x, y = c
         py = self._rotate(self._location, u, y)
         uy = cross(py, u)
@@ -74,12 +79,14 @@ class Shape(object):
         return self._rotate(py, uy, x)
 
     def projection(self):
+        """Project onto the sphere as a spherical polygon."""
         u = self._u()
 
         vectors = [self._project(c, u) for c in self._polygon.exterior.coords]
         return SphericalPolygon(vectors, self._location)
 
     def apply_velocity(self, dt):
+        """Update by the given timestep."""
         d = norm(self._velocity) * dt
 
         if d:

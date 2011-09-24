@@ -60,6 +60,7 @@ def apply_velocity(p, v):
         return p, v
 
 def _iteratelat(latdata):
+    """Set tile values for the given latitude array."""
     lat, shapes = latdata
     inlatrange = [s for s in shapes
                   if s.latrange.contains(lat[0][0])]
@@ -123,6 +124,13 @@ class PlanetSimulation(object):
         self._pool = Pool(processes=cpu_count())
 
     def update(self):
+        """Update the simulation by one timestep.
+
+        This consists of:
+        1. applying velocities to each continent shape,
+        2. projecting each shape's 2D boundary onto the sphere, and
+        3. updating the tiles with the shapes that contain them.
+        """
         for s in self._shapes:
             s.apply_velocity(0.01)
 
