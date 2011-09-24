@@ -118,7 +118,7 @@ class PlanetSimulation(object):
                   r*random.uniform(0.9,1.1)*sin(th))
                  for th in [random.uniform(0.9,1.1)*i*pi/8 for i in range(16)]]
 
-        self._shapes = [Shape(shape, p, o, v)]
+        self._shapes = Shape(shape, p, o, v).split()
 
         self._pool = Pool(processes=cpu_count())
 
