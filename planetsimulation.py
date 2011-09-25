@@ -81,7 +81,13 @@ def _iteratelat(latdata):
 
 class PlanetSimulation(object):
     
-    def __init__(self):
+    def __init__(self, r, dt):
+        """Create a simulation for a planet of radius r km and timesteps of dt
+        million years.
+        """
+        # max speed is 100km per million years
+        self._dp = 100.0/r * dt
+
         degrees = 2
 
         self.tiles = []
@@ -132,7 +138,7 @@ class PlanetSimulation(object):
         3. updating the tiles with the shapes that contain them.
         """
         for s in self._shapes:
-            s.apply_velocity(0.01)
+            s.apply_velocity(self._dp)
 
         shapes = [s.projection() for s in self._shapes]
 

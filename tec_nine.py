@@ -51,7 +51,7 @@ class Frame(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, -1, size = (1600, 1000))
 
-        self.map = PlanetDisplay(PlanetSimulation())
+        self.map = PlanetDisplay(PlanetSimulation(6400, 5))
         self.display = PygameDisplay(self, -1, self.map)
        
         self.Bind(wx.EVT_SIZE, self.OnSize)
