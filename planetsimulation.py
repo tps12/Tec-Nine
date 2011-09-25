@@ -65,17 +65,11 @@ def _iteratelat(latdata):
     lat, shapes = latdata
     inlatrange = [s for s in shapes
                   if s.latrange.contains(lat[0].lat)]
-    if inlatrange:
-        cos_lat = cos(lat[0].lat * pi/180)
-        z = sin(lat[0].lat * pi/180)
     for x in range(len(lat)):
         value = 0
         for s in [s for s in inlatrange
                   if s.lonrange.contains(lat[x].lon)]:
-            v = (cos_lat * cos(lat[x].lon * pi/180),
-                 cos_lat * sin(lat[x].lon * pi/180),
-                 z)
-            if s.contains(v):
+            if s.contains(lat[x].vector):
                 value += 1
         if value > lat[x].value:
             value += 1
