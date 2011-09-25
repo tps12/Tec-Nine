@@ -1,4 +1,4 @@
-from math import cos, sin, pi
+from math import acos, cos, sin, pi
 from random import randint
 
 from numpy import array, cross
@@ -71,12 +71,31 @@ class Shape(object):
         return u / norm(u)
 
     def _project(self, c, u):
-        """Project the given coordinate pair onto the sphere using the given unit vector."""
+        """Project the given coordinate pair onto the sphere using the given
+        orientation unit vector.
+        """
         x, y = c
-        py = self._rotate(self._location, u, y)
-        uy = cross(py, u)
-        uy = uy / norm(uy)
-        return self._rotate(py, uy, x)
+
+        r = sqrt(x*x + y*y)
+        th = atan2(y, x)
+        return self._rotate(self._location, self._rotate(u, self._location, th), r)
+
+    def _unproject(self, v, u):
+        """Get the local coordinates for a vector on the sphere using the given
+        orientation unit vector.
+        """
+        vp = self._orthogonal(v, u)
+        vp = vp/norm(vp)
+        th = acos(dot(vp, u))
+        
+        r = acos(dot(v, self._location))
+        vth = self._orthogonal(-cross(v, self._location), array(self._location))
+        vth = vth/norm(vth)
+        th = acos(dot(u, vth))
+        if (u[1]*vth[2] - u[2]*vth[1]) * self._location[0] < 0:
+            th *= -1
+
+        return r*cos(th), r*sin(th) 
 
     def projection(self):
         """Project onto the sphere as a spherical polygon."""

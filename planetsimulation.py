@@ -76,6 +76,8 @@ def _iteratelat(latdata):
                  z)
             if s.contains(v):
                 value += 1
+        if value > lat[x][2]:
+            value += 1
         lat[x] = (lat[x][0], lat[x][1], value)
     return lat
 
