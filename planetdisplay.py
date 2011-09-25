@@ -115,7 +115,7 @@ class PlanetDisplay(object):
                         xo -= len(self._sim.tiles[y])
                     elif xo < 0:
                         xo += len(self._sim.tiles[y])
-                    h = self._sim.tiles[y][xo][2]
+                    h = self._sim.tiles[y][xo].value
 
                     if self.selected == (xo,y):
                         color = (255, 255, 0)

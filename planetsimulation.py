@@ -10,6 +10,7 @@ from latrange import *
 from sphericalpolygon import *
 
 from shape import *
+from tile import *
 
 def distance(c1, c2):
     lat1, lon1 = [c * pi/180 for c in c1]
@@ -63,22 +64,22 @@ def _iteratelat(latdata):
     """Set tile values for the given latitude array."""
     lat, shapes = latdata
     inlatrange = [s for s in shapes
-                  if s.latrange.contains(lat[0][0])]
+                  if s.latrange.contains(lat[0].lat)]
     if inlatrange:
-        cos_lat = cos(lat[0][0] * pi/180)
-        z = sin(lat[0][0] * pi/180)
+        cos_lat = cos(lat[0].lat * pi/180)
+        z = sin(lat[0].lat * pi/180)
     for x in range(len(lat)):
         value = 0
         for s in [s for s in inlatrange
-                  if s.lonrange.contains(lat[x][1])]:
-            v = (cos_lat * cos(lat[x][1] * pi/180),
-                 cos_lat * sin(lat[x][1] * pi/180),
+                  if s.lonrange.contains(lat[x].lon)]:
+            v = (cos_lat * cos(lat[x].lon * pi/180),
+                 cos_lat * sin(lat[x].lon * pi/180),
                  z)
             if s.contains(v):
                 value += 1
-        if value > lat[x][2]:
+        if value > lat[x].value:
             value += 1
-        lat[x] = (lat[x][0], lat[x][1], value)
+        lat[x].value = value
     return lat
 
 class PlanetSimulation(object):
@@ -94,9 +95,9 @@ class PlanetSimulation(object):
             lon = d/2
             while lon <= 180:
                 flat = float(lat)
-                row = ([(flat, -lon, 0)] +
+                row = ([Tile(flat, -lon)] +
                        row +
-                       [(flat, lon, 0)])
+                       [Tile(flat, lon)])
                 lon += d
             self.tiles.append(row)
         
