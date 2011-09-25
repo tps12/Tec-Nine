@@ -92,7 +92,7 @@ class Shape(object):
 
         # theta is the angle between the axis of rotation between them
         # and the orientation vector
-        vth = self._orthogonal(-cross(v, self._location), array(self._location))
+        vth = self._orthogonal(cross(self._location, v), array(self._location))
         vth = vth/norm(vth)
         th = acos(dot(u, vth))
 
