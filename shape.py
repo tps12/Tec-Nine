@@ -74,24 +74,29 @@ class Shape(object):
         """Project the given coordinate pair onto the sphere using the given
         orientation unit vector.
         """
+        # convert to polar coordinates
         x, y = c
-
         r = sqrt(x*x + y*y)
         th = atan2(y, x)
+
+        # rotate the orientation vector about the location by theta,
+        # then rotate the location vector about that by r
         return self._rotate(self._location, self._rotate(u, self._location, th), r)
 
     def _unproject(self, v, u):
         """Get the local coordinates for a vector on the sphere using the given
         orientation unit vector.
         """
-        vp = self._orthogonal(v, u)
-        vp = vp/norm(vp)
-        th = acos(dot(vp, u))
-        
+        # r is the angular distance to the location
         r = acos(dot(v, self._location))
+
+        # theta is the angle between the axis of rotation between them
+        # and the orientation vector
         vth = self._orthogonal(-cross(v, self._location), array(self._location))
         vth = vth/norm(vth)
         th = acos(dot(u, vth))
+
+        # adjust the sign
         if (u[1]*vth[2] - u[2]*vth[1]) * self._location[0] < 0:
             th *= -1
 
