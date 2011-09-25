@@ -14,6 +14,7 @@ class Shape(object):
         self._location = location
         self._orientation = orientation
         self._velocity = velocity
+        self._history = []
 
     @staticmethod
     def _rotate(p, axis, theta):
@@ -103,11 +104,14 @@ class Shape(object):
         return r*cos(th), r*sin(th) 
 
     def projection(self):
-        """Project onto the sphere as a spherical polygon."""
+        """Project onto the sphere as a spherical polygon and create a new page
+        of history.
+        """
+        self._history.append(dict())
         u = self._u()
 
         vectors = [self._project(c, u) for c in self._polygon.exterior.coords]
-        return SphericalPolygon(vectors, self._location)
+        return SphericalPolygon(self, vectors, self._location)
 
     def apply_velocity(self, dt):
         """Update by the given timestep."""
@@ -123,4 +127,6 @@ class Shape(object):
                                                                  self._orientation,
                                                                  self._velocity]
 
-
+    def recordvalue(self, v, value):
+        """Record the value in the current page of history."""
+        self._history[-1][self._unproject(v, self._u())] = value

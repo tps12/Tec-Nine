@@ -63,17 +63,20 @@ def apply_velocity(p, v):
 def _iteratelat(latdata):
     """Set tile values for the given latitude array."""
     lat, shapes = latdata
-    inlatrange = [s for s in shapes
-                  if s.latrange.contains(lat[0].lat)]
+    inlatrange = [i for i in range(len(shapes))
+                  if shapes[i].latrange.contains(lat[0].lat)]
     for x in range(len(lat)):
         value = 0
-        for s in [s for s in inlatrange
-                  if s.lonrange.contains(lat[x].lon)]:
-            if s.contains(lat[x].vector):
+        overlapping = []
+        for i in [i for i in inlatrange
+                  if shapes[i].lonrange.contains(lat[x].lon)]:
+            if shapes[i].contains(lat[x].vector):
                 value += 1
+                overlapping.append(i)
         if value > lat[x].value:
             value += 1
         lat[x].value = value
+        lat[x].overlapping = overlapping
     return lat
 
 class PlanetSimulation(object):
@@ -134,4 +137,8 @@ class PlanetSimulation(object):
         shapes = [s.projection() for s in self._shapes]
 
         self.tiles = self._pool.map(_iteratelat, [(lat, shapes) for lat in self.tiles])
+        for lat in self.tiles:
+            for tile in lat:
+                for i in tile.overlapping:
+                    shapes[i].recordtile(tile)
         self.dirty = True

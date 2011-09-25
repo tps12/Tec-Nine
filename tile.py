@@ -12,3 +12,4 @@ class Tile(object):
 
 
         self.value = 0
+
