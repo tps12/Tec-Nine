@@ -111,7 +111,7 @@ class Shape(object):
         u = self._u()
 
         vectors = [self._project(c, u) for c in self._polygon.exterior.coords]
-        return SphericalPolygon(self, vectors, self._location)
+        return SphericalPolygon(vectors, self._location)
 
     def apply_velocity(self, dt):
         """Update by the given timestep."""

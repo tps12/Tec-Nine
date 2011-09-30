@@ -146,5 +146,5 @@ class PlanetSimulation(object):
         for lat in self.tiles:
             for tile in lat:
                 for i in tile.overlapping:
-                    shapes[i].recordtile(tile)
+                    self._shapes[i].recordvalue(tile.vector, tile.value)
         self.dirty = True

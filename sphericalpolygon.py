@@ -5,8 +5,7 @@ from greatcirclearc import *
 from latrange import *
 
 class SphericalPolygon(object):
-    def __init__(self, shape, vectors, centroid):
-        self._shape = shape
+    def __init__(self, vectors, centroid):
         self._vectors = [v for v in vectors]
         self._arcs = [GreatCircleArc(self._vectors[i], self._vectors[i+1])
                       for i in range(-1, len(self._vectors)-1)]
@@ -49,6 +48,3 @@ class SphericalPolygon(object):
         count = len([isects for isects in self._eacharc(lambda a: arc.intersects(a)) if isects])
 
         return (count % 2) == 1
-
-    def recordtile(self, tile):
-        self._shape.recordvalue(tile.vector, tile.value)
