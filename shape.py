@@ -6,6 +6,7 @@ from numpy.linalg import norm
 
 from shapely.geometry import Polygon
 
+from samplespace import *
 from sphericalpolygon import *
 
 class Shape(object):
@@ -107,7 +108,7 @@ class Shape(object):
         """Project onto the sphere as a spherical polygon and create a new page
         of history.
         """
-        self._history.append(dict())
+        self._history.append(SampleSpace())
         u = self._u()
 
         vectors = [self._project(c, u) for c in self._polygon.exterior.coords]
@@ -130,3 +131,9 @@ class Shape(object):
     def recordvalue(self, v, value):
         """Record the value in the current page of history."""
         self._history[-1][self._unproject(v, self._u())] = value
+
+    def historicalvalue(self, v):
+        if len(self._history) < 2:
+            return 1
+
+        return self._history[-2][self._unproject(v, self._u())]

@@ -66,17 +66,11 @@ def _iteratelat(latdata):
     inlatrange = [i for i in range(len(shapes))
                   if shapes[i].latrange.contains(lat[0].lat)]
     for x in range(len(lat)):
-        value = 0
-        overlapping = []
+        lat[x].overlapping = []
         for i in [i for i in inlatrange
                   if shapes[i].lonrange.contains(lat[x].lon)]:
             if shapes[i].contains(lat[x].vector):
-                value += 1
-                overlapping.append(i)
-        if value > lat[x].value:
-            value += 1
-        lat[x].value = value
-        lat[x].overlapping = overlapping
+                lat[x].overlapping.append(i)
     return lat
 
 class PlanetSimulation(object):
@@ -145,6 +139,12 @@ class PlanetSimulation(object):
         self.tiles = self._pool.map(_iteratelat, [(lat, shapes) for lat in self.tiles])
         for lat in self.tiles:
             for tile in lat:
+                tile.value = 0
                 for i in tile.overlapping:
-                    self._shapes[i].recordvalue(tile.vector, tile.value)
+                    tile.value += self._shapes[i].historicalvalue(tile.vector)
+                if tile.value == 0:
+                    tile.value = len(tile.overlapping)
+                if tile.value > 0:
+                    for i in tile.overlapping:
+                        self._shapes[i].recordvalue(tile.vector, tile.value)
         self.dirty = True
