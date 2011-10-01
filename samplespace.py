@@ -23,7 +23,10 @@ class SampleSpace(object):
         ds = [sqrt(sum([(self._locations[j][i]-location[i])**2 for i in range(2)]))
               for j in js]
 
-        total = sum(ds)
+        R = max(ds)
+        nums = [((R - d)/(R * d))**2 for d in ds]
+        den = sum(nums)
 
-        return sum([self._values[js[i]] for i in range(len(js))])/len(js)
-        #return sum([self._values[js[i]] * (total - ds[i])/total/len(js) for i in range(len(js))])
+        ws = [num/den for num in nums]
+
+        return sum([self._values[js[i]] * ws[i] for i in range(len(js))])
