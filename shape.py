@@ -1,5 +1,5 @@
-from math import acos, cos, sin, pi
-from random import randint
+from math import acos, cos, sin, pi, sqrt
+from random import randint, uniform
 
 from numpy import array, cross
 from numpy.linalg import norm
@@ -43,17 +43,19 @@ class Shape(object):
         """Split the shape into two child shapes."""
         c = self._polygon.centroid.coords[0]
         cs = self._polygon.exterior.coords
-        l = len(cs)
-        i = randint(0,l-1)
-        th = atan2(*cs[i])
-        dth = pi * 2/3 * (1 if randint(0,1) == 1 else -1)
-        j = min([j for j in range(l) if j != i],
-                key=lambda j: abs(th - atan2(*cs[j]) - dth))
-        if i > j:
-            i, j = j, i
 
-        acs = [c] + [cs[k] for k in range(j, l)] + [cs[k] for k in range(i+1)]
-        bcs = [c] + [cs[k] for k in range(i, j+1)]
+        i = max(range(len(cs)),
+                key=lambda i: sum([(cs[i][j] - c[j])**2 for j in range(2)]))
+        d = sqrt(sum([(cs[i][j] - c[j])**2 for j in range(2)]))
+        r = 2 * d
+
+        th = uniform(0, 2*pi)
+        clip = Polygon([c,
+                        (c[0] + r * cos(th), c[1] + r * sin(th)),
+                        (c[0] + r * cos(th + 2*pi/3), c[1] + r * sin(th + 2*pi/3))])
+
+        acs = self._polygon.intersection(clip).exterior.coords
+        bcs = self._polygon.difference(clip).exterior.coords
 
         u = self._u()
         p = array(self._location)
@@ -78,7 +80,6 @@ class Shape(object):
                     print 'child 2 valid', bcs
                 else:
                     print 'child 2 invalid', bcs
-                break
 
         return shapes
 
