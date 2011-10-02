@@ -66,22 +66,8 @@ class Shape(object):
             va = -va
         vb = -va
 
-        shapes = (Shape(acs, self._location, self._orientation, self._velocity + va, self._history),
+        return (Shape(acs, self._location, self._orientation, self._velocity + va, self._history),
                 Shape(bcs, self._location, self._orientation, self._velocity + vb, self._history))
-
-        for shape in shapes:
-            if not shape._polygon.is_valid:
-                print 'when splitting up', cs
-                if shapes[0]._polygon.is_valid:
-                    print 'child 1 valid', acs
-                else:
-                    print 'child 1 invalid', acs
-                if shapes[1]._polygon.is_valid:
-                    print 'child 2 valid', bcs
-                else:
-                    print 'child 2 invalid', bcs
-
-        return shapes
 
     def merge(self, other):
         """Merge another shape into this one."""
