@@ -164,13 +164,11 @@ class PlanetSimulation(object):
         # occaisionally split big shapes
         for i in range(len(self._shapes)):
             if random.uniform(0,1) > 1/self._shapes[i].area:
-                print 'splitting'
                 self._shapes[i:i+1] = self._shapes[i].split()
 
         # merge shapes that overlap a lot
         for (pair, count) in collisions.items():
             if count > 100:
-                print 'merging'
                 self._shapes[pair[0]].merge(self._shapes.pop(pair[1]))
                 break
         self.dirty = True
