@@ -35,7 +35,7 @@ class DisplayControls(wx.PyPanel):
 
         lines = wx.BoxSizer(wx.VERTICAL)
 
-        rotate = wx.Slider(self, wx.ID_ANY, 0, -18, 18, style=wx.SL_HORIZONTAL)
+        rotate = wx.Slider(self, wx.ID_ANY, -9, -18, 18, style=wx.SL_HORIZONTAL)
         self.Bind(wx.EVT_SCROLL, self._onrotate, rotate)
         self._onrotate(wx.ScrollEvent(pos=rotate.Value))
         lines.Add(rotate, flag=wx.EXPAND)
