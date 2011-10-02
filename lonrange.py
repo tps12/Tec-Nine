@@ -3,12 +3,7 @@ epsilon = 1/3600.0/100 # 1/100th of a second
 class LonRange(object):
     def __init__(self, minlon, maxlon):
         while maxlon < minlon: maxlon += 360
-        if maxlon - minlon > 180:
-            temp = maxlon
-            maxlon = minlon
-            minlon = temp
-            while maxlon < minlon: maxlon += 360
-
+        
         while 540 < minlon or 540 < maxlon:
             minlon -= 360
             maxlon -= 360

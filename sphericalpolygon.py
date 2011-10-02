@@ -7,11 +7,16 @@ from latrange import *
 class SphericalPolygon(object):
     def __init__(self, vectors, centroid):
         self._vectors = [v for v in vectors]
-        self._arcs = [GreatCircleArc(self._vectors[i], self._vectors[i+1])
+        self._arcs = [self._getarc(self._vectors[i], self._vectors[i+1])
                       for i in range(-1, len(self._vectors)-1)]
         self._centroid = centroid
         self._externalvector = self._guessexternal(self._vectors)
         self.latrange, self.lonrange = self._range()
+
+    @staticmethod
+    def _getarc(v1, v2):
+        vs = (v2, v1) if v1[0]*v2[1] - v1[1]*v2[0] < 0 else (v1,v2)
+        return GreatCircleArc(*vs)
 
     @staticmethod
     def _guessexternal(vs):
