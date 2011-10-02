@@ -10,12 +10,16 @@ from samplespace import *
 from sphericalpolygon import *
 
 class Shape(object):
-    def __init__(self, coords, location, orientation, velocity):
+    def __init__(self, coords, location, orientation, velocity, history = None):
         self._polygon = Polygon(coords)
         self._location = location
         self._orientation = orientation
         self._velocity = velocity
-        self._history = []
+        self._history = history if history is not None else []
+
+    @property
+    def area(self):
+        return self._polygon.area
 
     @staticmethod
     def _rotate(p, axis, theta):
@@ -60,8 +64,8 @@ class Shape(object):
             va = -va
         vb = -va
 
-        return (Shape(acs, self._location, self._orientation, self._velocity + va),
-                Shape(bcs, self._location, self._orientation, self._velocity + vb))
+        return (Shape(acs, self._location, self._orientation, self._velocity + va, self._history),
+                Shape(bcs, self._location, self._orientation, self._velocity + vb, self._history))
 
     def merge(self, other):
         """Merge another shape into this one."""
@@ -69,7 +73,23 @@ class Shape(object):
         poly = Polygon([self._unproject(v, su) for v in
                         [other._project(c, ou) for c in other._polygon.exterior.coords]])
         self._polygon = self._polygon.union(poly)
+
         self._velocity += other._velocity
+
+        history = []
+        for i in range(len(other._history)-len(self._history)):
+            h = SampleSpace()
+            for (c, v) in other._history[i]:
+                h[self._unproject(other._project(c, ou), su)] = v
+            history.append(h)
+        for i in range(len(self._history)-len(other._history)):
+            history.append(self._history[i])
+        for i in range(-min(len(self._history), len(other._history)), 0):
+            h = self._history[i]
+            for (c, v) in other._history[i]:
+                h[self._unproject(other._project(c, ou), su)] = v
+        
+        self._history = history
 
     @staticmethod
     def _orthogonal(v, n):

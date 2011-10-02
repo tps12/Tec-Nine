@@ -120,7 +120,7 @@ class PlanetSimulation(object):
                   r*random.uniform(0.9,1.1)*sin(th))
                  for th in [random.uniform(0.9,1.1)*i*pi/8 for i in range(16)]]
 
-        self._shapes = list(Shape(shape, p, o, v).split())
+        self._shapes = [Shape(shape, p, o, v)]
 
         self._pool = Pool(processes=cpu_count())
 
@@ -160,8 +160,17 @@ class PlanetSimulation(object):
                 if tile.value > 0:
                     for i in tile.overlapping:
                         self._shapes[i].recordvalue(tile.vector, tile.value)
+
+        # occaisionally split big shapes
+        for i in range(len(self._shapes)):
+            if random.uniform(0,1) > 1/self._shapes[i].area:
+                print 'splitting'
+                self._shapes[i:i+1] = self._shapes[i].split()
+
+        # merge shapes that overlap a lot
         for (pair, count) in collisions.items():
             if count > 100:
+                print 'merging'
                 self._shapes[pair[0]].merge(self._shapes.pop(pair[1]))
                 break
         self.dirty = True

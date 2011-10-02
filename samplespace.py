@@ -30,3 +30,7 @@ class SampleSpace(object):
         ws = [num/den for num in nums]
 
         return sum([self._values[js[i]] * ws[i] for i in range(len(js))])
+
+    def __iter__(self):
+        for i in range(len(self._values)):
+            yield self._locations[i], self._values[i]
