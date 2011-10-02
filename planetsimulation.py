@@ -1,4 +1,5 @@
 from cPickle import dump, load
+from itertools import combinations
 from math import asin, acos, atan2, pi, exp, sqrt, sin, cos
 from multiprocessing import cpu_count, Pool
 import random
@@ -119,7 +120,7 @@ class PlanetSimulation(object):
                   r*random.uniform(0.9,1.1)*sin(th))
                  for th in [random.uniform(0.9,1.1)*i*pi/8 for i in range(16)]]
 
-        self._shapes = Shape(shape, p, o, v).split()
+        self._shapes = list(Shape(shape, p, o, v).split())
 
         self._pool = Pool(processes=cpu_count())
 
@@ -137,6 +138,8 @@ class PlanetSimulation(object):
         shapes = [s.projection() for s in self._shapes]
 
         self.tiles = self._pool.map(_iteratelat, [(lat, shapes) for lat in self.tiles])
+
+        collisions = {}
         for lat in self.tiles:
             for tile in lat:
                 previous = tile.value
@@ -145,6 +148,11 @@ class PlanetSimulation(object):
                     tile.value += self._shapes[i].historicalvalue(tile.vector)
                 if tile.value == 0:
                     tile.value = len(tile.overlapping)
+                for pair in combinations(tile.overlapping, 2):
+                    if pair not in collisions:
+                        collisions[pair] = 1
+                    else:
+                        collisions[pair] += 1
                 if tile.value > 0 and previous == 0:
                     tile.value += 1
                 if tile.value > 10:
@@ -152,4 +160,8 @@ class PlanetSimulation(object):
                 if tile.value > 0:
                     for i in tile.overlapping:
                         self._shapes[i].recordvalue(tile.vector, tile.value)
+        for (pair, count) in collisions.items():
+            if count > 100:
+                self._shapes[pair[0]].merge(self._shapes.pop(pair[1]))
+                break
         self.dirty = True

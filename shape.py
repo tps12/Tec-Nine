@@ -53,6 +53,7 @@ class Shape(object):
 
         u = self._u()
         p = array(self._location)
+
         va = self._orthogonal(self._project(cs[i], u) + self._project(cs[j], u), p)
         acdir = self._orthogonal(self._project(Polygon(acs).centroid.coords[0], u), p)
         if dot(va, acdir) < 0:
@@ -61,6 +62,14 @@ class Shape(object):
 
         return (Shape(acs, self._location, self._orientation, self._velocity + va),
                 Shape(bcs, self._location, self._orientation, self._velocity + vb))
+
+    def merge(self, other):
+        """Merge another shape into this one."""
+        su, ou = [s._u() for s in self, other]
+        poly = Polygon([self._unproject(v, su) for v in
+                        [other._project(c, ou) for c in other._polygon.exterior.coords]])
+        self._polygon = self._polygon.union(poly)
+        self._velocity += other._velocity
 
     @staticmethod
     def _orthogonal(v, n):
