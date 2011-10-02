@@ -139,11 +139,16 @@ class PlanetSimulation(object):
         self.tiles = self._pool.map(_iteratelat, [(lat, shapes) for lat in self.tiles])
         for lat in self.tiles:
             for tile in lat:
+                previous = tile.value
                 tile.value = 0
                 for i in tile.overlapping:
                     tile.value += self._shapes[i].historicalvalue(tile.vector)
                 if tile.value == 0:
                     tile.value = len(tile.overlapping)
+                if tile.value > 0 and previous == 0:
+                    tile.value += 1
+                if tile.value > 10:
+                    tile.value = 10
                 if tile.value > 0:
                     for i in tile.overlapping:
                         self._shapes[i].recordvalue(tile.vector, tile.value)
