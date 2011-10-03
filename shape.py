@@ -54,20 +54,28 @@ class Shape(object):
                         (c[0] + r * cos(th), c[1] + r * sin(th)),
                         (c[0] + r * cos(th + 2*pi/3), c[1] + r * sin(th + 2*pi/3))])
 
-        acs = self._polygon.intersection(clip).exterior.coords
-        bcs = self._polygon.difference(clip).exterior.coords
+        inclip = self._polygon.intersection(clip)
+        outclip = self._polygon.difference(clip)
+
+        acss, bcss = [[g.exterior.coords]
+                      if g.type == 'Polygon' 
+                      else [sg for sg in g.geoms]
+                      for g in self._polygon.intersection(clip),
+                               self._polygon.difference(clip)]
 
         u = self._u()
         p = array(self._location)
 
         va = self._orthogonal(self._project(cs[i], u) + self._project(cs[j], u), p)
-        acdir = self._orthogonal(self._project(Polygon(acs).centroid.coords[0], u), p)
+        acdir = self._orthogonal(self._project(Polygon(acss[0]).centroid.coords[0], u), p)
         if dot(va, acdir) < 0:
             va = -va
         vb = -va
 
-        return (Shape(acs, self._location, self._orientation, self._velocity + va, self._history),
-                Shape(bcs, self._location, self._orientation, self._velocity + vb, self._history))
+        return ([Shape(acs, self._location, self._orientation, self._velocity + va, self._history)
+                 for acs in acss] +
+                [Shape(bcs, self._location, self._orientation, self._velocity + vb, self._history)
+                 for bcs in bcss])
 
     def merge(self, other):
         """Merge another shape into this one."""
