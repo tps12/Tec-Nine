@@ -106,9 +106,6 @@ class PlanetSimulation(object):
         # initial location
         p = (0, 1, 0)
 
-        # unit vector
-        u = (0, 0, 1)
-
         # 0 velocity vector
         v = (0, 0, 0)
 
