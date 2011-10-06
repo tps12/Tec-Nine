@@ -82,7 +82,12 @@ class Shape(object):
         su, ou = [s._u() for s in self, other]
         poly = Polygon([self._unproject(v, su) for v in
                         [other._project(c, ou) for c in other._polygon.exterior.coords]])
-        self._polygon = self._polygon.union(poly)
+        union = self._polygon.union(poly)
+
+        if union.type == 'MultiPolygon':
+            return
+        
+        self._polygon = union
 
         self._velocity += other._velocity
 
