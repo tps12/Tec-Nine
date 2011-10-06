@@ -98,6 +98,7 @@ class Shape(object):
             h = self._history[i]
             for (c, v) in other._history[i]:
                 h[self._unproject(other._project(c, ou), su)] = v
+            history.append(h)
         
         self._history = history
 
