@@ -15,7 +15,7 @@ class Shape(object):
         self._location = location
         self._orientation = orientation
         self._velocity = velocity
-        self._history = [h for h in history] if history is not None else []
+        self._history = history if history is not None else SampleSpace()
 
     @property
     def area(self):
@@ -91,21 +91,8 @@ class Shape(object):
 
         self._velocity += other._velocity
 
-        history = []
-        for i in range(len(other._history)-len(self._history)):
-            h = SampleSpace()
-            for (c, v) in other._history[i]:
-                h[self._unproject(other._project(c, ou), su)] = v
-            history.append(h)
-        for i in range(len(self._history)-len(other._history)):
-            history.append(self._history[i])
-        for i in range(-min(len(self._history), len(other._history)), 0):
-            h = self._history[i]
-            for (c, v) in other._history[i]:
-                h[self._unproject(other._project(c, ou), su)] = v
-            history.append(h)
-        
-        self._history = history
+        for (c, v) in other._history:
+            self._history[self._unproject(other._project(c, ou), su)] = v
 
     @staticmethod
     def _orthogonal(v, n):
@@ -150,10 +137,7 @@ class Shape(object):
         return r*cos(th), r*sin(th)
 
     def projection(self):
-        """Project onto the sphere as a spherical polygon and create a new page
-        of history.
-        """
-        self._history.append(SampleSpace())
+        """Project onto the sphere as a spherical polygon."""
         u = self._u()
 
         vectors = [self._project(c, u) for c in self._polygon.exterior.coords]
@@ -174,11 +158,11 @@ class Shape(object):
                                                                  self._velocity]
 
     def recordvalue(self, v, value):
-        """Record the value in the current page of history."""
-        self._history[-1][self._unproject(v, self._u())] = value
+        """Record the value in history."""
+        self._history[self._unproject(v, self._u())] = value
 
     def historicalvalue(self, v):
-        if len(self._history) < 2:
-            return 1
+        return self._history[self._unproject(v, self._u())]
 
-        return self._history[-2][self._unproject(v, self._u())]
+    def resethistory(self):
+        self._history = SampleSpace()

@@ -154,6 +154,12 @@ class PlanetSimulation(object):
                     tile.value += 1
                 if tile.value > 10:
                     tile.value = 10
+
+        for shape in self._shapes:
+            shape.resethistory()
+
+        for lat in self.tiles:
+            for tile in lat:
                 if tile.value > 0:
                     for i in tile.overlapping:
                         self._shapes[i].recordvalue(tile.vector, tile.value)
