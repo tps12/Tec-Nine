@@ -54,12 +54,9 @@ class Shape(object):
                         (c[0] + r * cos(th), c[1] + r * sin(th)),
                         (c[0] + r * cos(th + 2*pi/3), c[1] + r * sin(th + 2*pi/3))])
 
-        inclip = self._polygon.intersection(clip)
-        outclip = self._polygon.difference(clip)
-
         acss, bcss = [[g.exterior.coords]
                       if g.type == 'Polygon' 
-                      else [sg for sg in g.geoms]
+                      else [sg.exterior.coords for sg in g.geoms]
                       for g in self._polygon.intersection(clip),
                                self._polygon.difference(clip)]
 
