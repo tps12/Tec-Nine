@@ -15,7 +15,7 @@ class Shape(object):
         self._location = location
         self._orientation = orientation
         self._velocity = velocity
-        self._history = history if history is not None else []
+        self._history = [h for h in history] if history is not None else []
 
     @property
     def area(self):
@@ -147,7 +147,7 @@ class Shape(object):
         if (u[1]*vth[2] - u[2]*vth[1]) * self._location[0] < 0:
             th *= -1
 
-        return r*cos(th), r*sin(th) 
+        return r*cos(th), r*sin(th)
 
     def projection(self):
         """Project onto the sphere as a spherical polygon and create a new page
