@@ -85,7 +85,8 @@ class Shape(object):
             polys = [poly]
         else:
             # reprojecting created a self-intersection
-            polys = [p for p in polygonize(poly.buffer(0.0))]
+            fixed = poly.buffer(0.0)
+            polys = [p for p in polygonize(fixed)] if fixed.type == 'MultPolygon' else [fixed]
 
         try:
             union = reduce(lambda a,b: a.union(b), polys, self._polygon)
