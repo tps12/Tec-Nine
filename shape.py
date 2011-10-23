@@ -5,6 +5,7 @@ from numpy import array, cross
 from numpy.linalg import norm
 
 from shapely.geometry import Polygon
+from shapely.ops import polygonize
 
 from samplespace import *
 from sphericalpolygon import *
@@ -79,14 +80,29 @@ class Shape(object):
         su, ou = [s._u() for s in self, other]
         poly = Polygon([self._unproject(v, su) for v in
                         [other._project(c, ou) for c in other._polygon.exterior.coords]])
-        union = self._polygon.union(poly)
+
+        if poly.is_valid:
+            polys = [poly]
+        else:
+            # reprojecting created a self-intersection
+            polys = [p for p in polygonize(poly.buffer(0.0))]
+
+        try:
+            union = reduce(lambda a,b: a.union(b), polys, self._polygon)
+        except:
+            import pdb
+            pdb.set_trace()
 
         if union.type == 'MultiPolygon':
             return
         
         self._polygon = union
 
+        fastest = max([norm(s._velocity) for s in self, other])
         self._velocity += other._velocity
+        speed = norm(self._velocity)
+        if speed > fastest:
+            self._velocity *= speed/fastest
 
         for (c, v) in other._history:
             self._history[self._unproject(other._project(c, ou), su)] = v
