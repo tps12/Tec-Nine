@@ -103,7 +103,7 @@ class Shape(object):
         self._velocity += other._velocity
         speed = norm(self._velocity)
         if speed > fastest:
-            self._velocity *= speed/fastest
+            self._velocity *= fastest/speed
 
         for (c, v) in other._history:
             self._history[self._unproject(other._project(c, ou), su)] = v

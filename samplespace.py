@@ -20,6 +20,9 @@ class SampleSpace(object):
         if len(js) == 0:
             return 0
 
+        if len(js) == 1:
+            return self._values[js[0]]
+
         ds = [sqrt(sum([(self._locations[j][i]-location[i])**2 for i in range(2)]))
               for j in js]
 
