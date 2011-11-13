@@ -165,13 +165,17 @@ class PlanetSimulation(object):
                         self._shapes[i].recordvalue(tile.vector, tile.value)
 
         # occaisionally split big shapes
+        splits = []
         for i in range(len(self._shapes)):
             if random.uniform(0,1) > 1/self._shapes[i].area:
                 self._shapes[i:i+1] = self._shapes[i].split()
+                splits += [i,i+1]
 
         # merge shapes that overlap a lot
         for (pair, count) in collisions.items():
-            if count > 100:
-                self._shapes[pair[0]].merge(self._shapes.pop(pair[1]))
-                break
+            if count > min([self._shapes[i].area for i in pair])/10:
+                if not any([i in splits for i in pair]):
+                    self._shapes[pair[0]].merge(self._shapes.pop(pair[1]))
+                    break
+
         self.dirty = True
