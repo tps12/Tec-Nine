@@ -10,18 +10,9 @@ from numpy.linalg import *
 from latrange import *
 from sphericalpolygon import *
 
+from adjacency import *
 from shape import *
 from tile import *
-
-def distance(c1, c2):
-    lat1, lon1 = [c * pi/180 for c in c1]
-    lat2, lon2 = [c * pi/180 for c in c2]
-
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-    return 2 * atan2(sqrt(a), sqrt(1-a))
 
 def bearing(c1, c2):
     lat1, lon1 = [c * pi/180 for c in c1]
@@ -83,6 +74,8 @@ class PlanetSimulation(object):
         # max speed is 100km per million years
         self._dp = 100.0/r * dt
 
+        self._erode = dt
+
         degrees = 2
 
         self.tiles = []
@@ -98,7 +91,9 @@ class PlanetSimulation(object):
                        [Tile(flat, lon)])
                 lon += d
             self.tiles.append(row)
-        
+
+        self.adj = Adjacency(self.tiles)
+                
         xmax = max([len(self.tiles[i]) for i in range(len(self.tiles))])
 
         dimensions = xmax, len(self.tiles)
@@ -154,6 +149,25 @@ class PlanetSimulation(object):
                     tile.value += 1
                 if tile.value > 10:
                     tile.value = 10
+
+        # erode to lower adjacent tiles
+        for e in range(self._erode):
+            dv = [[0 for j in range(len(self.tiles[i]))] for i in range(len(self.tiles))]
+            for i in range(len(self.tiles)):
+                for j in range(len(self.tiles[i])):
+                    tile = self.tiles[i][j]
+                    if tile.value > 0:
+                        adj = self.adj[(j,i)]
+                        for (j2,i2) in adj:
+                            d = tile.value - self.tiles[i2][j2].value
+                            if d > 0:
+                                d /= (5 * len(adj))
+                                dv[i][j] -= d
+                                dv[i2][j2] += d
+
+            for i in range(len(self.tiles)):
+                for j in range(len(self.tiles[i])):
+                    self.tiles[i][j].value += dv[i][j]
 
         for shape in self._shapes:
             shape.resethistory()
