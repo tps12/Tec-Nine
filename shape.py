@@ -4,7 +4,7 @@ from random import randint, uniform
 from numpy import array, cross
 from numpy.linalg import norm
 
-from shapely.geometry import Polygon
+from shapely.geometry import Point, Polygon
 from shapely.ops import polygonize
 
 from samplespace import *
@@ -190,10 +190,9 @@ class Shape(object):
         p = self._unproject(v, self._u())
         ps = list(self._polygon.exterior.coords)
 
-        i = min(range(1, len(ps)),
-                key=lambda i: self._distance(ps[i-1], p) + self._distance(ps[i], p))
-        ps.insert(i, p)
+        d = min([self._distance(ps[i-1], p) + self._distance(ps[i], p) for i in range(1, len(ps))])
 
-        poly = Polygon(ps)
+        blob = Point(p).buffer(d/2, quadsegs=2)
+        poly = self._polygon.union(blob)
         if poly.is_valid and poly.type == 'Polygon':
             self._polygon = poly
