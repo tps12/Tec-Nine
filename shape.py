@@ -180,3 +180,20 @@ class Shape(object):
 
     def resethistory(self):
         self._history = SampleSpace()
+
+    @staticmethod
+    def _distance(c1, c2):
+        dx, dy = [c2[i] - c1[i] for i in range(2)]
+        return sqrt(dx*dx + dy*dy)
+
+    def includepoint(self, v):
+        p = self._unproject(v, self._u())
+        ps = list(self._polygon.exterior.coords)
+
+        i = min(range(1, len(ps)),
+                key=lambda i: self._distance(ps[i-1], p) + self._distance(ps[i], p))
+        ps.insert(i, p)
+
+        poly = Polygon(ps)
+        if poly.is_valid and poly.type == 'Polygon':
+            self._polygon = poly

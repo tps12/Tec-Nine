@@ -65,6 +65,11 @@ def _iteratelat(latdata):
                 lat[x].overlapping.append(i)
     return lat
 
+class ErodedMaterial(object):
+    def __init__(self, amount, sources=None):
+        self.amount = amount
+        self.sources = sources
+
 class PlanetSimulation(object):
     
     def __init__(self, r, dt):
@@ -149,25 +154,36 @@ class PlanetSimulation(object):
                     tile.value += 1
                 if tile.value > 10:
                     tile.value = 10
+                tile.dv = []
 
         # erode to lower adjacent tiles
-        for e in range(self._erode):
-            dv = [[0 for j in range(len(self.tiles[i]))] for i in range(len(self.tiles))]
-            for i in range(len(self.tiles)):
-                for j in range(len(self.tiles[i])):
-                    tile = self.tiles[i][j]
-                    if tile.value > 0:
-                        adj = self.adj[(j,i)]
-                        for (j2,i2) in adj:
-                            d = tile.value - self.tiles[i2][j2].value
-                            if d > 0:
-                                d /= (5 * len(adj))
-                                dv[i][j] -= d
-                                dv[i2][j2] += d
+        for i in range(len(self.tiles)):
+            for j in range(len(self.tiles[i])):
+                tile = self.tiles[i][j]
+                if tile.value > 0:
+                    adj = self.adj[(j,i)]
+                    for (j2,i2) in adj:
+                        other = self.tiles[i2][j2]
+                        d = tile.value - other.value
+                        if d > 0:
+                            d /= len(adj)
+                            tile.dv.append(ErodedMaterial(-d))
+                            other.dv.append(ErodedMaterial(d, tile.overlapping))
 
-            for i in range(len(self.tiles)):
-                for j in range(len(self.tiles[i])):
-                    self.tiles[i][j].value += dv[i][j]
+        for i in range(len(self.tiles)):
+            for j in range(len(self.tiles[i])):
+                tile = self.tiles[i][j]
+                if len(tile.overlapping) > 0:
+                    tile.value += sum([e.amount for e in tile.dv])
+                elif sum([e.amount for e in tile.dv]) > 1.5:
+                    tile.value = sum([e.amount for e in tile.dv])
+                    sources = set()
+                    for e in tile.dv:
+                        for s in e.sources:
+                            sources.add(s)
+                    for s in sources:
+                        self._shapes[s].includepoint(tile.vector)
+                    tile.overlapping = list(sources)
 
         for shape in self._shapes:
             shape.resethistory()
