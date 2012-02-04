@@ -89,14 +89,16 @@ class Shape(object):
             polys = [p for p in polygonize(fixed)] if fixed.type == 'MultPolygon' else [fixed]
 
         try:
-            union = reduce(lambda a,b: a.union(b), polys, self._polygon)
+            union = reduce(lambda a,b: Polygon(a.exterior.coords).union(Polygon(b.exterior.coords)),
+                           polys,
+                           self._polygon)
         except:
             import pdb
             pdb.set_trace()
 
         if union.type == 'MultiPolygon':
             return
-        
+
         self._polygon = union
 
         fastest = max([norm(s._velocity) for s in self, other])
