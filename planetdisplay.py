@@ -85,6 +85,11 @@ class PlanetDisplay(object):
                 self._dirty = True
 
                 return True
+        elif e.type == KEYUP:
+            if e.key == pygame.K_d:
+                import pdb
+                pdb.set_trace()
+                return True
 
         return False
     

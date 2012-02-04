@@ -16,6 +16,7 @@ class PygameDisplay(wx.Window):
         self.Bind(wx.EVT_TIMER, self.Update, self.timer)
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_LEFT_UP, self.OnClick)
+        self.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
        
         self.timer.Start(self.display.dt * 1000, False)
 
@@ -28,6 +29,12 @@ class PygameDisplay(wx.Window):
         self.display.handle(pygame.event.Event(pygame.locals.MOUSEBUTTONUP,
                                                {'button': 1,
                                                 'pos': event.Position.Get()}))
+
+    def OnKeyUp(self, event):
+        if self.display.handle(pygame.event.Event(pygame.locals.KEYUP,
+                                                  {'key': vars(pygame)['K_' + str(unichr(event.GetKeyCode())).lower()],
+                                                   'mod': 0})):
+            event.Skip()
 
     def Redraw(self):
         if self.size_dirty:
