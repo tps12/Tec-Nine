@@ -1,4 +1,4 @@
-from math import acos, cos, sin, pi, sqrt
+from math import acos, cos, sin, pi, sqrt, isinf
 from random import randint, uniform
 
 from numpy import array, cross
@@ -194,7 +194,16 @@ class Shape(object):
 
         dist = lambda i: self._distance(ps[i], p)
         n1 = min(range(len(ps)), key=dist)
+        d = dist(n1)
         n2 = min([(n1+d) % len(ps) for d in -1, +1], key=dist)
 
         self._polygon = Polygon(self._polygon.exterior.coords).union(Polygon([p,ps[n1],ps[n2],p]))
 
+        return d
+
+    def simplify(self, d):
+        if isinf(d):
+            return
+
+        s = self._polygon.simplify(d)
+        self._polygon = s

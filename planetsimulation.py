@@ -170,6 +170,7 @@ class PlanetSimulation(object):
                             tile.dv.append(ErodedMaterial(-d))
                             other.dv.append(ErodedMaterial(d, tile.overlapping))
 
+        d = float('inf')
         for i in range(len(self.tiles)):
             for j in range(len(self.tiles[i])):
                 tile = self.tiles[i][j]
@@ -182,8 +183,11 @@ class PlanetSimulation(object):
                         for s in e.sources:
                             sources.add(s)
                     for s in sources:
-                        self._shapes[s].includepoint(tile.vector)
+                        d = min(d, self._shapes[s].includepoint(tile.vector))
                     tile.overlapping = list(sources)
+
+        for s in self._shapes:
+            s.simplify(d)
 
         for shape in self._shapes:
             shape.resethistory()
