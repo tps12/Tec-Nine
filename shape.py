@@ -190,11 +190,11 @@ class Shape(object):
 
     def includepoint(self, v):
         p = self._unproject(v, self._u())
-        ps = list(self._polygon.exterior.coords)
+        ps = list(self._polygon.exterior.coords)[:-1]
 
-        d = min([self._distance(ps[i-1], p) + self._distance(ps[i], p) for i in range(1, len(ps))])
+        dist = lambda i: self._distance(ps[i], p)
+        n1 = min(range(len(ps)), key=dist)
+        n2 = min([(n1+d) % len(ps) for d in -1, +1], key=dist)
 
-        blob = Point(p).buffer(d/2, quadsegs=2)
-        poly = self._polygon.union(blob)
-        if poly.is_valid and poly.type == 'Polygon':
-            self._polygon = poly
+        self._polygon = Polygon(self._polygon.exterior.coords).union(Polygon([p,ps[n1],ps[n2],p]))
+
