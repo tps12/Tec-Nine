@@ -121,6 +121,8 @@ class PlanetSimulation(object):
 
         self._pool = Pool(processes=cpu_count())
 
+        self.dirty = True
+
     def update(self):
         """Update the simulation by one timestep.
 

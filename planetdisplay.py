@@ -1,7 +1,6 @@
 from math import sin, cos, pi
 
-import pygame
-from pygame.locals import *
+from PySide.QtGui import QColor, QImage, QPainter, QWidget, QSizePolicy
 
 def redbluescale(v):
     r = 255 - 255 * v 
@@ -40,12 +39,14 @@ def coolscale(v):
          255)
     return r, g, b
 
-class PlanetDisplay(object):
+class PlanetDisplay(QWidget):
     dt = 0.01
     
     def __init__(self, sim):
+        QWidget.__init__(self)
         self._sim = sim
         self._screen = None
+        self._rotate = 0
         self.selected = None
         self.dirty = True
 
@@ -58,55 +59,54 @@ class PlanetDisplay(object):
         self._rotate = value
         self._dirty = True
     
-    def handle(self, e):
-        if e.type == MOUSEBUTTONUP:
-            mx, my = e.pos
+    def mousePressEvent(self, e):
+        mx, my = e.pos().toTuple()
 
-            res = max([len(r) for r in self._sim.tiles]), len(self._sim.tiles)
+        res = max([len(r) for r in self._sim.tiles]), len(self._sim.tiles)
 
-            y = my / (self.size[1]/res[1])
-            x = mx / (self.size[0]/res[0]) - (res[0] - len(self._sim.tiles[y]))/2
+        size = self._screen.size().toTuple()
 
-            r = self.rotate
-            o = r * len(self._sim.tiles[y])/360
+        y = my / (size[1]/res[1])
+        x = mx / (size[0]/res[0]) - (res[0] - len(self._sim.tiles[y]))/2
 
-            xo = x + o
-            if xo > len(self._sim.tiles[y])-1:
-                xo -= len(self._sim.tiles[y])
-            elif xo < 0:
-                xo += len(self._sim.tiles[y])
-            
-            if 0 <= y < len(self._sim.tiles) and 0 <= xo < len(self._sim.tiles[y]):
-                if self.selected == (xo,y):
-                    self.selected = None
-                else:
-                    self.selected = (xo,y)
-       
-                self._dirty = True
+        r = self._rotate
+        o = r * len(self._sim.tiles[y])/360
 
-                return True
-        elif e.type == KEYUP:
-            if e.key == pygame.K_d:
-                import pdb
-                pdb.set_trace()
-                return True
+        xo = x + o
+        if xo > len(self._sim.tiles[y])-1:
+            xo -= len(self._sim.tiles[y])
+        elif xo < 0:
+            xo += len(self._sim.tiles[y])
+        
+        if 0 <= y < len(self._sim.tiles) and 0 <= xo < len(self._sim.tiles[y]):
+            if self.selected == (xo,y):
+                self.selected = None
+            else:
+                self.selected = (xo,y)
+   
+            self._dirty = True
 
-        return False
+            return True
     
-    def draw(self, surface):
-        self._sim.update()
+    def paintEvent(self, e):
+        surface = QPainter()
+        surface.begin(self)
         
         if (self._sim.dirty or self._dirty or
-            self._screen == None or self._screen.get_size() != surface.get_size()):
-            self._screen = pygame.Surface(surface.get_size(), 0, 32)
+            self._screen == None or self._screen.size() != surface.size()):
+            self._screen = QImage(surface.device().width(), surface.device().height(),
+                                  QImage.Format_RGB32)
             
-            self.size = self._screen.get_size()
+            size = self._screen.width(), self._screen.height()
         
-            self._screen.fill((0,0,0))
+            self._screen.fill(QColor(0,0,0).rgb())
+
+            screen = QPainter()
+            screen.begin(self._screen)
 
             res = max([len(r) for r in self._sim.tiles]), len(self._sim.tiles)
-            template = pygame.Surface((self.size[0]/res[0],
-                                       self.size[1]/res[1]), 0, 32)
+            template = QImage(size[0]/res[0], size[1]/res[1],
+                              QImage.Format_RGB32)
 
             for y in range(res[1]):
                 for x in range(len(self._sim.tiles[y])):
@@ -129,12 +129,13 @@ class PlanetDisplay(object):
                         color = (value, value, value)
                     else:
                         color = (255, 255, 255)
-                    block.fill(color)
+                    block.fill(QColor(*color).rgb())
                    
-                    self._screen.blit(block,
-                                      ((x + (res[0] - len(self._sim.tiles[y]))/2)*block.get_width(),
-                                       y*block.get_height()))
+                    screen.drawImage((x + (res[0] - len(self._sim.tiles[y]))/2)*block.width(),
+                                     y*block.height(), block)
+            screen.end()
 
             self._dirty = False
-                    
-        surface.blit(self._screen, (0,0))
+
+        surface.drawImage(0, 0, self._screen)
+        surface.end()
