@@ -20,7 +20,7 @@ class SplitPresenter(object):
         self._view.rotate.sliderMoved.connect(self.rotate)
 
         self._view.projection.setCurrentIndex(self._display.projection)
-        self._view.projection.currentIndexChanged.connect(self.project)
+        self._view.projection.currentIndexChanged[int].connect(self.project)
 
         self._uistack = uistack
 
