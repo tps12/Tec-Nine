@@ -4,9 +4,8 @@ from PySide.QtGui import QColor, QImage, QPainter, QWidget, QSizePolicy
 
 class SplitDisplay(QWidget):
     
-    PROJECT_FLAT = 0
-    PROJECT_MERC = 1
-    PROJECT_SINE = 2
+    PROJECT_MERC = 0
+    PROJECT_SINE = 1
 
     def __init__(self, sim):
         QWidget.__init__(self)
@@ -81,39 +80,6 @@ class SplitDisplay(QWidget):
                        
                         screen.drawImage((x + (res[0] - len(self._sim.tiles[y]))/2)*block.width(),
                                          y*block.height(), block)
-            elif self._projection == self.PROJECT_FLAT:
-                res = len(self._sim.tiles)
-                template = QImage(size[0]/(2*res), size[1]/res, QImage.Format_RGB32)
-
-                r2 = res*res/4
-                for y in range(res):
-                    for x in range(res):
-                        if (x-res/2)**2 + (y-res/2)**2 <= r2:
-                            for xh in x, x + res:
-                                block = template.copy()
-
-                                r = self.rotate
-                                o = r * (2*res)/360
-                                xo = (xh + o) * len(self._sim.tiles[y])/(2*res)
-
-                                if xo > len(self._sim.tiles[y])-1:
-                                    xo -= len(self._sim.tiles[y])
-                                elif xo < 0:
-                                    xo += len(self._sim.tiles[y])
-                                h = self._sim.tiles[y][xo].value
-
-                                if h > 0:
-                                    r = g = b = 128
-                                    if h == 2:
-                                        r = 255
-                                    elif h == 3:
-                                        b = 255
-                                    color = (r, g, b)
-                                else:
-                                    color = (255, 255, 255)
-                                block.fill(QColor(*color).rgb())
-
-                                screen.drawImage(xh*block.width(), y*block.height(), block)
             else:
                 res = len(self._sim.tiles)
                 template = QImage(size[0]/res, size[1]/res, QImage.Format_RGB32)
