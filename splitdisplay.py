@@ -32,6 +32,21 @@ class SplitDisplay(QWidget):
     def rotate(self, value):
         self._rotate = value
         self._dirty = True
+
+    @staticmethod
+    def tilecolor(tile):
+        h = tile.value
+
+        if h > 0:
+            r = g = b = 128
+            if h == 2:
+                r = 255
+            elif h == 3:
+                b = 255
+            color = (r, g, b)
+        else:
+            color = (255, 255, 255)
+        return QColor(*color)
     
     def paintEvent(self, e):
         surface = QPainter()
@@ -65,18 +80,8 @@ class SplitDisplay(QWidget):
                             xo -= len(self._sim.tiles[y])
                         elif xo < 0:
                             xo += len(self._sim.tiles[y])
-                        h = self._sim.tiles[y][xo].value
 
-                        if h > 0:
-                            r = g = b = 128
-                            if h == 2:
-                                r = 255
-                            elif h == 3:
-                                b = 255
-                            color = (r, g, b)
-                        else:
-                            color = (255, 255, 255)
-                        block.fill(QColor(*color).rgb())
+                        block.fill(self.tilecolor(self._sim.tiles[y][xo]).rgb())
                        
                         screen.drawImage((x + (res[0] - len(self._sim.tiles[y]))/2)*block.width(),
                                          y*block.height(), block)
@@ -96,19 +101,9 @@ class SplitDisplay(QWidget):
                             xo -= len(self._sim.tiles[y])
                         elif xo < 0:
                             xo += len(self._sim.tiles[y])
-                        h = self._sim.tiles[y][xo].value
 
-                        if h > 0:
-                            r = g = b = 128
-                            if h == 2:
-                                r = 255
-                            elif h == 3:
-                                b = 255
-                            color = (r, g, b)
-                        else:
-                            color = (255, 255, 255)
-                        block.fill(QColor(*color).rgb())
-
+                        block.fill(self.tilecolor(self._sim.tiles[y][xo]).rgb())
+ 
                         screen.drawImage(x*block.width(), y*block.height(), block)
 
             screen.end()
