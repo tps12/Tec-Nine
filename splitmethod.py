@@ -35,10 +35,10 @@ def center(tiles):
     return closest(tiles, a)
 
 def mostest(tiles, p, fn):
-    m, md2 = None, float('inf' if fn(0, 1) else '-inf')
+    m, md2 = None, None
     for tile in tiles:
         d2 = sum([(tile.vector[i]-p[i])**2 for i in range(len(p))])
-        if fn(d2, md2):
+        if md2 is None or fn(d2, md2):
             m = tile
             md2 = d2
     return m
