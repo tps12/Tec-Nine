@@ -75,15 +75,6 @@ def split(tiles):
     b2 = b1 + 2*pi/3
     bs = [b1, b2]
 
-    cs = [i*pi/2 for i in range(4)]
-
-    # one or two square corners should slot into the first split-off group
-    for cn in cs:
-        if bs[1] > 2*pi:
-            cn += 2*pi
-        if bs[0] < cn <= bs[1]:
-            bs.append(cn)
-
     fc = firstcorner(c.vector, f.vector)
 
     # vectors for the corners of the split-off wedge
