@@ -177,6 +177,12 @@
      </item>
      <item>
       <widget class="QToolButton" name="iterate">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Iterate</string>
        </property>
