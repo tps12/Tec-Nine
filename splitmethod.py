@@ -24,6 +24,7 @@ def rotate(p, axis, theta):
                    sqrt(L2)*(-axis[1]*p[0]+axis[0]*p[1]) * sin(theta))/L2])
 
 def average(vs):
+    """Average a list of vectors."""
     a = [0, 0, 0]
     for v in vs:
         for i in range(len(a)):
@@ -31,10 +32,14 @@ def average(vs):
     return [float(c)/len(vs) for c in a]
 
 def center(tiles):
+    """Get the tile closest to the average location of the given tiles."""
     a = average([t.vector for t in tiles])
     return closest(tiles, a)
 
 def mostest(tiles, p, fn):
+    """Return the most whatevery tile relative to a point,
+    given a comparison function that evaluates whateveriness.
+    """
     m, md2 = None, None
     for tile in tiles:
         d2 = sum([(tile.vector[i]-p[i])**2 for i in range(len(p))])
@@ -44,12 +49,16 @@ def mostest(tiles, p, fn):
     return m
 
 def closest(tiles, p):
+    """Get the closest tile to a point."""
     return mostest(tiles, p, lambda d2, md2: d2 < md2)
 
 def farthest(tiles, p):
+    """Get the farthest tile from a point."""
     return mostest(tiles, p, lambda d2, md2: d2 > md2)
 
 def firstcorner(c, f):
+    """Locate a corner of a square that would encompass a shape
+    with the given center and furthest point."""
     cp = cross(c, f)
     ncp = norm(cp)
     d = atan2(ncp, dot(c, f))
@@ -61,12 +70,14 @@ def split(tiles):
     c = center(tiles)
     f = farthest(tiles, c.vector)
 
+    # two random border angles separated by 120 degrees
     b1 = random() * 2*pi
     b2 = b1 + 2*pi/3
     bs = [b1, b2]
 
     cs = [i*pi/2 for i in range(4)]
 
+    # one or two square corners should slot into the first split-off group
     for cn in cs:
         if bs[1] > 2*pi:
             cn += 2*pi
@@ -75,8 +86,10 @@ def split(tiles):
 
     fc = firstcorner(c.vector, f.vector)
 
+    # vectors for the corners of the split-off wedge
     vs = [rotate(fc, c.vector, th) for th in bs]
 
+    # include center and close
     vs.append(c.vector)
     vs.append(vs[0])
 
