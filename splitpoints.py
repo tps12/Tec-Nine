@@ -12,6 +12,7 @@ from sphericalpolygon import *
 
 from adjacency import *
 from shape import *
+from splitmethod import split
 from tile import *
 
 def _setlat(lat, shape):
@@ -60,3 +61,4 @@ class SplitPoints(object):
                        p, o, v).projection()
 
         self.tiles = [_setlat(lat, shape) for lat in self.tiles]
+        split([t for lat in self.tiles for t in lat if t.value == 1])
