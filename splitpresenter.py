@@ -1,4 +1,6 @@
-from PySide.QtGui import QGridLayout
+from random import choice
+
+from PySide.QtGui import QGridLayout, QMenu
 
 from splitpoints import SplitPoints
 from splitdisplay import SplitDisplay
@@ -25,7 +27,31 @@ class SplitPresenter(object):
         self._view.projection.setCurrentIndex(self._display.projection)
         self._view.projection.currentIndexChanged[int].connect(self.project)
 
+        self._view.iterate.clicked.connect(self.iterate)
+        iterate = QMenu()
+        iterate.addAction(self._view.red)
+        iterate.addAction(self._view.blue)
+        self._view.iterate.setMenu(iterate)
+
+        self._view.red.triggered.connect(self.red)
+        self._view.blue.triggered.connect(self.blue)
+
         self._uistack = uistack
+
+    def iterate(self):
+        self._model.iterate(choice([True, False]))
+        self._display.invalidate()
+        self._view.content.update()
+
+    def red(self):
+        self._model.iterate(True)
+        self._display.invalidate()
+        self._view.content.update()
+
+    def blue(self):
+        self._model.iterate(False)
+        self._display.invalidate()
+        self._view.content.update()
 
     def rotate(self, value):
         self._display.rotate = value
@@ -44,4 +70,5 @@ class SplitPresenter(object):
 
     def reset(self):
         self._model.reset()
+        self._display.invalidate()
         self._view.content.update()

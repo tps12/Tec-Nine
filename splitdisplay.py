@@ -59,6 +59,9 @@ class SplitDisplay(QWidget):
         else:
             color = (255, 255, 255)
         return QColor(*color)
+
+    def invalidate(self):
+        self._dirty = True
     
     def paintEvent(self, e):
         surface = QPainter()

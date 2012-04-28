@@ -176,6 +176,25 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="iterate">
+       <property name="text">
+        <string>Iterate</string>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::MenuButtonPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextOnly</enum>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="done">
        <property name="text">
         <string>Done</string>
@@ -198,6 +217,16 @@
     </layout>
    </item>
   </layout>
+  <action name="red">
+   <property name="text">
+    <string>Red</string>
+   </property>
+  </action>
+  <action name="blue">
+   <property name="text">
+    <string>Blue</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
