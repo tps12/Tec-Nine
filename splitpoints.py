@@ -17,9 +17,8 @@ from tile import *
 
 def _setlat(lat, shape):
     """Set tile values for the given latitude array."""
-    if shape.latrange.contains(lat[0].lat):
-        for x in range(len(lat)):
-            lat[x].value = 1 if shape.contains(lat[x].vector) else 0
+    for x in range(len(lat)):
+        lat[x].value = 1 if shape.contains(lat[x].vector) else 0
     return lat
 
 class SplitPoints(object):
@@ -45,13 +44,16 @@ class SplitPoints(object):
 
     def reset(self):
         # initial location
-        p = (0, -1, 0)
+        p = [random.uniform(-1, 1) for i in range(3)]
+        p /= norm(p)
 
         # 0 velocity vector
         v = (0, 0, 0)
 
         # orienting point
-        o = (0, 0, -1)
+        o = [0, 0, 0]
+        mini = min(range(len(p)), key=lambda i: abs(p[i]))
+        o[mini] = 1 if p[mini] < 0 else -1
 
         r = 1.145
         shape = Shape([(r*random.uniform(0.9,1.1)*cos(th),
