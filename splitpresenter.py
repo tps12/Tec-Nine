@@ -19,6 +19,9 @@ class SplitPresenter(object):
         self._view.rotate.setValue(self._display.rotate)
         self._view.rotate.sliderMoved.connect(self.rotate)
 
+        self._view.time.setValue(self._display.time)
+        self._view.time.sliderMoved.connect(self.time)
+
         self._view.projection.setCurrentIndex(self._display.projection)
         self._view.projection.currentIndexChanged[int].connect(self.project)
 
@@ -26,6 +29,10 @@ class SplitPresenter(object):
 
     def rotate(self, value):
         self._display.rotate = value
+        self._view.content.update()
+
+    def time(self, value):
+        self._display.time = value
         self._view.content.update()
 
     def project(self, value):

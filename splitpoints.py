@@ -46,13 +46,13 @@ class SplitPoints(object):
 
     def reset(self):
         # initial location
-        p = (0, 1, 0)
+        p = (0, -1, 0)
 
         # 0 velocity vector
         v = (0, 0, 0)
 
         # orienting point
-        o = (1, 0, 0)
+        o = (0, 0, -1)
 
         r = 1.145
         shape = Shape([(r*random.uniform(0.9,1.1)*cos(th),
