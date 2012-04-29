@@ -75,10 +75,13 @@ def split(tiles):
     b2 = b1 + 2*pi/3
     bs = [b1, b2]
 
+    # add any corners that fall in between (1 or 2)
+    ths = [bs[0]] + [cn for cn in [i*pi/2 for i in range(1,5)] if bs[0] < cn < bs[1]] + [bs[1]]
+
     fc = firstcorner(c.vector, f.vector)
 
     # vectors for the corners of the split-off wedge
-    vs = [rotate(fc, c.vector, th) for th in bs]
+    vs = [rotate(fc, c.vector, th) for th in ths]
 
     # include center and close
     vs.append(c.vector)
