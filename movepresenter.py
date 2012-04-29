@@ -32,6 +32,8 @@ class MovePresenter(object):
 
         self._view.direction.sliderMoved.connect(self.direction)
         self._view.speed.sliderMoved.connect(self.speed)
+        
+        self._model.speed(self._view.speed.value())
 
         self._uistack = uistack
 

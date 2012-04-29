@@ -57,6 +57,9 @@ def farthest(tiles, p):
     return mostest(tiles, p, lambda d2, md2: d2 > md2)
 
 def move(tiles, group, v, index, indexedtiles):
+    for t in tiles:
+        t.value = 0
+
     for t in group:
         t.value = 2
 
