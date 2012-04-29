@@ -35,10 +35,13 @@ class MovePresenter(object):
         
         self._model.speed(self._view.speed.value())
 
+        self._view.count.setNum(self._model.count)
+
         self._uistack = uistack
 
     def step(self):
         self._model.step()
+        self._view.count.setNum(self._model.count)
         self._display.invalidate()
         self._view.content.update()
 

@@ -97,3 +97,7 @@ class MovePoints(object):
     def speed(self, value):
         self._velocity /= norm(self._velocity)
         self._velocity *= value*pi/180
+
+    @property
+    def count(self):
+        return sum([1 for lat in self.tiles for t in lat if t.value == 1])

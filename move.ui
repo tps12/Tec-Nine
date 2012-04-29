@@ -48,6 +48,20 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="count">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string> tiles</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="trail">
          <property name="text">
           <string>Show trail</string>
