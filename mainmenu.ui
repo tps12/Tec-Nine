@@ -35,6 +35,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="movepoints">
+     <property name="text">
+      <string>Move</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="next">
      <property name="text">
       <string>Return</string>
