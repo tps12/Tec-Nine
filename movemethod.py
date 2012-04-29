@@ -73,7 +73,14 @@ def move(tiles, group, v, index, indexedtiles):
     speed = norm(v)
 
     for i in range(len(vs)):
-        indexedtiles[list(index.nearest(list(rotate(vs[i], axis, speed))))[0]].value = 1
+        loc = list(rotate(vs[i], axis, speed))
+        k = 0
+        while True:
+            t = indexedtiles[list(index.nearest(loc, k+1))[k]]
+            if t.value != 1:
+                t.value = 1
+                break
+            k += 1
 
     vp = rotate(v, axis, speed)
     for i in range(len(v)):
