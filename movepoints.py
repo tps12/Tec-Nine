@@ -3,6 +3,7 @@ from itertools import combinations
 from math import asin, acos, atan2, pi, exp, sqrt, sin, cos
 from multiprocessing import cpu_count, Pool
 import random
+from time import time
 
 from numpy import *
 from numpy.linalg import *
@@ -82,11 +83,13 @@ class MovePoints(object):
         self._velocity = v
 
     def step(self):
+        start = time()
         move([t for lat in self.tiles for t in lat],
              [t for lat in self.tiles for t in lat if t.value == 1],
              self._velocity,
              self._index,
              self._indexedtiles)
+        self.time = time() - start
 
     def direction(self, value):
         a = average([t.vector for lat in self.tiles for t in lat if t.value == 1])

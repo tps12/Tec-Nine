@@ -41,6 +41,7 @@ class MovePresenter(object):
 
     def step(self):
         self._model.step()
+        self._view.time.setNum(self._model.time)
         self._view.count.setNum(self._model.count)
         self._display.invalidate()
         self._view.content.update()
