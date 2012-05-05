@@ -51,7 +51,7 @@ class PointTree(object):
                 for c in range(len(v)):
                     if v[c] < ranges[c][0]: ranges[c][0] = v[c]
                     if v[c] > ranges[c][1]: ranges[c][1] = v[c]
-            self._medians = [(ranges[c][1] - ranges[c][0])/2 for c in range(len(vs[0]))]
+            self._medians = [(ranges[c][1] + ranges[c][0])/2 for c in range(len(vs[0]))]
             cvss = [[] for i in range(2**len(vs[0]))]
             for v in vs:
                 cvss[self._child(v)].append(v)

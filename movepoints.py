@@ -8,9 +8,8 @@ from time import time
 from numpy import *
 from numpy.linalg import *
 
-from rtree import index
-
 from latrange import *
+from pointtree import PointTree
 from sphericalpolygon import *
 
 from adjacency import *
@@ -68,17 +67,15 @@ class MovePoints(object):
 
         self.tiles = [_setlat(lat, shape) for lat in self.tiles]
 
-        p = index.Property()
-        p.dimension = 3
-        self._index = index.Index(properties=p)
-    
         self._indexedtiles = []
         for lat in self.tiles:
             for t in lat:
                 i = len(self._indexedtiles)
                 self._indexedtiles.append(t)
-                self._index.add(i, list(t.vector))
 
+        self._index = PointTree(dict([[self._indexedtiles[i].vector, i]
+                                      for i in range(len(self._indexedtiles))]))
+    
         self._direction = direction
         self._velocity = v
 
