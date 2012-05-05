@@ -49,6 +49,8 @@ class PointTree(object):
             self._children = [PointTree.branch(cvs) for cvs in cvss]
 
         def _child(self, v):
+            # index of the child containing v
+            # each dimension gets a bit: 1 if it's greater than the median, else 0
             return sum([(1 if v[i] > self._medians[i] else 0) << i for i in range(len(v))])
 
         def depth(self):
@@ -58,16 +60,28 @@ class PointTree(object):
             return [cc for c in self._children for cc in c.contents()]
 
         def nearest(self, v, k, ns = None):
-            ci = self._child(v)
-            ns = sorted((ns or []) + self._children[ci].nearest(v, k), key=lambda n: n[0])[0:k]
-            for c in range(len(v)):
-                vm = list(v)
-                vm[c] = self._medians[c]
-                if len(ns) < k or PointTree.d2(v, vm) < ns[-1][0]:
-                    cmi = self._child(vm)
-                    if cmi == ci: continue
-                    ns = self._children[cmi].nearest(v, k, ns)
+            ns = [] if ns is None else ns
+            for (ci, p) in self._nearestbounds(v):
+                if len(ns) < k or PointTree.d2(v, p) < ns[-1][0]:
+                    ns = sorted(ns + self._children[ci].nearest(v, k), key=lambda n: n[0])[0:k]
             return ns
+
+        def _nearestbounds(self, v):
+            """Get child index and nearest point tuples in which to look for points close to v.
+
+            The first item is always a tuple of the child index containing v and v itself.
+            Subsequent items consist of the index of another branch and a point representing the
+            nearest possible location to v in that branch.
+            """
+            ci = self._child(v)
+            bs = [(ci, v)] # always start with v's own branch
+            for bi in range(len(self._children)):
+                if bi == ci: continue
+                diff = bi ^ ci
+                bits = [diff & (1 << i) == (1 << i) for i in range(len(v))]
+                p = [self._medians[i] if bits[i] else v[i] for i in range(len(bits))]
+                bs.append((bi, p))
+            return bs
 
         def __repr__(self):
             return 'PointTree._Branch({0})'.format(repr([tuple(v) for v in self.contents()]))

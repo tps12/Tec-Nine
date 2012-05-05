@@ -47,46 +47,46 @@ class PointTreeTestCase(TestCase):
 
     def test_2d(self):
         grid = """
+         10 + - - - - - - - - - +
+            . o                 .
+            .                   .
+            .                   .
+            .       2   1       .
+          5 .                   .
+            .           v       .
+            .                   .
+            .                 3 .
+            . o                 .
+          0 + - - - - - - - - - +
             0         5        10
-            + - - - - - - - - - + 0
-            . o               o .
-            .                   .
-            .                   .
-            .           1       .
-            .                   . 5
-            .       v   0       .
-            .                   .
-            .   2               .
-            .                   .
-            + - - - - - - - - - + 10
             """
-        t = PointTree((1,1), (1,9), (4,6), (6,6), (8,2))
+        t = PointTree((1,1), (1,9), (4,6), (6,6), (9,2))
         self.longMessage = True
-        self.assertEqual(t.nearest((6,4), 3), [(6,6), (4,6), (8,2)], msg=grid)
+        self.assertEqual(t.nearest((6,4), 3), [(6,6), (4,6), (9,2)], msg=grid)
 
     def test_2d_across_boundary(self):
         grid = """
+         10 + - - - - + - - - - +
+            . o       .         .
+            .         .         .
+            .         .         .
+            .       2 . 1       .
+          5 + - - - - + - - - - +
+            .         . v       .
+            .         .         .
+            .         .       3 .
+            . o       .         .
+          0 + - - - - + - - - - +
             0         5        10
-            + - - - - + - - - - + 0
-            . o       .       o .
-            .         .         .
-            .         .         .
-            .         . 1       .
-            + - - - - + - - - - + 5
-            .       v . 0       .
-            .         .         .
-            .   2     .         .
-            .         .         .
-            + - - - - + - - - - + 10
             """
-        args = [(1,1), (1,9), (4,6), (6,6), (8,2)]
+        args = [(1,1), (1,9), (4,6), (6,6), (9,2)]
         while True:
             t = PointTree(*args)
             if t.depth() > 1:
                 break
             args += [(0,0), (9,9)]
         self.longMessage = True
-        self.assertEqual(t.nearest((6,4), 3), [(6,6), (4,6), (8,2)], msg=grid)
+        self.assertEqual(t.nearest((6,4), 3), [(6,6), (4,6), (9,2)], msg=grid)
 
 if __name__ == '__main__':
     main()
