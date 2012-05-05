@@ -1,5 +1,15 @@
 class PointTree(object):
     def __init__(self, *vs):
+        if len(vs) == 1:
+            try:
+                self._values = dict(vs[0])
+                vs = vs[0].keys()
+            except TypeError:
+                raise ValueError('Must specify at least two points')
+        else:
+            if len(set(vs)) < len(vs):
+                raise ValueError('Points must be unique')
+            self._values = dict([[v, v] for v in vs])
         if len(vs) < 2: raise ValueError('Must specify at least two points')
         try: iter(vs[0])
         except TypeError: vs = [[v] for v in vs]
@@ -16,7 +26,8 @@ class PointTree(object):
         try: iter(v)
         except TypeError: v = [v]
         ns = self._root.nearest(v, k)
-        return [n[1][0] for n in ns] if len(ns[0][1]) == 1 else [tuple(n[1]) for n in ns]
+        keys = [n[1][0] for n in ns] if len(ns[0][1]) == 1 else [tuple(n[1]) for n in ns]
+        return [self._values[k] for k in keys]
 
     @classmethod
     def branch(cls, vs):

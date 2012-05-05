@@ -7,6 +7,12 @@ class PointTreeTestCase(TestCase):
     def test_constructor(self):
         PointTree((0,0), (1,1))
 
+    def test_constructor_with_values(self):
+        PointTree({(0,0): 'a', (1,1): 'b'})
+
+    def test_unique(self):
+        self.assertRaises(ValueError, PointTree, (0,0), (1,1), (1,1))
+
     def test_requires_two_points(self):
         self.assertRaises(ValueError, PointTree, (0,0))
 
@@ -18,14 +24,6 @@ class PointTreeTestCase(TestCase):
 
     def test_requires_numbers(self):
         self.assertRaises(ValueError, PointTree, ('a','b'), ('x','y'))
-
-    def test_infinite_branch(self):
-        # figure out length required to cause branch
-        count = 2
-        while PointTree(*range(count)).depth() < 2:
-            count += 1
-        # create a tree with uniform values to try to force infinite recursion
-        PointTree(*[0 for i in range(count)])
 
     def test_empty_branch(self):
         ps = [(0,0), (1,0), (0,1)]
@@ -40,6 +38,10 @@ class PointTreeTestCase(TestCase):
     def test_nearest(self):
         t = PointTree(0, 1, 2, 3, 4, 5)
         self.assertEqual(t.nearest(0.75, 3), [1, 0, 2])
+
+    def test_nearest_dict(self):
+        t = PointTree({0:'a', 1:'b', 2:'c', 3:'d', 4:'e', 5:'f'})
+        self.assertEqual(t.nearest(0.75, 3), ['b', 'a', 'c'])
 
     def test_nearest_across_boundary(self):
         t = PointTree(0, 1, 2, 3, 4, 5)
@@ -80,11 +82,15 @@ class PointTreeTestCase(TestCase):
             0         5        10
             """
         args = [(1,1), (1,9), (4,6), (6,6), (9,2)]
+        dl = 0.01
+        i = 1
         while True:
             t = PointTree(*args)
             if t.depth() > 1:
                 break
-            args += [(0,0), (9,9)]
+            idl = i * dl
+            args += [(idl, idl), (9-idl,9-idl)]
+            i += 1
         self.longMessage = True
         self.assertEqual(t.nearest((6,4), 3), [(6,6), (4,6), (9,2)], msg=grid)
 
