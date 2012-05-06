@@ -22,6 +22,13 @@ class PointTreeTestCase(TestCase):
     def test_1d(self):
         PointTree(1, 2, 3)
 
+    def test_branches_around_zero(self):
+        args = [-1, 1]
+        i = 2
+        while PointTree(*args).depth() < 2:
+            args += [-i, i]
+            i += 1
+
     def test_requires_numbers(self):
         self.assertRaises(ValueError, PointTree, ('a','b'), ('x','y'))
 
