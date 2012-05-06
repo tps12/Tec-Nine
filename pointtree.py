@@ -22,12 +22,23 @@ class PointTree(object):
     def depth(self):
         return self._root.depth()
 
-    def nearest(self, v, k = 1):
+    def nearest(self, v, k = 1, **kwargs):
         try: iter(v)
         except TypeError: v = [v]
         ns = self._root.nearest(v, k)
-        keys = [n[1][0] for n in ns] if len(ns[0][1]) == 1 else [tuple(n[1]) for n in ns]
-        return [self._values[k] for k in keys]
+        
+        try:
+            score = kwargs['score']
+        except KeyError:
+            score = False
+
+        is1d = len(v) == 1
+        ns = [(n[0], n[1][0] if is1d else tuple(n[1])) for n in ns]
+
+        if score:
+            return [(n[0], self._values[n[1]]) for n in ns]
+        else:
+            return [self._values[n[1]] for n in ns]
 
     @classmethod
     def branch(cls, vs):

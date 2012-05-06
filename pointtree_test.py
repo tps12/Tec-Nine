@@ -50,6 +50,12 @@ class PointTreeTestCase(TestCase):
         t = PointTree({0:'a', 1:'b', 2:'c', 3:'d', 4:'e', 5:'f'})
         self.assertEqual(t.nearest(0.75, 3), ['b', 'a', 'c'])
 
+    def test_nearest_score(self):
+        t = PointTree({0:'a', 1:'b', 2:'c', 3:'d', 4:'e', 5:'f'})
+        nss = t.nearest(0.75, 3, score=True)
+        self.assertEqual([ns[1] for ns in nss], ['b', 'a', 'c'])
+        self.assertTrue(nss[0][0] < nss[1][0] < nss[2][0])
+
     def test_nearest_across_boundary(self):
         t = PointTree(0, 1, 2, 3, 4, 5)
         self.assertEqual(t.nearest(3.25, 3), [3, 4, 2])
