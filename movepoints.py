@@ -81,11 +81,22 @@ class MovePoints(object):
 
     def step(self):
         start = time()
-        move([t for lat in self.tiles for t in lat],
-             [t for lat in self.tiles for t in lat if t.value == 1],
-             self._velocity,
-             self._index,
-             self._indexedtiles)
+
+        group = [t for lat in self.tiles for t in lat if t.value == 1]
+        for t in self._indexedtiles:
+            t.value = 0
+        for t in group:
+            t.value = 2
+
+        group, v = move(self._indexedtiles,
+                        group,
+                        self._velocity,
+                        self._index)
+        for t, ts in group.iteritems():
+            t.value = 1
+
+        self._velocity = v
+
         self.time = time() - start
 
     def direction(self, value):

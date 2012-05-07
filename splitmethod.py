@@ -88,8 +88,10 @@ def split(tiles):
     vs.append(vs[0])
 
     p = SphericalPolygon(vs, average(vs)/norm(average(vs)))
+    a, b = [], []
     for t in tiles:
         if p.contains(t.vector):
-            t.value = 2
+            a.append(t)
         else:
-            t.value = 3
+            b.append(t)
+    return a, b

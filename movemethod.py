@@ -56,13 +56,7 @@ def farthest(tiles, p):
     """Get the farthest tile from a point."""
     return mostest(tiles, p, lambda d2, md2: d2 > md2)
 
-def move(tiles, group, v, index, indexedtiles):
-    for t in tiles:
-        t.value = 0
-
-    for t in group:
-        t.value = 2
-
+def move(tiles, group, v, index):
     vs = [t.vector for t in group]
     a = average(vs)
     a /= norm(a)
@@ -72,12 +66,15 @@ def move(tiles, group, v, index, indexedtiles):
 
     speed = norm(v)
 
+    new = dict()
     for i in range(len(vs)):
         loc = list(rotate(vs[i], axis, speed))
-        for t in [indexedtiles[i] for i in index.nearest(loc, 2)]:
-            if t.value != 1:
-                t.value = 1
+        for t in [tiles[n] for n in index.nearest(loc, 2)]:
+            if t in new:
+                new[t].append(tiles[i])
+            else:
+                new[t] = [tiles[i]]
 
     vp = rotate(v, axis, speed)
-    for i in range(len(v)):
-        v[i] = vp[i]
+
+    return new, vp
