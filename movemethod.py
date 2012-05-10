@@ -68,13 +68,13 @@ def move(tiles, group, v, index):
 
     new = dict()
     for i in range(len(vs)):
-        loc = list(rotate(vs[i], axis, speed))
+        loc = list(rotate(vs[i], axis, speed)) if speed > 0 else vs[i]
         for t in [tiles[n] for n in index.nearest(loc, 2)]:
             if t in new:
                 new[t].append(tiles[i])
             else:
                 new[t] = [tiles[i]]
 
-    vp = rotate(v, axis, speed)
+    vp = rotate(v, axis, speed) if speed > 0 else v
 
     return new, vp

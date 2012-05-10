@@ -87,6 +87,11 @@ def split(tiles):
     vs.append(c.vector)
     vs.append(vs[0])
 
+    # velocity directions
+    va = rotate(fc, c.vector, sum(bs)/2)
+    va /= norm(va)
+    vb = -va
+
     p = SphericalPolygon(vs, average(vs)/norm(average(vs)))
     a, b = [], []
     for t in tiles:
@@ -94,4 +99,8 @@ def split(tiles):
             a.append(t)
         else:
             b.append(t)
-    return a, b
+
+    if len(a) == 0 or len(b) == 0:
+        return ((a+b, (0, 0, 0)),)
+
+    return (a, va), (b, vb)

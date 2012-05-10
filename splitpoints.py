@@ -65,7 +65,7 @@ class SplitPoints(object):
         self.split()
 
     def split(self):
-        a, b = split([t for lat in self.tiles for t in lat if t.value == 1])
+        a, b = [tiles for (tiles, v) in split([t for lat in self.tiles for t in lat if t.value == 1])]
         for t in a:
             t.value = 2
         for t in b:
