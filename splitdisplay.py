@@ -5,7 +5,7 @@ from PySide.QtGui import QColor, QImage, QPainter, QWidget, QSizePolicy
 from projection import *
 
 class SplitDisplay(QWidget):
-    _projections = [sinusoidal, mercator, flat]
+    _projections = [mercator, sinusoidal, flat]
     
     def __init__(self, sim):
         QWidget.__init__(self)
