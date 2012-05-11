@@ -6,6 +6,7 @@ class SplitDisplay(QWidget):
     
     PROJECT_MERC = 0
     PROJECT_SINE = 1
+    PROJECT_FLAT = 2
 
     def __init__(self, sim):
         QWidget.__init__(self)
@@ -100,7 +101,7 @@ class SplitDisplay(QWidget):
                        
                         screen.drawImage((x + (res[0] - len(self._sim.tiles[y]))/2)*block.width(),
                                          y*block.height(), block)
-            else:
+            elif self._projection == self.PROJECT_MERC:
                 res = len(self._sim.tiles)
                 template = QImage(size[0]/res, size[1]/res, QImage.Format_RGB32)
 
@@ -120,6 +121,29 @@ class SplitDisplay(QWidget):
                         block.fill(self.tilecolor(self._sim.tiles[y][xo], self._time).rgb())
  
                         screen.drawImage(x*block.width(), y*block.height(), block)
+            else:
+                res = len(self._sim.tiles)
+                template = QImage(size[0]/res/2, size[1]/res, QImage.Format_RGB32)
+
+                for y in range(res):
+                    r = self.rotate
+                    o = (r + 90) * len(self._sim.tiles[y])/360
+                    for x in range(len(self._sim.tiles[y])):
+                        block = template.copy()
+
+                        xo = x + o
+                        if xo > len(self._sim.tiles[y])-1:
+                            xo -= len(self._sim.tiles[y])
+                        elif xo < 0:
+                            xo += len(self._sim.tiles[y])
+
+                        v = self._sim.tiles[y][x].vector
+                        sx, sy = [(v[i+1]+1)/2 for i in range(2)]
+                        sx = 1 + (sx if v[0] > 0 else -sx)
+
+                        block.fill(self.tilecolor(self._sim.tiles[y][xo], self._time).rgb())
+
+                        screen.drawImage(sx*res*block.width(), sy*res*block.height(), block)
 
             screen.end()
 

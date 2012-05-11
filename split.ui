@@ -141,6 +141,11 @@
            <string>Sinusoidal</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Flat</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
