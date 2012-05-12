@@ -73,6 +73,8 @@ class PlanetSimulation(object):
         shape = Shape(shape, p, o, v).projection()
 
         self._shapes = [Group([t for lat in self.tiles for t in lat if shape.contains(t.vector)], v)]
+        for t in self._shapes[0].tiles:
+            t.value = 1
 
         self._indexedtiles = []
         for lat in self.tiles:
@@ -86,18 +88,34 @@ class PlanetSimulation(object):
         self.dirty = True
 
     def update(self):
-        """Update the simulation by one timestep."""
-        for t in self._indexedtiles:
-            t.value = 0
+        old = set([t for shape in self._shapes for t in shape.tiles])
+        new = dict()
 
+        """Update the simulation by one timestep."""
         for i in range(len(self._shapes)):
             group, v = move(self._indexedtiles,
                             self._shapes[i].tiles,
                             self._shapes[i].v,
                             self._index)
             self._shapes[i] = Group(group.keys(), v)
-            for t in self._shapes[i].tiles:
-                t.value = min(t.value + 1, 10)
+            for dest, sources in group.iteritems():
+                if dest in new:
+                    new[dest] += sources
+                else:
+                    new[dest] = sources
+
+        seen = set()
+        for dest, sources in new.iteritems():
+            dest.value = sum([t.value for t in sources])/len(sources)
+            if not dest in seen:
+                try:
+                    old.remove(dest)
+                except KeyError:
+                    dest.value = min(10, dest.value + 1)
+                seen.add(dest)
+
+        for t in old:
+            t.value = 0
 
         # occaisionally split big shapes
         for i in range(len(self._shapes)):
