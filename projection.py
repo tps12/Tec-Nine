@@ -45,16 +45,33 @@ def mercator(screen, size, tiles, rotate, tilecolor):
 
 def flat(screen, size, tiles, rotate, tilecolor):
         res = len(tiles)
-        template = QImage(size[0]/res/2, size[1]/res, QImage.Format_RGB32)
+        template = QImage(size[0]/res, 2*size[1]/res, QImage.Format_RGB32)
 
         screen.setBrush(Qt.white)
-        screen.drawEllipse(0, 0, res * template.width(), res * template.height())
-        screen.drawEllipse(res * template.width(), 0, res * template.width(), res * template.height())
+        screen.drawEllipse(0, 0, res * template.width()/2, res * template.height()/2)
+        screen.drawEllipse(res * template.width()/2, 0, res * template.width()/2, res * template.height()/2)
 
         for y in range(res):
             r = rotate
             o = (r + 90) * len(tiles[y])/360
-            for x in range(len(tiles[y])):
+
+            # draw each hemisphere from outside to center
+            sections = [[] for s in range(4)]
+            i = 0
+            while i < len(tiles[y]) and tiles[y][i].vector[0] < 0:
+                sections[0].append(i)
+                i += 1
+            while i < len(tiles[y]) and tiles[y][i].vector[0] > tiles[y][i-1].vector[0]:
+                sections[1].append(i)
+                i += 1
+            while i < len(tiles[y]) and tiles[y][i].vector[0] > 0:
+                sections[2].append(i)
+                i += 1
+            while i < len(tiles[y]):
+                sections[3].append(i)
+                i += 1
+                
+            for x in sections[0] + list(reversed(sections[3])) + sections[2] + list(reversed(sections[1])):
                 block = template.copy()
 
                 xo = x + o
@@ -69,5 +86,5 @@ def flat(screen, size, tiles, rotate, tilecolor):
 
                 block.fill(tilecolor(tiles[y][xo]).rgb())
 
-                screen.drawImage(sx*res*block.width(), sy*res*block.height(), block)
+                screen.drawImage(sx*res*block.width()/2, sy*res*block.height()/2, block)
 
