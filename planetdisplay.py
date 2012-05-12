@@ -2,6 +2,8 @@ from math import sin, cos, pi
 
 from PySide.QtGui import QColor, QImage, QPainter, QWidget, QSizePolicy
 
+from projection import *
+
 def redbluescale(v):
     r = 255 - 255 * v 
     b = 255 * v
@@ -41,12 +43,15 @@ def coolscale(v):
 
 class PlanetDisplay(QWidget):
     dt = 0.01
+
+    _projections = [mercator, sinusoidal, flat]
     
     def __init__(self, sim):
         QWidget.__init__(self)
         self._sim = sim
         self._screen = None
         self._rotate = 0
+        self._projection = 0
         self.selected = None
         self.dirty = True
 
@@ -59,6 +64,16 @@ class PlanetDisplay(QWidget):
         self._rotate = value
         self._dirty = True
     
+    @property
+    def projection(self):
+        return self._projection
+
+    @projection.setter
+    def projection(self, value):
+        self._projection = value
+        self._dirty = True
+    
+    @property
     def mousePressEvent(self, e):
         mx, my = e.pos().toTuple()
 
@@ -87,7 +102,17 @@ class PlanetDisplay(QWidget):
             self._dirty = True
 
             return True
-    
+
+    def tilecolor(self, tile):
+        h = tile.value
+
+        if h > 0:
+            value = int(255 - 25 * h)
+            color = (value, value, value)
+        else:
+            color = (255, 255, 255)
+        return QColor(*color)
+   
     def paintEvent(self, e):
         surface = QPainter()
         surface.begin(self)
@@ -104,35 +129,8 @@ class PlanetDisplay(QWidget):
             screen = QPainter()
             screen.begin(self._screen)
 
-            res = max([len(r) for r in self._sim.tiles]), len(self._sim.tiles)
-            template = QImage(size[0]/res[0], size[1]/res[1],
-                              QImage.Format_RGB32)
+            self._projections[self._projection](screen, size, self._sim.tiles, self.rotate, self.tilecolor)
 
-            for y in range(res[1]):
-                for x in range(len(self._sim.tiles[y])):
-                    block = template.copy()
-
-                    r = self.rotate
-                    o = r * len(self._sim.tiles[y])/360
-
-                    xo = x + o
-                    if xo > len(self._sim.tiles[y])-1:
-                        xo -= len(self._sim.tiles[y])
-                    elif xo < 0:
-                        xo += len(self._sim.tiles[y])
-                    h = self._sim.tiles[y][xo].value
-
-                    if self.selected == (xo,y):
-                        color = (255, 255, 0)
-                    elif h > 0:
-                        value = int(255 - 25 * h)
-                        color = (value, value, value)
-                    else:
-                        color = (255, 255, 255)
-                    block.fill(QColor(*color).rgb())
-                   
-                    screen.drawImage((x + (res[0] - len(self._sim.tiles[y]))/2)*block.width(),
-                                     y*block.height(), block)
             screen.end()
 
             self._dirty = False

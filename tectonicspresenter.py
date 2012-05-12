@@ -67,12 +67,19 @@ class TectonicsPresenter(object):
         self._view.rotate.setValue(self._display.rotate)
         self._view.rotate.sliderMoved.connect(self.rotate)
 
+        self._view.projection.setCurrentIndex(self._display.projection)
+        self._view.projection.currentIndexChanged[int].connect(self.project)
+
         self._view.pause.setVisible(False)
 
         self._uistack = uistack
 
     def rotate(self, value):
         self._display.rotate = value
+        self._view.content.update()
+
+    def project(self, value):
+        self._display.projection = value
         self._view.content.update()
 
     def done(self):
