@@ -88,24 +88,31 @@ class PlanetSimulation(object):
         self.dirty = True
 
     def update(self):
+        """Update the simulation by one timestep."""
+
         old = set([t for shape in self._shapes for t in shape.tiles])
         new = dict()
 
-        """Update the simulation by one timestep."""
+        for t in self._indexedtiles:
+            t.overlapping = []
+
         for i in range(len(self._shapes)):
             group, v = move(self._indexedtiles,
                             self._shapes[i].tiles,
                             self._shapes[i].v,
                             self._index)
             self._shapes[i] = Group(group.keys(), v)
-            for dest, sources in group.iteritems():
+            for dest, sources in group.items():
                 if dest in new:
                     new[dest] += sources
                 else:
                     new[dest] = sources
+                dest.overlapping.append(i)
+
+        collisions = {}
 
         seen = set()
-        for dest, sources in new.iteritems():
+        for dest, sources in new.items():
             dest.value = sum([t.value for t in sources])/len(sources)
             if not dest in seen:
                 try:
@@ -114,8 +121,22 @@ class PlanetSimulation(object):
                     dest.value = min(10, dest.value + 1)
                 seen.add(dest)
 
+            for pair in combinations(dest.overlapping, 2):
+                if pair in collisions:
+                    collisions[pair] += 1
+                else:
+                    collisions[pair] = 1
+
         for t in old:
             t.value = 0
+
+        # merge shapes that overlap a lot
+        for pair, count in collisions.items():
+            if count > min([len(self._shapes[i].tiles) for i in pair])/10:
+                first, second = [self._shapes[i].tiles for i in pair]
+                self._shapes[pair[0]].tiles = list(set(first + second))
+                self._shapes.remove(self._shapes[pair[1]])
+                break
 
         # occaisionally split big shapes
         for i in range(len(self._shapes)):
