@@ -87,6 +87,10 @@ class PlanetSimulation(object):
 
         self.dirty = True
 
+    @property
+    def continents(self):
+        return len(self._shapes)
+
     def update(self):
         """Update the simulation by one timestep."""
 
@@ -105,22 +109,24 @@ class PlanetSimulation(object):
             self._shapes[i] = Group(group.keys(), v)
             for dest, sources in group.items():
                 if dest in new:
-                    new[dest] += sources
+                    new[dest].append(sources)
                 else:
-                    new[dest] = sources
+                    new[dest] = [sources]
                 dest.overlapping.append(i)
 
         collisions = {}
 
         seen = set()
-        for dest, sources in new.items():
-            dest.value = sum([t.value for t in sources])/len(sources)
+        for dest, sourcelists in new.items():
+            values = [sum([t.value for t in sources])/len(sources) for sources in sourcelists]
+            dest.value = sum(values) / 2.0 if len(values) > 1 else values[0]
             if not dest in seen:
                 try:
                     old.remove(dest)
                 except KeyError:
-                    dest.value = min(10, dest.value + 1)
+                    dest.value += 1
                 seen.add(dest)
+            dest.value = min(10, dest.value)
 
             for pair in combinations(dest.overlapping, 2):
                 if pair in collisions:
@@ -162,12 +168,30 @@ class PlanetSimulation(object):
                     tile.overlapping = list(sources)
 
         # merge shapes that overlap a lot
+        groups = []
         for pair, count in collisions.items():
             if count > min([len(self._shapes[i].tiles) for i in pair])/10:
-                first, second = [self._shapes[i].tiles for i in pair]
-                self._shapes[pair[0]].tiles = list(set(first + second))
-                self._shapes.remove(self._shapes[pair[1]])
-                break
+                for group in groups:
+                    if pair[0] in group:
+                        group.add(pair[1])
+                        break
+                    elif pair[1] in group:
+                        group.add(pair[0])
+                        break
+                else:
+                    groups.append(set(pair))
+
+        gone = []
+        for group in groups:
+            largest = max(group, key=lambda i: len(self._shapes[i].tiles))
+            tiles = list(self._shapes[largest].tiles)
+            for other in group:
+                if other != largest:
+                    tiles += self._shapes[other].tiles
+                    gone.append(self._shapes[other])
+            self._shapes[largest].tiles = list(set(tiles))
+        for s in gone:
+            self._shapes.remove(s)
 
         # occaisionally split big shapes
         for i in range(len(self._shapes)):
