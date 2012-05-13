@@ -34,6 +34,8 @@ class PlanetSimulation(object):
 
         self._erode = dt
 
+        tilearea = 4 * pi * r**2
+
         degrees = 2
 
         self.tiles = []
@@ -49,6 +51,18 @@ class PlanetSimulation(object):
                        [Tile(flat, lon)])
                 lon += d
             self.tiles.append(row)
+
+        self._indexedtiles = []
+        for lat in self.tiles:
+            for t in lat:
+                self._indexedtiles.append(t)
+
+        tilearea /= len(self._indexedtiles)
+
+        # the numerator of the split probability, where
+        # the number of tiles in the shape is the denomenator:
+        # a 50M km^2 continent has a 50/50 chance of splitting in a given step
+        self._splitnum = 25e6/tilearea
 
         self.adj = Adjacency(self.tiles)
                 
@@ -75,12 +89,6 @@ class PlanetSimulation(object):
         self._shapes = [Group([t for lat in self.tiles for t in lat if shape.contains(t.vector)], v)]
         for t in self._shapes[0].tiles:
             t.value = 1
-
-        self._indexedtiles = []
-        for lat in self.tiles:
-            for t in lat:
-                i = len(self._indexedtiles)
-                self._indexedtiles.append(t)
 
         self._index = PointTree(dict([[self._indexedtiles[i].vector, i]
                                       for i in range(len(self._indexedtiles))]))
@@ -195,7 +203,8 @@ class PlanetSimulation(object):
 
         # occaisionally split big shapes
         for i in range(len(self._shapes)):
-            if random.uniform(0,1) > 500/float(len(self._shapes[i].tiles)):
-                self._shapes[i:i+1] = [Group(ts, self._shapes[i].v + v/20) for ts, v in split(self._shapes[i].tiles)]
+            if random.uniform(0,1) > self._splitnum / len(self._shapes[i].tiles):
+                self._shapes[i:i+1] = [Group(ts, self._shapes[i].v + v * self._dp)
+                                       for ts, v in split(self._shapes[i].tiles)]
 
         self.dirty = True
