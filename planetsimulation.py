@@ -95,6 +95,7 @@ class PlanetSimulation(object):
 
         for t in self._indexedtiles:
             t.overlapping = []
+            t.dv = []
 
         for i in range(len(self._shapes)):
             group, v = move(self._indexedtiles,
@@ -129,6 +130,36 @@ class PlanetSimulation(object):
 
         for t in old:
             t.value = 0
+
+        # erode to lower adjacent tiles
+        for i in range(len(self.tiles)):
+            for j in range(len(self.tiles[i])):
+                tile = self.tiles[i][j]
+                if tile.value > 0:
+                    adj = self.adj[(j,i)]
+                    for (j2,i2) in adj:
+                        other = self.tiles[i2][j2]
+                        d = tile.value - other.value
+                        if d > 0:
+                            d /= len(adj)
+                            tile.dv.append(ErodedMaterial(-d))
+                            other.dv.append(ErodedMaterial(d, tile.overlapping))
+
+        for i in range(len(self.tiles)):
+            for j in range(len(self.tiles[i])):
+                tile = self.tiles[i][j]
+                if len(tile.overlapping) > 0:
+                    tile.value += sum([e.amount for e in tile.dv])
+                elif sum([e.amount for e in tile.dv]) > 1.5:
+                    tile.value = sum([e.amount for e in tile.dv])
+                    sources = set()
+                    for e in tile.dv:
+                        for s in e.sources:
+                            sources.add(s)
+                    for s in sources:
+                        if not tile in self._shapes[s].tiles:
+                            self._shapes[s].tiles.append(tile)
+                    tile.overlapping = list(sources)
 
         # merge shapes that overlap a lot
         for pair, count in collisions.items():
