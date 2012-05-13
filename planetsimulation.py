@@ -32,7 +32,7 @@ class PlanetSimulation(object):
         # max speed is 100km per million years
         self._dp = 100.0/r * dt
 
-        self._erode = dt
+        self._build = dt
 
         tilearea = 4 * pi * r**2
 
@@ -110,6 +110,7 @@ class PlanetSimulation(object):
             t.dv = []
 
         for i in range(len(self._shapes)):
+            speed = norm(self._shapes[i].v)
             group, v = move(self._indexedtiles,
                             self._shapes[i].tiles,
                             self._shapes[i].v,
@@ -117,22 +118,22 @@ class PlanetSimulation(object):
             self._shapes[i] = Group(group.keys(), v)
             for dest, sources in group.items():
                 if dest in new:
-                    new[dest].append(sources)
+                    new[dest].append((sources,speed))
                 else:
-                    new[dest] = [sources]
+                    new[dest] = [(sources,speed)]
                 dest.overlapping.append(i)
 
         collisions = {}
 
         seen = set()
         for dest, sourcelists in new.items():
-            values = [sum([t.value for t in sources])/len(sources) for sources in sourcelists]
+            values = [sum([t.value for t in sources])/len(sources) for sources, speed in sourcelists]
             dest.value = sum(values) / 2.0 if len(values) > 1 else values[0]
             if not dest in seen:
                 try:
                     old.remove(dest)
                 except KeyError:
-                    dest.value += 1
+                    dest.value += self._build * sum([speed for sources, speed in sourcelists])/len(sourcelists)
                 seen.add(dest)
             dest.value = min(10, dest.value)
 
