@@ -1,5 +1,6 @@
 from math import sin, cos, pi
 
+from PySide.QtCore import Qt
 from PySide.QtGui import QColor, QImage, QPainter, QWidget, QSizePolicy
 
 from projection import *
@@ -107,10 +108,10 @@ class PlanetDisplay(QWidget):
         h = tile.value
 
         if h > 0:
-            value = int(255 - 25 * h)
+            value = int(128 + 12.5 * h)
             color = (value, value, value)
         else:
-            color = (255, 255, 255)
+            color = (0, 0, 0)
         return QColor(*color)
    
     def paintEvent(self, e):
@@ -124,12 +125,12 @@ class PlanetDisplay(QWidget):
             
             size = self._screen.width(), self._screen.height()
         
-            self._screen.fill(QColor(0,0,0).rgb())
+            self._screen.fill(QColor(255,255,255).rgb())
 
             screen = QPainter()
             screen.begin(self._screen)
 
-            self._projections[self._projection](screen, size, self._sim.tiles, self.rotate, self.tilecolor)
+            self._projections[self._projection](screen, size, self._sim.tiles, self.rotate, self.tilecolor, Qt.black)
 
             screen.end()
 

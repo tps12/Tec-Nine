@@ -1,7 +1,7 @@
 from PySide.QtCore import Qt
 from PySide.QtGui import QImage
 
-def sinusoidal(screen, size, tiles, rotate, tilecolor):
+def sinusoidal(screen, size, tiles, rotate, tilecolor, backcolor = None):
         res = max([len(r) for r in tiles]), len(tiles)
         template = QImage(size[0]/res[0], size[1]/res[1], QImage.Format_RGB32)
 
@@ -22,7 +22,7 @@ def sinusoidal(screen, size, tiles, rotate, tilecolor):
                
                 screen.drawImage((x + (res[0] - len(tiles[y]))/2)*block.width(), y*block.height(), block)
 
-def mercator(screen, size, tiles, rotate, tilecolor):
+def mercator(screen, size, tiles, rotate, tilecolor, backcolor = None):
         res = len(tiles)
         template = QImage(size[0]/res, size[1]/res, QImage.Format_RGB32)
 
@@ -43,11 +43,13 @@ def mercator(screen, size, tiles, rotate, tilecolor):
 
                 screen.drawImage(x*block.width(), y*block.height(), block)
 
-def flat(screen, size, tiles, rotate, tilecolor):
+def flat(screen, size, tiles, rotate, tilecolor, backcolor = None):
+        backcolor = Qt.white if backcolor is None else backcolor
+
         res = len(tiles)
         template = QImage(size[0]/res, 2*size[1]/res, QImage.Format_RGB32)
 
-        screen.setBrush(Qt.white)
+        screen.setBrush(backcolor)
         screen.drawEllipse(0, 0, res * template.width()/2, res * template.height()/2)
         screen.drawEllipse(res * template.width()/2, 0, res * template.width()/2, res * template.height()/2)
 
