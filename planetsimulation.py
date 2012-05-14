@@ -194,11 +194,15 @@ class PlanetSimulation(object):
         for group in groups:
             largest = max(group, key=lambda i: len(self._shapes[i].tiles))
             tiles = list(self._shapes[largest].tiles)
+            v = array(self._shapes[largest].v) * len(tiles)
             for other in group:
                 if other != largest:
+                    v += array(self._shapes[other].v) * len(self._shapes[other].tiles)
                     tiles += self._shapes[other].tiles
                     gone.append(self._shapes[other])
             self._shapes[largest].tiles = list(set(tiles))
+            v /= len(tiles)
+            self._shapes[largest].v = v
         for s in gone:
             self._shapes.remove(s)
 
