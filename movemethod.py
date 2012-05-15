@@ -76,5 +76,6 @@ def move(tiles, group, v, index):
                 new[t] = [group[i]]
 
     vp = rotate(v, axis, speed) if speed > 0 else v
+    vp = vp - dot(vp, a) * a
 
     return new, vp
