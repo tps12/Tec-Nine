@@ -99,6 +99,10 @@ class PlanetSimulation(object):
     def continents(self):
         return len(self._shapes)
 
+    @property
+    def land(self):
+        return int(100.0*sum([len(s.tiles) for s in self._shapes])/len(self._indexedtiles) + 0.5)
+
     def update(self):
         """Update the simulation by one timestep."""
 

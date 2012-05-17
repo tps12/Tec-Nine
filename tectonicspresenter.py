@@ -62,6 +62,7 @@ class TectonicsPresenter(object):
         self._display = PlanetDisplay(self._model)
 
         self._view.continents.setNum(self._model.continents)
+        self._view.percent.setNum(self._model.land)
 
         self._view.content.setLayout(QGridLayout())
         self._view.content.layout().addWidget(self._display)
@@ -114,4 +115,5 @@ class TectonicsPresenter(object):
         self._ticks += 1
         self._view.ticks.setNum(self._ticks)
         self._view.continents.setNum(self._model.continents)
+        self._view.percent.setNum(self._model.land)
         self._view.content.update()
