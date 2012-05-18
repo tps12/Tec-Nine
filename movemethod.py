@@ -1,5 +1,5 @@
 from math import pi, sqrt, atan2, sin, cos
-from random import random
+from random import random, choice
 
 from numpy import array, cross, dot
 from numpy.linalg import norm
@@ -56,7 +56,7 @@ def farthest(tiles, p):
     """Get the farthest tile from a point."""
     return mostest(tiles, p, lambda d2, md2: d2 > md2)
 
-def move(tiles, group, v, index):
+def move(tiles, group, v, adj, index):
     vs = [t.vector for t in group]
     a = average(vs)
     a /= norm(a)
@@ -66,6 +66,7 @@ def move(tiles, group, v, index):
 
     speed = norm(v)
 
+    old = set(group)
     new = dict()
     for i in range(len(vs)):
         loc = list(rotate(vs[i], axis, speed)) if speed > 0 else vs[i]
@@ -74,6 +75,15 @@ def move(tiles, group, v, index):
                 new[t].append(group[i])
             else:
                 new[t] = [group[i]]
+ 
+    while len(new) > len(old):
+        edge = [t for t in new.keys() if t not in old and any([n not in new for n in adj[t]])]
+        if len(edge) == 0:
+            break
+        while len(new) > len(old) and len(edge) > 0:
+            t = choice(edge)
+            del new[t]
+            edge.remove(t)
 
     vp = rotate(v, axis, speed) if speed > 0 else v
     vp = vp - dot(vp, a) * a

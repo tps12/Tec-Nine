@@ -42,6 +42,12 @@ class MovePoints(object):
                 lon += d
             self.tiles.append(row)
 
+        adj = Adjacency(self.tiles)
+        self._adj = dict()
+        for y in range(len(self.tiles)):
+            for x in range(len(self.tiles[y])):
+                self._adj[self.tiles[y][x]] = [self.tiles[j][i] for i, j in adj[(x,y)]]
+
         self.reset(0, 1)
 
     def reset(self, direction, speed):
@@ -91,6 +97,7 @@ class MovePoints(object):
         group, v = move(self._indexedtiles,
                         group,
                         self._velocity,
+                        self._adj,
                         self._index)
         for t, ts in group.iteritems():
             t.value = 1

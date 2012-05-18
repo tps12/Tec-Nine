@@ -66,6 +66,11 @@ class PlanetSimulation(object):
 
         self.adj = Adjacency(self.tiles)
                 
+        self._tileadj = dict()
+        for y in range(len(self.tiles)):
+            for x in range(len(self.tiles[y])):
+                self._tileadj[self.tiles[y][x]] = [self.tiles[j][i] for i, j in self.adj[(x,y)]]
+
         xmax = max([len(self.tiles[i]) for i in range(len(self.tiles))])
 
         dimensions = xmax, len(self.tiles)
@@ -118,6 +123,7 @@ class PlanetSimulation(object):
             group, v = move(self._indexedtiles,
                             self._shapes[i].tiles,
                             self._shapes[i].v,
+                            self._tileadj,
                             self._index)
             self._shapes[i] = Group(group.keys(), v)
             for dest, sources in group.items():
