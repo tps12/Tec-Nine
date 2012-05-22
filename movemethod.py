@@ -36,13 +36,17 @@ def center(tiles):
     a = average([t.vector for t in tiles])
     return closest(tiles, a)
 
+def dist2(p1, p2):
+    """Get the distance squared between two points."""
+    return sum([(p1[i]-p2[i])**2 for i in range(len(p1))])
+
 def mostest(tiles, p, fn):
     """Return the most whatevery tile relative to a point,
     given a comparison function that evaluates whateveriness.
     """
     m, md2 = None, None
     for tile in tiles:
-        d2 = sum([(tile.vector[i]-p[i])**2 for i in range(len(p))])
+        d2 = dist2(tile.vector, p)
         if md2 is None or fn(d2, md2):
             m = tile
             md2 = d2
@@ -76,14 +80,19 @@ def move(tiles, group, v, adj, index):
             else:
                 new[t] = [group[i]]
  
-    while len(new) > len(old):
+    na = average([t.vector for t in new.keys()])
+    if len(new) > len(group):
+        # a leading edge tile is:
+        #    - in the new group
+        #    - not in the old group
+        #    - has at least one neighbor not in the new group
+
         edge = [t for t in new.keys() if t not in old and any([n not in new for n in adj[t]])]
-        if len(edge) == 0:
-            break
-        while len(new) > len(old) and len(edge) > 0:
-            t = choice(edge)
+
+        edge = sorted(edge, key=lambda t: dist2(t.vector, na))
+        while len(new) > len(group) and len(edge) > 0:
+            t = edge.pop()
             del new[t]
-            edge.remove(t)
 
     vp = rotate(v, axis, speed) if speed > 0 else v
     vp = vp - dot(vp, a) * a
