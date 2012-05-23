@@ -32,7 +32,7 @@ class PlanetSimulation(object):
         # max speed is 100km per million years
         self._dp = 100.0/r * dt
 
-        self._build = 2.75 * dt
+        self._build = 2 * dt
 
         tilearea = 4 * pi * r**2
 
@@ -137,8 +137,7 @@ class PlanetSimulation(object):
 
         seen = set()
         for dest, sourcelists in new.items():
-            values = [sum([t.value for t in sources])/len(sources) for sources, speed in sourcelists]
-            dest.value = sum(values) / 2.0 if len(values) > 1 else values[0]
+            dest.value = sum([sum([t.value for t in sources])/len(sources) for sources, speed in sourcelists])
             if not dest in seen:
                 try:
                     old.remove(dest)
