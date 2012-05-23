@@ -5,6 +5,8 @@ class MainWindowPresenter(object):
         self._view = view
         self._widgets = []
 
+        self._view.parent().setWindowTitle(self._view.windowTitle())
+
         m = MainMenu(self)
         self.push(m)
 
