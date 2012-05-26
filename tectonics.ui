@@ -177,6 +177,20 @@
       </layout>
      </item>
      <item>
+      <widget class="QPushButton" name="load">
+       <property name="text">
+        <string>Load...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="save">
+       <property name="text">
+        <string>Save...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="done">
        <property name="text">
         <string>Done</string>

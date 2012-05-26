@@ -1,5 +1,5 @@
-from numpy import *
-from numpy.linalg import *
+from numpy import array
+from numpy.linalg import norm
 
 from greatcirclearc import *
 from latrange import *

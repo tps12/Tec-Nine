@@ -22,3 +22,6 @@ class Tile(object):
 
         a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
         return 2 * atan2(sqrt(a), sqrt(1-a))
+
+    def __repr__(self):
+        return 'Tile({0}, {1})'.format(self.lat, self.lon)

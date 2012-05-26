@@ -5,8 +5,8 @@ from multiprocessing import cpu_count, Pool
 import random
 from time import time
 
-from numpy import *
-from numpy.linalg import *
+from numpy import cross
+from numpy.linalg import norm
 
 from latrange import *
 from pointtree import PointTree

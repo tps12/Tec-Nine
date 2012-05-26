@@ -4,8 +4,7 @@ from math import asin, acos, atan2, pi, exp, sqrt, sin, cos
 from multiprocessing import cpu_count, Pool
 import random
 
-from numpy import *
-from numpy.linalg import *
+from numpy.linalg import norm
 
 from latrange import *
 from sphericalpolygon import *

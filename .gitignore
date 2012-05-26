@@ -1,4 +1,5 @@
 *.pyc
+*.tec9
 ETOPO2v2c_i2_LSB.*
 .*.pickle
 .*.swp

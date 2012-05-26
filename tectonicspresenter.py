@@ -1,6 +1,6 @@
 from time import sleep
 
-from PySide.QtGui import QApplication, QGridLayout
+from PySide.QtGui import QApplication, QGridLayout, QFileDialog
 from PySide.QtCore import QThread, Signal
 
 from planetdisplay import PlanetDisplay
@@ -50,6 +50,8 @@ class TectonicsPresenter(object):
         self._view.start.clicked.connect(self.start)
         self._view.pause.clicked.connect(self.pause)
         self._view.done.clicked.connect(self.done)
+        self._view.load.clicked.connect(self.load)
+        self._view.save.clicked.connect(self.save)
 
         self._model = PlanetSimulation(6400, 5)
         self._worker = SimThread(self._model)
@@ -84,6 +86,25 @@ class TectonicsPresenter(object):
     def project(self, value):
         self._display.projection = value
         self._view.content.update()
+
+    def load(self):
+        filename = QFileDialog.getOpenFileName(self._view,
+                                               'Load simulation state',
+                                               '',
+                                               '*{0}'.format(PlanetSimulation.EXTENSION))[0]
+        if len(filename) > 0:
+            self._model.load(filename)
+            self._view.content.update()
+            self._ticks = -1
+            self.tick()
+
+    def save(self):
+        filename = QFileDialog.getSaveFileName(self._view,
+                                               'Save simulation state',
+                                               '',
+                                               '*{0}'.format(PlanetSimulation.EXTENSION))[0]
+        if len(filename) > 0:
+            self._model.save(filename)
 
     def done(self):
         self._worker.stop()

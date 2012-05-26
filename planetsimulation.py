@@ -4,9 +4,6 @@ from math import asin, acos, atan2, pi, exp, sqrt, sin, cos
 import random
 from time import time
 
-from numpy import *
-from numpy.linalg import *
-
 from adjacency import *
 from movemethod import move
 from pointtree import PointTree
@@ -25,6 +22,8 @@ class Group(object):
         self.v = v
 
 class PlanetSimulation(object):
+    EXTENSION = '.tec9'
+
     def __init__(self, r, dt):
         """Create a simulation for a planet of radius r km and timesteps of dt
         million years.
@@ -52,10 +51,7 @@ class PlanetSimulation(object):
                 lon += d
             self.tiles.append(row)
 
-        self._indexedtiles = []
-        for lat in self.tiles:
-            for t in lat:
-                self._indexedtiles.append(t)
+        self.initindexes()
 
         tilearea /= len(self._indexedtiles)
 
@@ -63,13 +59,6 @@ class PlanetSimulation(object):
         # the number of tiles in the shape is the denomenator:
         # a 50M km^2 continent has a 50/50 chance of splitting in a given step
         self._splitnum = 25e6/tilearea
-
-        self.adj = Adjacency(self.tiles)
-                
-        self._tileadj = dict()
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                self._tileadj[self.tiles[y][x]] = [self.tiles[j][i] for i, j in self.adj[(x,y)]]
 
         xmax = max([len(self.tiles[i]) for i in range(len(self.tiles))])
 
@@ -95,10 +84,23 @@ class PlanetSimulation(object):
         for t in self._shapes[0].tiles:
             t.value = 1
 
+        self.dirty = True
+
+    def initindexes(self):
+        self._indexedtiles = []
+        for lat in self.tiles:
+            for t in lat:
+                self._indexedtiles.append(t)
+
+        self.adj = Adjacency(self.tiles)
+                
+        self._tileadj = dict()
+        for y in range(len(self.tiles)):
+            for x in range(len(self.tiles[y])):
+                self._tileadj[self.tiles[y][x]] = [self.tiles[j][i] for i, j in self.adj[(x,y)]]
+       
         self._index = PointTree(dict([[self._indexedtiles[i].vector, i]
                                       for i in range(len(self._indexedtiles))]))
-
-        self.dirty = True
 
     @property
     def continents(self):
@@ -107,6 +109,36 @@ class PlanetSimulation(object):
     @property
     def land(self):
         return int(100.0*sum([len(s.tiles) for s in self._shapes])/len(self._indexedtiles) + 0.5)
+
+    def data(self):
+        data = dict()
+        data['random'] = random.getstate()
+        data['dp'] = self._dp
+        data['build'] = self._build
+        data['splitnum'] = self._splitnum
+        data['tiles'] = self.tiles
+        data['shapes'] = [([self._indexedtiles.index(t) for t in s.tiles], s.v) for s in self._shapes]
+        return data
+
+    def setdata(self, data):
+        random.setstate(data['random'])
+        self._dp = data['dp']
+        self._build = data['build']
+        self._splitnum = data['splitnum']
+        self.tiles = data['tiles']
+        self.initindexes()
+        self._shapes = [Group([self._indexedtiles[i] for i in tis], v) for (tis, v) in data['shapes']]
+        self.dirty = True
+
+    def load(self, filename):
+        with open(filename, 'r') as f:
+            self.setdata(load(f))
+
+    def save(self, filename):
+        if filename[-len(self.EXTENSION):] != self.EXTENSION:
+            filename += self.EXTENSION
+        with open(filename, 'w') as f:
+            dump(self.data(), f, 0)
 
     def update(self):
         """Update the simulation by one timestep."""
