@@ -74,25 +74,11 @@ def move(tiles, group, v, adj, index):
     new = dict()
     for i in range(len(vs)):
         loc = list(rotate(vs[i], axis, speed)) if speed > 0 else vs[i]
-        for t in [tiles[n] for n in index.nearest(loc, 2)]:
+        for t in [tiles[n] for n in index.nearest(loc)]:
             if t in new:
                 new[t].append(group[i])
             else:
                 new[t] = [group[i]]
- 
-    na = average([t.vector for t in new.keys()])
-    if len(new) > len(group):
-        # a leading edge tile is:
-        #    - in the new group
-        #    - not in the old group
-        #    - has at least one neighbor not in the new group
-
-        edge = [t for t in new.keys() if t not in old and any([n not in new for n in adj[t]])]
-
-        edge = sorted(edge, key=lambda t: dist2(t.vector, na))
-        while len(new) > len(group) and len(edge) > 0:
-            t = edge.pop()
-            del new[t]
 
     vp = rotate(v, axis, speed) if speed > 0 else v
     vp = vp - dot(vp, a) * a
