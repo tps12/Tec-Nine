@@ -80,6 +80,19 @@ def move(tiles, group, v, adj, index):
             else:
                 new[t] = [group[i]]
 
+    if speed > 0:
+        fill = set(new.keys())
+        while len(fill) > 0:
+            holes = set()
+            for f in fill:
+                for h in [t for t in adj[f] if t not in new]:
+                    loc = list(rotate(h.vector, axis, -speed))
+                    n = tiles[index.nearest(loc)[0]]
+                    if n in group:
+                        new[h] = [n]
+                        holes.add(h)
+            fill = holes
+
     vp = rotate(v, axis, speed) if speed > 0 else v
     vp = vp - dot(vp, a) * a
 

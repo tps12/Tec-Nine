@@ -31,7 +31,7 @@ class PlanetSimulation(object):
         # max speed is 100km per million years
         self._dp = 100.0/r * dt
 
-        self._build = 2 * dt
+        self._build = 1.5 * dt
 
         tilearea = 4 * pi * r**2
 

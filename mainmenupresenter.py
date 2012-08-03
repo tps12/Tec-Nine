@@ -12,7 +12,6 @@ class MainMenuPresenter(object):
         self._view.climate.clicked.connect(self.climate)
         self._view.split.clicked.connect(self.split)
         self._view.movepoints.clicked.connect(self.move)
-        self._view.holes.clicked.connect(self.holes)
         self._view.options.clicked.connect(self.options)
         self._view.exit.clicked.connect(self.exit)
         self._uistack = uistack
@@ -31,9 +30,6 @@ class MainMenuPresenter(object):
 
     def move(self):
         self._uistack.push(Move(self._uistack))
-
-    def holes(self):
-        self._uistack.push(Holes(self._uistack))
 
     def options(self):
         self._uistack.push(Options(self._uistack))
