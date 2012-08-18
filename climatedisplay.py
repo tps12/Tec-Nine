@@ -36,23 +36,36 @@ class ClimateDisplay(QWidget):
     def invalidate(self):
         self._dirty = True
 
+    colors = {
+        u'A' : {
+            u'f' : (0,0,255),
+            u'm' : (0,63,255),
+            u'w' : (0,127,255) },
+        u'B' : {
+            u'S' : (255,127,0),
+            u'W' : (255,0,0) },
+        u'C' : {
+            u'f' : (0,255,0),
+            u's' : (255,255,0),
+            u'w' : (127,255,0) },
+        u'D' : {
+            u'f' : (0,255,255),
+            u's' : (255,0,255),
+            u'w' : (127,127,255) },
+        u'E' : {
+            u'F' : (127,127,127),
+            u'T' : (191,191,191) }
+    }
+
     def tilecolor(self, tile):
-        h, p = tile.value, tile.pressure
+        h, k = tile.value, tile.climate
 
         if h > 0:
-            g = int(128 + 12.5 * h)
+            color = self.colors[k[0]][k[1]]
         else:
-            g = 0
+            color = 0, 0, 0
 
-        pc = abs(p) * (g + 255)/2
-        if p > 0:
-            r = g
-            b = max(g, pc)
-        else:
-            b = g
-            r = max(g, pc)
-
-        return QColor(r, g, b)
+        return QColor(*color)
     
     def paintEvent(self, e):
         surface = QPainter()
