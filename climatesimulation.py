@@ -94,26 +94,13 @@ class ClimateSimulation(object):
                 lon += d
             self.tiles.append(row)
 
-        self.initindexes()
+        self.initdicts()
         self._season = None
         self.cells = 3
 
-    def initindexes(self):
-        self._indexedtiles = []
-        for lat in self.tiles:
-            for t in lat:
-                self._indexedtiles.append(t)
-
+    def initdicts(self):
         self.adj = Adjacency(self.tiles)
-                
-        self._tileadj = dict()
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                self._tileadj[self.tiles[y][x]] = [self.tiles[j][i] for i, j in self.adj[(x,y)]]
-       
-        self._index = PointTree(dict([[self._indexedtiles[i].vector, i]
-                                      for i in range(len(self._indexedtiles))]))
-
+        
         xmax = max([len(self.tiles[i]) for i in range(len(self.tiles))])
 
         dimensions = xmax, len(self.tiles)
@@ -368,7 +355,7 @@ class ClimateSimulation(object):
 
     def earth(self):
         earth = Earth()
-        for t in self._indexedtiles:
+        for t in [t for lat in self.tiles for t in lat]:
             t.value = earth.sample(t.lat, t.lon) / 900.0
             if t.value < 0:
                 t.value = 0
