@@ -41,6 +41,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="erosion">
+     <property name="text">
+      <string>Erosion</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="split">
      <property name="text">
       <string>Split</string>
