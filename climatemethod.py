@@ -22,6 +22,11 @@ def bearing(c1, c2):
                   cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon))
     return (theta * 180/pi) % 360
 
+class ClimateInfo(object):
+    def __init__(self, precipitation, koeppen):
+        self.precipitation = precipitation
+        self.koeppen = koeppen
+
 class ClimateDict(object):
     def __init__(self, dimensions):
         self._xmax, self._ymax = dimensions
@@ -305,8 +310,8 @@ def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange):
         seasons.append(row)
 
     cc = ClimateClassification(seasons, temprange)
-    ks = {}
+    cs = {}
     for y in range(len(tiles)):
         for x in range(len(tiles[y])):
-            ks[(x,y)] = cc.climate[y][x][-1]
-    return ks
+            cs[(x,y)] = ClimateInfo(cc.climate[y][x][2], cc.climate[y][x][4])
+    return cs
