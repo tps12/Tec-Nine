@@ -4,12 +4,8 @@ from math import pi, cos
 from adjacency import *
 from climatemethod import climate
 from earth import Earth
+from erodemethod import erode
 from tile import *
-
-class ErodedMaterial(object):
-    def __init__(self, amount, sources=None):
-        self.amount = amount
-        self.sources = sources
 
 class ErosionSimulation(object):
     EXTENSION = '.tec9'
@@ -40,34 +36,19 @@ class ErosionSimulation(object):
 
         for t in [t for lat in self.tiles for t in lat]:
             t.eroding = []
-            t.overlapping = []
 
         self.adj = Adjacency(self.tiles)
 
-    def classify(self):
+    def erode(self):
         seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5]
 
-        ks = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange)
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                self.tiles[y][x].climate = ks[(x,y)]
+        erosion = erode(self.tiles,
+                        self.adj,
+                        {},
+                        climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange))
 
-    def erode(self):
-        self.classify()
-
-        # erode to lower adjacent tiles
-        for i in range(len(self.tiles)):
-            for j in range(len(self.tiles[i])):
-                tile = self.tiles[i][j]
-                if tile.value > 0:
-                    adj = self.adj[(j,i)]
-                    for (j2,i2) in adj:
-                        other = self.tiles[i2][j2]
-                        d = tile.value - other.value
-                        if d > 0:
-                            d /= len(adj)
-                            tile.eroding.append(ErodedMaterial(-d))
-                            other.eroding.append(ErodedMaterial(d, tile.overlapping))
+        for t in [t for lat in self.tiles for t in lat]:
+            t.eroding = erosion[t]
 
     @property
     def earthavailable(self):
