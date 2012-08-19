@@ -20,6 +20,9 @@ class ErosionPresenter(object):
         self._view.content.setLayout(QGridLayout())
         self._view.content.layout().addWidget(self._display)
 
+        self._view.climate.setCheckState(Qt.Checked if self._model.climate else Qt.Unchecked)
+        self._view.climate.stateChanged.connect(self.climate)
+
         self._view.lost.setCheckState(Qt.Checked if self._display.lost else Qt.Unchecked)
         self._view.lost.stateChanged.connect(self.lost)
 
@@ -33,6 +36,11 @@ class ErosionPresenter(object):
         self._view.projection.currentIndexChanged[int].connect(self.project)
 
         self._uistack = uistack
+
+    def climate(self, state):
+        self._model.climate = state == Qt.Checked
+        self._display.invalidate()
+        self._view.content.update()
 
     def lost(self, state):
         self._display.lost = state == Qt.Checked

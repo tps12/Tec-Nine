@@ -38,17 +38,31 @@ class ErosionSimulation(object):
             t.eroding = []
 
         self.adj = Adjacency(self.tiles)
+        
+        self._climate = False
 
     def erode(self):
         seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5]
 
-        erosion = erode(self.tiles,
-                        self.adj,
-                        {},
-                        climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange))
+        if self.climate:
+            c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange)
+        else:
+            c = None
+
+        erosion = erode(self.tiles, self.adj, {}, c)
 
         for t in [t for lat in self.tiles for t in lat]:
             t.eroding = erosion[t]
+
+    @property
+    def climate(self):
+        return self._climate
+
+    @climate.setter
+    def climate(self, value):
+        if self._climate != value:
+            self._climate = value
+            self.erode()
 
     @property
     def earthavailable(self):

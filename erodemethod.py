@@ -18,6 +18,17 @@ def erode(tiles, adjacency, groups, climate):
                 for (j2,i2) in adj:
                     other = tiles[i2][j2]
                     d = tile.value - other.value
+                    if climate:
+                        c = climate[(j,i)]
+                        # ice caps are protected
+                        if c.koeppen == u'EF':
+                            d = 0
+                        # glaciers erode a lot
+                        elif c.koeppen[0] == u'E':
+                            d *= 2
+                        # everything else erodes according to precipitation
+                        else:
+                            d *= c.precipitation
                     if d > 0:
                         d /= len(adj)
                         erosion[tile].append(ErodedMaterial(-d))
