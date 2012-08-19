@@ -71,9 +71,7 @@ class ClimateSimulation(object):
     spin = 1.0
     tilt = 23
 
-    maxelevation = 10.0
     temprange = (-25.0, 50.0)
-    sealevel = 0
     breezedistance = 10
     
     def __init__(self, r):
@@ -157,8 +155,7 @@ class ClimateSimulation(object):
 
                 if temperature:                    
                     h = self.tiles[y][x].value
-                    t = (ins * (1-(h - self.sealevel)/(self.maxelevation - self.sealevel))
-                         if h > self.sealevel else ins)
+                    t = (ins * (1 - h/10.0) if h > 0 else ins)
                     self.temperature[(x,y)] = t
 
                 if convective:
@@ -202,7 +199,7 @@ class ClimateSimulation(object):
         d = 0
         for y in range(len(self.tiles)):
             for x in range(len(self.tiles[y])):
-                if self.tiles[y][x].value <= self.sealevel:
+                if self.tiles[y][x].value <= 0:
                     self.seabased[(x,y)] = d
                     frontier.append((x,y))
                     
@@ -359,11 +356,12 @@ class ClimateSimulation(object):
             t.value = earth.sample(t.lat, t.lon) / 900.0
             if t.value < 0:
                 t.value = 0
+        self.initdicts()
         self.classify()
 
     def setdata(self, data):
         self.tiles = data['tiles']
-        self.initindexes()
+        self.initdicts()
 
     def load(self, filename):
         with open(filename, 'r') as f:
