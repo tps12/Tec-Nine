@@ -5,6 +5,7 @@ import random
 from time import time
 
 from adjacency import *
+from climatemethod import climate
 from erodemethod import erode
 from movemethod import move
 from pointtree import PointTree
@@ -24,6 +25,12 @@ class Group(object):
 
 class PlanetSimulation(object):
     EXTENSION = '.tec9'
+
+    cells = 3
+    spin = 1.0
+    tilt = 23
+
+    temprange = (-25.0, 50.0)
 
     def __init__(self, r, dt):
         """Create a simulation for a planet of radius r km and timesteps of dt
@@ -189,10 +196,10 @@ class PlanetSimulation(object):
         for t in old:
             t.value = 0
 
-        erosion = erode(self.tiles,
-                        self.adj,
-                        overlapping,
-                        None)
+        seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
+        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange) 
+
+        erosion = erode(self.tiles, self.adj, overlapping, c)
 
         for t in [t for lat in self.tiles for t in lat]:
             t.dv = erosion[t]
