@@ -20,7 +20,7 @@ from tile import *
 def _setlat(lat, shape):
     """Set tile values for the given latitude array."""
     for x in range(len(lat)):
-        lat[x].value = 1 if shape.contains(lat[x].vector) else 0
+        lat[x].elevation = 1 if shape.contains(lat[x].vector) else 0
     return lat
 
 class MovePoints(object):
@@ -88,11 +88,11 @@ class MovePoints(object):
     def step(self):
         start = time()
 
-        group = [t for lat in self.tiles for t in lat if t.value == 1]
+        group = [t for lat in self.tiles for t in lat if t.elevation == 1]
         for t in self._indexedtiles:
-            t.value = 0
+            t.elevation = 0
         for t in group:
-            t.value = 2
+            t.elevation = 2
 
         group, v = move(self._indexedtiles,
                         group,
@@ -100,14 +100,14 @@ class MovePoints(object):
                         self._adj,
                         self._index)
         for t, ts in group.iteritems():
-            t.value = 1
+            t.elevation = 1
 
         self._velocity = v
 
         self.time = time() - start
 
     def direction(self, value):
-        a = average([t.vector for lat in self.tiles for t in lat if t.value == 1])
+        a = average([t.vector for lat in self.tiles for t in lat if t.elevation == 1])
         a /= norm(a)
         self._velocity = rotate(self._velocity, a, value - self._direction)
         self._direction = value
@@ -118,4 +118,4 @@ class MovePoints(object):
 
     @property
     def count(self):
-        return sum([1 for lat in self.tiles for t in lat if t.value == 1])
+        return sum([1 for lat in self.tiles for t in lat if t.elevation == 1])

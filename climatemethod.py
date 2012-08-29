@@ -132,7 +132,7 @@ class Climate(object):
                     self.direction[(x,y)] = d
 
                 if temperature:                    
-                    h = self.tiles[y][x].value
+                    h = self.tiles[y][x].elevation
                     t = (ins * (1 - h/10.0) if h > 0 else ins)
                     self.temperature[(x,y)] = t
 
@@ -141,7 +141,7 @@ class Climate(object):
                     self.convective[(x,y)] = p
 
                 if pressure:
-                    h = self.tiles[y][x].value
+                    h = self.tiles[y][x].elevation
                     if h > 0:
                         p = 0.5
                     else:
@@ -175,7 +175,7 @@ class Climate(object):
         d = 0
         for y in range(len(self.tiles)):
             for x in range(len(self.tiles[y])):
-                if self.tiles[y][x].value <= 0:
+                if self.tiles[y][x].elevation <= 0:
                     self.seabased[(x,y)] = d
                     frontier.append((x,y))
                     
@@ -281,7 +281,7 @@ class Climate(object):
              for y in range(len(self.tiles))]
         for y in range(len(self.tiles)):
             for x in range(len(self.tiles[y])):
-                c[y][x] = (self.tiles[y][x].value,
+                c[y][x] = (self.tiles[y][x].elevation,
                            self.temperature[(x,y)],
                            self.precipitation[(x,y)])
 

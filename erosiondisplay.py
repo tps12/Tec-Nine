@@ -58,7 +58,7 @@ class ErosionDisplay(QWidget):
         self._dirty = True
 
     def tilecolor(self, tile):
-        h = tile.value
+        h = tile.elevation
 
         if h > 0:
             v = 128

@@ -71,13 +71,17 @@ class ErosionSimulation(object):
     def earth(self):
         earth = Earth()
         for t in [t for lat in self.tiles for t in lat]:
-            t.value = earth.sample(t.lat, t.lon) / 900.0
-            if t.value < 0:
-                t.value = 0
+            t.elevation = earth.sample(t.lat, t.lon) / 900.0
+            if t.elevation < 0:
+                t.elevation = 0
         self.erode()
 
     def setdata(self, data):
         self.tiles = data['tiles']
+        if 'version' not in data:
+            for t in [t for lat in self.tiles for t in lat]:
+                t.elevation = t.value
+                del t.value
 
         for t in [t for lat in self.tiles for t in lat]:
             t.eroding = []

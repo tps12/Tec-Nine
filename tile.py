@@ -10,8 +10,7 @@ class Tile(object):
                        cos_lat * sin(self.lon * pi/180),
                        sin(self.lat * pi/180))
 
-
-        self.value = 0
+        self.elevation = 0
 
     def distance(self, other):
         lat1, lon1 = [c * pi/180 for c in self.lat, self.lon]

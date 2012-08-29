@@ -44,7 +44,7 @@ class SplitDisplay(QWidget):
         self._dirty = True
 
     def tilecolor(self, tile):
-        h = tile.value
+        h = tile.elevation
 
         if h > 0:
             r = g = b = 128

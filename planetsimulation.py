@@ -90,7 +90,7 @@ class PlanetSimulation(object):
 
         self._shapes = [Group([t for lat in self.tiles for t in lat if shape.contains(t.vector)], v)]
         for t in self._shapes[0].tiles:
-            t.value = 1
+            t.elevation = 1
 
         self.dirty = True
 
@@ -120,6 +120,7 @@ class PlanetSimulation(object):
 
     def data(self):
         data = dict()
+        data['version'] = 0
         data['random'] = random.getstate()
         data['dp'] = self._dp
         data['build'] = self._build
@@ -134,6 +135,10 @@ class PlanetSimulation(object):
         self._build = data['build']
         self._splitnum = data['splitnum']
         self.tiles = data['tiles']
+        if 'version' not in data:
+            for t in [t for lat in self.tiles for t in lat]:
+                t.elevation = t.value
+                del t.value
         self.initindexes()
         self._shapes = [Group([self._indexedtiles[i] for i in tis], v) for (tis, v) in data['shapes']]
         self.dirty = True
@@ -178,14 +183,14 @@ class PlanetSimulation(object):
 
         seen = set()
         for dest, sourcelists in new.items():
-            dest.value = sum([sum([t.value for t in sources])/len(sources) for sources, speed in sourcelists])
+            dest.elevation = sum([sum([t.elevation for t in sources])/len(sources) for sources, speed in sourcelists])
             if not dest in seen:
                 try:
                     old.remove(dest)
                 except KeyError:
-                    dest.value += self._build * sum([speed for sources, speed in sourcelists])/len(sourcelists)
+                    dest.elevation += self._build * sum([speed for sources, speed in sourcelists])/len(sourcelists)
                 seen.add(dest)
-            dest.value = min(10, dest.value)
+            dest.elevation = min(10, dest.elevation)
 
             for pair in combinations(overlapping[dest], 2):
                 if pair in collisions:
@@ -194,7 +199,7 @@ class PlanetSimulation(object):
                     collisions[pair] = 1
 
         for t in old:
-            t.value = 0
+            t.elevation = 0
 
         seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
         c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange) 
@@ -208,9 +213,9 @@ class PlanetSimulation(object):
             for j in range(len(self.tiles[i])):
                 tile = self.tiles[i][j]
                 if len(overlapping[tile]) > 0:
-                    tile.value += sum([e.amount for e in tile.dv])
+                    tile.elevation += sum([e.amount for e in tile.dv])
                 elif sum([e.amount for e in tile.dv]) > 1.5:
-                    tile.value = sum([e.amount for e in tile.dv])
+                    tile.elevation = sum([e.amount for e in tile.dv])
                     sources = set()
                     for e in tile.dv:
                         for s in e.sources:

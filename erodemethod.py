@@ -13,11 +13,11 @@ def erode(tiles, adjacency, groups, climate):
     for i in range(len(tiles)):
         for j in range(len(tiles[i])):
             tile = tiles[i][j]
-            if tile.value > 0:
+            if tile.elevation > 0:
                 adj = adjacency[(j,i)]
                 for (j2,i2) in adj:
                     other = tiles[i2][j2]
-                    d = tile.value - other.value
+                    d = tile.elevation - other.elevation
                     if climate:
                         c = climate[(j,i)]
                         # glaciers erode a lot

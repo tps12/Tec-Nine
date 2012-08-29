@@ -105,7 +105,7 @@ class PlanetDisplay(QWidget):
             return True
 
     def tilecolor(self, tile):
-        h = tile.value
+        h = tile.elevation
 
         if h > 0:
             value = int(128 + 12.5 * h)

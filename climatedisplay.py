@@ -58,7 +58,7 @@ class ClimateDisplay(QWidget):
     }
 
     def tilecolor(self, tile):
-        h, k = tile.value, tile.climate
+        h, k = tile.elevation, tile.climate
 
         if h > 0:
             color = self.colors[k[0]][k[1]]

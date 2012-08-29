@@ -17,7 +17,7 @@ from tile import *
 def _setlat(lat, shape):
     """Set tile values for the given latitude array."""
     for x in range(len(lat)):
-        lat[x].value = 1 if shape.contains(lat[x].vector) else 0
+        lat[x].elevation = 1 if shape.contains(lat[x].vector) else 0
     return lat
 
 class SplitPoints(object):
@@ -64,15 +64,15 @@ class SplitPoints(object):
         self.split()
 
     def split(self):
-        a, b = [tiles for (tiles, v) in split([t for lat in self.tiles for t in lat if t.value == 1])]
+        a, b = [tiles for (tiles, v) in split([t for lat in self.tiles for t in lat if t.elevation == 1])]
         for t in a:
-            t.value = 2
+            t.elevation = 2
         for t in b:
-            t.value = 3
+            t.elevation = 3
 
     def iterate(self, red):
         match = 2 if red else 3
         for lat in self.tiles:
             for t in lat:
-                t.value = 1 if t.value == match else 0
+                t.elevation = 1 if t.elevation == match else 0
         self.split()
