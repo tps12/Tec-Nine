@@ -13,10 +13,10 @@ from shape import *
 from splitmethod import split
 from tile import *
 
-class ErodedMaterial(object):
-    def __init__(self, amount, sources=None):
-        self.amount = amount
+class TileMovement(object):
+    def __init__(self, sources, speed):
         self.sources = sources
+        self.speed = speed
 
 class Group(object):
     def __init__(self, tiles, v):
@@ -174,29 +174,34 @@ class PlanetSimulation(object):
             self._shapes[i] = Group(group.keys(), v)
             for dest, sources in group.items():
                 if dest in new:
-                    new[dest].append((sources,speed))
+                    new[dest].append(TileMovement(sources, speed))
                 else:
-                    new[dest] = [(sources,speed)]
+                    new[dest] = [TileMovement(sources, speed)]
                 overlapping[dest].append(i)
 
         collisions = {}
 
+        newe = {}
+
         seen = set()
-        for dest, sourcelists in new.items():
-            dest.elevation = sum([sum([t.elevation for t in sources])/len(sources) for sources, speed in sourcelists])
+        for dest, movements in new.items():
+            newe[dest] = sum([sum([t.elevation for t in m.sources])/len(m.sources) for m in movements])
             if not dest in seen:
                 try:
                     old.remove(dest)
                 except KeyError:
-                    dest.elevation += self._build * sum([speed for sources, speed in sourcelists])/len(sourcelists)
+                    newe[dest] += self._build * sum([m.speed for m in movements])/len(movements)
                 seen.add(dest)
-            dest.elevation = min(10, dest.elevation)
+            newe[dest] = min(10, newe[dest])
 
             for pair in combinations(overlapping[dest], 2):
                 if pair in collisions:
                     collisions[pair] += 1
                 else:
                     collisions[pair] = 1
+
+        for t, e in newe.items():
+            t.elevation = e
 
         for t in old:
             t.elevation = 0
