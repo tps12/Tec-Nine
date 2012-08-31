@@ -49,7 +49,7 @@ class ErosionSimulation(object):
         else:
             c = None
 
-        erosion = erode(self.tiles, self.adj, {}, c)
+        erosion = erode(self.tiles, self.adj, c)
 
         for t in [t for lat in self.tiles for t in lat]:
             t.eroding = erosion[t]

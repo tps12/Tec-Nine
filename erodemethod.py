@@ -1,9 +1,9 @@
 class ErodedMaterial(object):
-    def __init__(self, amount, sources=None):
+    def __init__(self, amount, source=None):
         self.amount = amount
-        self.sources = sources
+        self.source = source
 
-def erode(tiles, adjacency, groups, climate):
+def erode(tiles, adjacency, climate):
     erosion = {}
 
     for t in [t for lat in tiles for t in lat]:
@@ -29,6 +29,6 @@ def erode(tiles, adjacency, groups, climate):
                     if d > 0:
                         d /= len(adj)
                         erosion[tile].append(ErodedMaterial(-d))
-                        erosion[other].append(ErodedMaterial(d, groups[tile] if tile in groups else []))
+                        erosion[other].append(ErodedMaterial(d, tile))
 
     return erosion

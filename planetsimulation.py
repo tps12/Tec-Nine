@@ -18,6 +18,20 @@ class TileMovement(object):
         self.sources = sources
         self.speed = speed
 
+class NextTileValue(object):
+    def __init__(self, sources, shapecount):
+        self._elevations = [s.elevation for s in sources]
+        self._thicknesses = [s.thickness for s in sources]
+        self._shapecount = shapecount
+        self._build = 0
+
+    def build(self, amount):
+        self._build = amount
+
+    def apply(self, tile):
+        tile.averagesources(self._elevations, self._thicknesses, self._shapecount)
+        tile.build(self._build)
+
 class Group(object):
     def __init__(self, tiles, v):
         self.tiles = tiles
@@ -90,7 +104,8 @@ class PlanetSimulation(object):
 
         self._shapes = [Group([t for lat in self.tiles for t in lat if shape.contains(t.vector)], v)]
         for t in self._shapes[0].tiles:
-            t.elevation = 1
+            # initial landmass starts at elevation 1
+            t.emptyland()
 
         self.dirty = True
 
@@ -120,7 +135,7 @@ class PlanetSimulation(object):
 
     def data(self):
         data = dict()
-        data['version'] = 0
+        data['version'] = 1
         data['random'] = random.getstate()
         data['dp'] = self._dp
         data['build'] = self._build
@@ -139,6 +154,11 @@ class PlanetSimulation(object):
             for t in [t for lat in self.tiles for t in lat]:
                 t.elevation = t.value
                 del t.value
+            data['version'] = 0
+        if data['version'] == 0:
+            for t in [t for lat in self.tiles for t in lat]:
+                t.thickness = 10 if t.elevation > 0 else 5
+            data['version'] = 1
         self.initindexes()
         self._shapes = [Group([self._indexedtiles[i] for i in tis], v) for (tis, v) in data['shapes']]
         self.dirty = True
@@ -162,7 +182,6 @@ class PlanetSimulation(object):
         overlapping = {}
         for t in self._indexedtiles:
             overlapping[t] = []
-            t.dv = []
 
         for i in range(len(self._shapes)):
             speed = norm(self._shapes[i].v)
@@ -185,14 +204,16 @@ class PlanetSimulation(object):
 
         seen = set()
         for dest, movements in new.items():
-            newe[dest] = sum([sum([t.elevation for t in m.sources])/len(m.sources) for m in movements])
+            # get all the source tiles contributing to this one
+            newe[dest] = NextTileValue([s for ss in [m.sources for m in movements] for s in ss],
+                                       len(overlapping[dest]))
             if not dest in seen:
                 try:
                     old.remove(dest)
                 except KeyError:
-                    newe[dest] += self._build * sum([m.speed for m in movements])/len(movements)
+                    # calculate the amount to build up the leading edge
+                    newe[dest].build(self._build * sum([m.speed for m in movements])/len(movements))
                 seen.add(dest)
-            newe[dest] = min(10, newe[dest])
 
             for pair in combinations(overlapping[dest], 2):
                 if pair in collisions:
@@ -200,35 +221,38 @@ class PlanetSimulation(object):
                 else:
                     collisions[pair] = 1
 
+        # apply the new values
         for t, e in newe.items():
-            t.elevation = e
+            e.apply(t)
 
+        # clear out abandoned tiles
         for t in old:
-            t.elevation = 0
+            t.emptyocean()
 
         seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
         c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange) 
 
-        erosion = erode(self.tiles, self.adj, overlapping, c)
-
-        for t in [t for lat in self.tiles for t in lat]:
-            t.dv = erosion[t]
+        erosion = erode(self.tiles, self.adj, c)
 
         for i in range(len(self.tiles)):
             for j in range(len(self.tiles[i])):
                 tile = self.tiles[i][j]
+                dv = erosion[tile]
+                # if the tile is in at least one shape, apply the erosion differences (+ or -)
                 if len(overlapping[tile]) > 0:
-                    tile.elevation += sum([e.amount for e in tile.dv])
-                elif sum([e.amount for e in tile.dv]) > 1.5:
-                    tile.elevation = sum([e.amount for e in tile.dv])
-                    sources = set()
-                    for e in tile.dv:
-                        for s in e.sources:
-                            sources.add(s)
-                    for s in sources:
+                    tile.depositexisting(dv)
+                # otherwise, require a certain threshold
+                elif sum([e.amount for e in dv]) > 1.5:
+                    tile.depositnew(dv)
+                    sourceshapes = set()
+                    for e in dv:
+                        if e.source is not None:
+                            for shape in overlapping[e.source]:
+                                sourceshapes.add(shape)
+                    for s in sourceshapes:
                         if not tile in self._shapes[s].tiles:
                             self._shapes[s].tiles.append(tile)
-                    overlapping[tile] = list(sources)
+                    overlapping[tile] = list(sourceshapes)
 
         # merge shapes that overlap a lot
         groups = []
