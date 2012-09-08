@@ -1,13 +1,31 @@
-class ErodedMaterial(object):
-    def __init__(self, amount, source=None):
+class ErosionEvent(object):
+    def __init__(self, degree, destination):
+        self.degree = degree
+        self.destination = destination
+
+class ErosionMaterial(object):
+    def __init__(self, amount, substance):
         self.amount = amount
-        self.source = source
+        self.substance = substance
+
+class Erosion(object):
+    def __init__(self):
+        self.destinations = []
+        self.materials = []
+        self.sources = []
+
+    def addmaterial(self, amount, substance):
+        self.materials.append(ErosionMaterial(amount, substance))
+
+# no longer exists; remains so tiles pickled pre-version 2 can be loaded
+class ErodedMaterial(object):
+    pass
 
 def erode(tiles, adjacency, climate):
     erosion = {}
 
     for t in [t for lat in tiles for t in lat]:
-        erosion[t] = []
+        erosion[t] = Erosion()
 
     # erode to lower adjacent tiles
     for i in range(len(tiles)):
@@ -28,7 +46,7 @@ def erode(tiles, adjacency, climate):
                             d *= c.precipitation
                     if d > 0:
                         d /= len(adj)
-                        erosion[tile].append(ErodedMaterial(-d))
-                        erosion[other].append(ErodedMaterial(d, tile))
+                        erosion[tile].destinations.append(ErosionEvent(d, other))
+                        erosion[other].sources.append(tile)
 
     return erosion

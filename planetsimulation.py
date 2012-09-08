@@ -20,8 +20,7 @@ class TileMovement(object):
 
 class NextTileValue(object):
     def __init__(self, sources, shapecount):
-        self._elevations = [s.elevation for s in sources]
-        self._thicknesses = [s.thickness for s in sources]
+        self._substances = [s.substance for s in sources]
         self._shapecount = shapecount
         self._build = 0
 
@@ -29,7 +28,7 @@ class NextTileValue(object):
         self._build = amount
 
     def apply(self, tile):
-        tile.averagesources(self._elevations, self._thicknesses, self._shapecount)
+        tile.averagesources(self._substances, self._shapecount)
         tile.build(self._build)
 
 class Group(object):
@@ -135,7 +134,7 @@ class PlanetSimulation(object):
 
     def data(self):
         data = dict()
-        data['version'] = 1
+        data['version'] = 2
         data['random'] = random.getstate()
         data['dp'] = self._dp
         data['build'] = self._build
@@ -234,26 +233,24 @@ class PlanetSimulation(object):
 
         erosion = erode(self.tiles, self.adj, c)
 
-        for i in range(len(self.tiles)):
-            for j in range(len(self.tiles[i])):
-                tile = self.tiles[i][j]
-                dv = erosion[tile]
-                # if the tile is in at least one shape, apply the erosion differences (+ or -)
-                if len(overlapping[tile]) > 0:
-                    tile.depositexisting(dv)
-                # otherwise, require a certain threshold
-                elif sum([e.amount for e in dv]) > 1.5:
-                    tile.depositnew(dv)
-                    sourceshapes = set()
-                    for e in dv:
-                        if e.source is not None:
-                            for shape in overlapping[e.source]:
-                                sourceshapes.add(shape)
-                    for s in sourceshapes:
-                        if not tile in self._shapes[s].tiles:
-                            self._shapes[s].tiles.append(tile)
-                    overlapping[tile] = list(sourceshapes)
+        for t in [t for lat in self.tiles for t in lat]:
+            t.erode(erosion)
 
+        for t in [t for lat in self.tiles for t in lat]:
+            # if the tile is in at least one shape, apply the erosion materials
+            if len(overlapping[t]) > 0:
+                t.depositexisting(erosion[t].materials)
+            # otherwise, require a certain threshold
+            elif t.depositnew(erosion[t].materials):
+                sourceshapes = set()
+                for e in erosion[t].sources:
+                    for shape in overlapping[e]:
+                        sourceshapes.add(shape)
+                for s in sourceshapes:
+                    if not t in self._shapes[s].tiles:
+                        self._shapes[s].tiles.append(t)
+                overlapping[t] = list(sourceshapes)
+               
         # merge shapes that overlap a lot
         groups = []
         for pair, count in collisions.items():

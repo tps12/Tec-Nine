@@ -4,7 +4,7 @@ from math import pi, cos
 from adjacency import *
 from climatemethod import climate
 from earth import Earth
-from erodemethod import erode
+from erodemethod import erode, Erosion
 from tile import *
 
 class ErosionSimulation(object):
@@ -35,7 +35,7 @@ class ErosionSimulation(object):
             self.tiles.append(row)
 
         for t in [t for lat in self.tiles for t in lat]:
-            t.eroding = []
+            t.eroding = Erosion()
 
         self.adj = Adjacency(self.tiles)
         
@@ -52,6 +52,7 @@ class ErosionSimulation(object):
         erosion = erode(self.tiles, self.adj, c)
 
         for t in [t for lat in self.tiles for t in lat]:
+            t.erode(erosion)
             t.eroding = erosion[t]
 
     @property
@@ -82,6 +83,11 @@ class ErosionSimulation(object):
             for t in [t for lat in self.tiles for t in lat]:
                 t.elevation = t.value
                 del t.value
+            data['version'] = 0
+        if data['version'] == 0:
+            for t in [t for lat in self.tiles for t in lat]:
+                t.thickness = 10 if t.elevation > 0 else 5
+            data['version'] = 1
 
         for t in [t for lat in self.tiles for t in lat]:
             t.eroding = []

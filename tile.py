@@ -15,6 +15,10 @@ class Tile(object):
 
         self.emptyocean()
 
+    @property
+    def substance(self):
+        return (self.elevation, self.thickness)
+
     def distance(self, other):
         lat1, lon1 = [c * pi/180 for c in self.lat, self.lon]
         lat2, lon2 = [c * pi/180 for c in other.lat, other.lon]
@@ -29,7 +33,9 @@ class Tile(object):
         self.elevation = min(self.MAX_HEIGHT, self.elevation)
         self.thickness = min(self.MAX_THICKNESS, self.thickness)
 
-    def averagesources(self, elevations, thicknesses, groupcount):
+    def averagesources(self, substances, groupcount):
+        elevations = [s[0] for s in substances]
+        thicknesses = [s[1] for s in substances]
         self.elevation = float(sum(elevations))/len(elevations)
         self.thickness = float(sum(thicknesses))*groupcount/len(thicknesses)
         self.limit()
@@ -39,10 +45,22 @@ class Tile(object):
         self.thickness += 2 * amount
         self.limit()
 
+    def erode(self, erosion):
+        e = erosion[self]
+        m = sum([d.degree for d in e.destinations])
+        for d in e.destinations:
+            erosion[d.destination].addmaterial(d.degree, self.substance)
+        self.elevation -= m
+        self.thickness -= m
+
     def depositnew(self, materials):
-        amount = sum([m.amount for m in materials])
-        self.elevation += amount
-        self.thickness += amount + 5
+        if sum([m.amount for m in materials]) > 1.5:
+            amount = sum([m.amount for m in materials])
+            self.elevation += amount
+            self.thickness += amount + 5
+            return True
+        else:
+            return False
 
     def depositexisting(self, materials):
         amount = sum([m.amount for m in materials])

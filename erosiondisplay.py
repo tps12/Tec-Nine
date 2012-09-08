@@ -67,12 +67,12 @@ class ErosionDisplay(QWidget):
             r = g = b = v = 0
 
         if self.lost:
-            t = sum([e.amount for e in tile.eroding if e.amount < 0])
+            t = sum([d.degree for d in tile.eroding.destinations])
             r = v + abs(max(-5, t)) * 25.5 
             g = b = v
 
         if self.gained:
-            t = sum([e.amount for e in tile.eroding if e.amount > 0])
+            t = sum([m.amount for m in tile.eroding.materials])
             g = v + abs(min(5, t)) * 25.5
             b = v
             if not self.lost:
