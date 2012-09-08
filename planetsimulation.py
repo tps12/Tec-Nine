@@ -106,6 +106,9 @@ class PlanetSimulation(object):
             # initial landmass starts at elevation 1
             t.emptyland()
 
+        for t in [t for lat in self.tiles for t in lat]:
+            t.climate = None
+
         self.dirty = True
 
     def initindexes(self):
@@ -134,7 +137,7 @@ class PlanetSimulation(object):
 
     def data(self):
         data = dict()
-        data['version'] = 2
+        data['version'] = 3
         data['random'] = random.getstate()
         data['dp'] = self._dp
         data['build'] = self._build
@@ -158,6 +161,10 @@ class PlanetSimulation(object):
             for t in [t for lat in self.tiles for t in lat]:
                 t.thickness = 10 if t.elevation > 0 else 5
             data['version'] = 1
+        if data['version'] < 3:
+            for t in [t for lat in self.tiles for t in lat]:
+                t.climate = None
+            data['version'] = 3
         self.initindexes()
         self._shapes = [Group([self._indexedtiles[i] for i in tis], v) for (tis, v) in data['shapes']]
         self.dirty = True
@@ -229,9 +236,13 @@ class PlanetSimulation(object):
             t.emptyocean()
 
         seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
-        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange) 
+        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange)
 
-        erosion = erode(self.tiles, self.adj, c)
+        for y in range(len(self.tiles)):
+            for x in range(len(self.tiles[y])):
+                self.tiles[y][x].climate = c[(x,y)]
+
+        erosion = erode(self.tiles, self.adj)
 
         for t in [t for lat in self.tiles for t in lat]:
             t.erode(erosion)

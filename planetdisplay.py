@@ -42,10 +42,72 @@ def coolscale(v):
          255)
     return r, g, b
 
+
+def climatecolor(tile):
+    h, c = tile.elevation, tile.climate
+
+    if c == None:
+        return (255,255,255)
+
+    k = c.koeppen
+
+    colors = {
+        u'A' : {
+            u'f' : (0,0,255),
+            u'm' : (0,63,255),
+            u'w' : (0,127,255) },
+        u'B' : {
+            u'S' : (255,127,0),
+            u'W' : (255,0,0) },
+        u'C' : {
+            u'f' : (0,255,0),
+            u's' : (255,255,0),
+            u'w' : (127,255,0) },
+        u'D' : {
+            u'f' : (0,255,255),
+            u's' : (255,0,255),
+            u'w' : (127,127,255) },
+        u'E' : {
+            u'F' : (127,127,127),
+            u'T' : (191,191,191) }
+    }
+
+    if h > 0:
+        color = colors[k[0]][k[1]]
+    else:
+        color = 0, 0, 0
+    return color
+
+def elevationcolor(tile):
+    h = tile.elevation
+
+    if h > 0:
+        value = int(128 + 12.5 * h)
+        color = (value, value, value)
+    else:
+        color = (0, 0, 0)
+    return color
+
+def thicknesscolor(tile):
+    h = tile.thickness
+
+    if h > 0:
+        value = int(128 + 1.69 * h)
+        color = (value, value, value)
+    else:
+        color = (0, 0, 0)
+    return color
+
 class PlanetDisplay(QWidget):
     dt = 0.01
 
     _projections = [mercator, sinusoidal, flat]
+
+    CLIMATE = 0
+    ELEVATION = 1
+    THICKNESS = 2
+
+    _colorfunctions = [climatecolor, elevationcolor, thicknesscolor]
     
     def __init__(self, sim):
         QWidget.__init__(self)
@@ -53,6 +115,7 @@ class PlanetDisplay(QWidget):
         self._screen = None
         self._rotate = 0
         self._projection = 0
+        self._aspect = self.ELEVATION
         self.selected = None
         self.dirty = True
 
@@ -72,6 +135,15 @@ class PlanetDisplay(QWidget):
     @projection.setter
     def projection(self, value):
         self._projection = value
+        self._dirty = True
+
+    @property
+    def aspect(self):
+        return self._aspect
+
+    @aspect.setter
+    def aspect(self, value):
+        self._aspect = value
         self._dirty = True
     
     @property
@@ -105,14 +177,7 @@ class PlanetDisplay(QWidget):
             return True
 
     def tilecolor(self, tile):
-        h = tile.elevation
-
-        if h > 0:
-            value = int(128 + 12.5 * h)
-            color = (value, value, value)
-        else:
-            color = (0, 0, 0)
-        return QColor(*color)
+        return QColor(*self._colorfunctions[self._aspect](tile))
    
     def paintEvent(self, e):
         surface = QPainter()

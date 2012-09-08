@@ -36,6 +36,7 @@ class ErosionSimulation(object):
 
         for t in [t for lat in self.tiles for t in lat]:
             t.eroding = Erosion()
+            t.climate = None
 
         self.adj = Adjacency(self.tiles)
         
@@ -49,7 +50,11 @@ class ErosionSimulation(object):
         else:
             c = None
 
-        erosion = erode(self.tiles, self.adj, c)
+        for y in range(len(self.tiles)):
+            for x in range(len(self.tiles[y])):
+                self.tiles[y][x].climate = c[(x,y)] if c is not None else None
+
+        erosion = erode(self.tiles, self.adj)
 
         for t in [t for lat in self.tiles for t in lat]:
             t.erode(erosion)

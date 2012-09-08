@@ -21,7 +21,7 @@ class Erosion(object):
 class ErodedMaterial(object):
     pass
 
-def erode(tiles, adjacency, climate):
+def erode(tiles, adjacency):
     erosion = {}
 
     for t in [t for lat in tiles for t in lat]:
@@ -36,8 +36,8 @@ def erode(tiles, adjacency, climate):
                 for (j2,i2) in adj:
                     other = tiles[i2][j2]
                     d = tile.elevation - other.elevation
-                    if climate:
-                        c = climate[(j,i)]
+                    c = tile.climate
+                    if c is not None:
                         # glaciers erode a lot
                         if c.koeppen[0] == u'E':
                             pass

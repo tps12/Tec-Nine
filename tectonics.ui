@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>597</width>
+    <height>336</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,6 +57,31 @@
          <property name="tickPosition">
           <enum>QSlider::NoTicks</enum>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="aspect">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
+         </property>
+         <item>
+          <property name="text">
+           <string>Climate</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Elevation</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Thickness</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item>

@@ -72,6 +72,9 @@ class TectonicsPresenter(object):
         self._view.rotate.setValue(self._display.rotate)
         self._view.rotate.sliderMoved.connect(self.rotate)
 
+        self._view.aspect.setCurrentIndex(self._display.aspect)
+        self._view.aspect.currentIndexChanged[int].connect(self.aspect)
+
         self._view.projection.setCurrentIndex(self._display.projection)
         self._view.projection.currentIndexChanged[int].connect(self.project)
 
@@ -81,6 +84,10 @@ class TectonicsPresenter(object):
 
     def rotate(self, value):
         self._display.rotate = value
+        self._view.content.update()
+
+    def aspect(self, value):
+        self._display.aspect = value
         self._view.content.update()
 
     def project(self, value):
