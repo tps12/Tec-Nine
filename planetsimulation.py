@@ -19,16 +19,15 @@ class TileMovement(object):
         self.speed = speed
 
 class NextTileValue(object):
-    def __init__(self, sources, shapecount):
-        self._substances = [s.substance for s in sources]
-        self._shapecount = shapecount
+    def __init__(self, movements):
+        self._substances = [[s.substance for s in m.sources] for m in movements]
         self._build = 0
 
     def build(self, amount):
         self._build = amount
 
     def apply(self, tile):
-        tile.averagesources(self._substances, self._shapecount)
+        tile.mergesources(self._substances)
         tile.build(self._build)
 
 class Group(object):
@@ -52,7 +51,7 @@ class PlanetSimulation(object):
         # max speed is 100km per million years
         self._dp = 100.0/r * dt
 
-        self._build = 1.25 * dt
+        self._build = dt
 
         tilearea = 4 * pi * r**2
 
@@ -137,7 +136,7 @@ class PlanetSimulation(object):
 
     def data(self):
         data = dict()
-        data['version'] = 3
+        data['version'] = 4
         data['random'] = random.getstate()
         data['dp'] = self._dp
         data['build'] = self._build
@@ -147,24 +146,13 @@ class PlanetSimulation(object):
         return data
 
     def setdata(self, data):
+        if 'version' not in data or data['version'] < 4:
+            raise ValueError('File version is too old')
         random.setstate(data['random'])
         self._dp = data['dp']
         self._build = data['build']
         self._splitnum = data['splitnum']
         self.tiles = data['tiles']
-        if 'version' not in data:
-            for t in [t for lat in self.tiles for t in lat]:
-                t.elevation = t.value
-                del t.value
-            data['version'] = 0
-        if data['version'] == 0:
-            for t in [t for lat in self.tiles for t in lat]:
-                t.thickness = 10 if t.elevation > 0 else 5
-            data['version'] = 1
-        if data['version'] < 3:
-            for t in [t for lat in self.tiles for t in lat]:
-                t.climate = None
-            data['version'] = 3
         self.initindexes()
         self._shapes = [Group([self._indexedtiles[i] for i in tis], v) for (tis, v) in data['shapes']]
         self.dirty = True
@@ -211,8 +199,7 @@ class PlanetSimulation(object):
         seen = set()
         for dest, movements in new.items():
             # get all the source tiles contributing to this one
-            newe[dest] = NextTileValue([s for ss in [m.sources for m in movements] for s in ss],
-                                       len(overlapping[dest]))
+            newe[dest] = NextTileValue(movements)
             if not dest in seen:
                 try:
                     old.remove(dest)

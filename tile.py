@@ -1,5 +1,19 @@
 from math import sin, cos, pi, atan2, sqrt
 
+class Layer(object):
+    def __init__(self, rock, thickness):
+        self.rock = rock
+        self.thickness = thickness
+
+    def __eq__(self, other):
+        return self.rock == other.rock and self.thickness == other.thickness
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __repr__(self):
+        return 'Layer({0}, {1})'.format(repr(self.rock), repr(self.thickness))
+
 class Tile(object):
     MAX_HEIGHT = 10
     MAX_THICKNESS = 75
@@ -17,7 +31,7 @@ class Tile(object):
 
     @property
     def substance(self):
-        return (self.elevation, self.thickness)
+        return self.bottom, list(self.layers)
 
     def distance(self, other):
         lat1, lon1 = [c * pi/180 for c in self.lat, self.lon]
@@ -30,51 +44,175 @@ class Tile(object):
         return 2 * atan2(sqrt(a), sqrt(1-a))
 
     def limit(self):
-        self.elevation = min(self.MAX_HEIGHT, self.elevation)
-        self.thickness = min(self.MAX_THICKNESS, self.thickness)
+        shrunk = 0
+        while self.thickness > self.MAX_THICKNESS:
+            dt = self.thickness - self.MAX_THICKNESS
+            l = self.layers.pop(0)
+            dlt = min(dt, l.thickness)
+            if dlt < l.thickness:
+                self.layers.insert(0, Layer(l.rock, l.thickness - dlt))
+            shrunk += dlt
 
-    def averagesources(self, substances, groupcount):
-        elevations = [s[0] for s in substances]
-        thicknesses = [s[1] for s in substances]
-        self.elevation = float(sum(elevations))/len(elevations)
-        self.thickness = float(sum(thicknesses))*groupcount/len(thicknesses)
+        self.bottom += shrunk
+
+        de = self.elevation - self.MAX_HEIGHT
+        if de > 0:
+            self.bottom -= de
+
+    def compact(self):
+        """Merge adjacent identical layers."""
+        i = 0
+        while i < len(self.layers) - 1:
+            l = self.layers[i]
+            if l.rock == self.layers[i+1].rock:
+                self.layers[i] = Layer(l.rock, l.thickness + self.layers.pop(i+1).thickness)
+            else:
+                i += 1
+
+    @staticmethod
+    def mergelayers(sources):
+        # each source is a (bottom, layer-list) tuple
+
+        # general approach is:
+        #  - work from the highest elevation down
+        #  - at each layer transition in any source:
+        #     - among the sources with something defined at that level
+        #         - choose the most common one
+        #     - if there is more than one possibility for most common
+        #         - choose one that differs from the previous (above) level
+        #     - if the layer matches the previous one, extend it
+
+        # pad source bottoms with empty layers
+        bottom = min([s[0] for s in sources])
+        ss = []
+        for s in sources:
+            db = s[0] - bottom
+            pl = [Layer(None, db)] if db > 0 else []
+            ss.append(pl + s[1])
+
+        # pad source tops with empty layers
+        elevation = max([s[0] + sum([l.thickness for l in s[1]]) for s in sources])
+        for i in range(len(sources)):
+            de = elevation - (sources[i][0] + sum([l.thickness for l in sources[i][1]]))
+            if de > 0:
+                ss[i].append(Layer(None, de))
+
+        output = []
+        depth = 0
+
+        lastr = None
+        
+        # while there's anything left to work with
+        while any([len(s) for s in ss]):
+            # grab the next smallest layer down
+            i = min(range(len(ss)), key=lambda i: ss[i][-1].thickness if len(ss[i]) > 0 else float('inf'))
+
+            # take the rocks from the other sources, shrinking their layers
+            t = ss[i][-1].thickness
+            rs = []
+            for s in ss:
+                if len(s) == 0:
+                    continue
+                l = s.pop()
+                if l.thickness > t:
+                    s.append(Layer(l.rock, l.thickness - t))
+                if l.rock is not None:
+                    for ri in range(len(rs)):
+                        if rs[ri][0] == l.rock:
+                            rs[ri][1] += 1
+                            break
+                    else:
+                        rs.append([l.rock, 1])
+
+            if len(rs) == 0:
+                continue
+
+            # vote
+            v = max([r[1] for r in rs])
+            rs = [r[0] for r in rs if r[1] == v]
+
+            # prefer unique
+            if len(rs) > 1 and lastr in rs:
+                rs.remove(lastr)
+
+            if len(rs) > 0:
+                lastr = rs[0]
+                output.append(Layer(lastr, t))
+        
+        # compact
+        i = 0
+        while i < len(output)-1:
+            t, n = output[i:i+2]
+            if t.thickness == 0:
+                output[i:i+2] = [n]
+            else:
+                if t.rock == n.rock:
+                    output[i:i+2] = [Layer(t.rock, t.thickness + n.thickness)]
+                else:
+                    i += 1
+
+        # reverse
+        return bottom, list(reversed(output))
+
+    def mergesources(self, groups):
+        # average out each group
+        gs = [self.mergelayers(ss) for ss in groups]
+        # stack the groups up (in arbitrary order!)
+        self.bottom = sum([g[0] for g in gs])
+        self.layers = [s for ss in [g[1] for g in gs] for s in ss]
         self.limit()
+        self.compact()
 
     def build(self, amount):
-        self.elevation += amount
-        self.thickness += 2 * amount
+        self.bottom -= amount
+        self.layers.insert(0, Layer('I', 2 * amount))
         self.limit()
+        self.compact()
 
     def erode(self, erosion):
         e = erosion[self]
         m = sum([d.degree for d in e.destinations])
         for d in e.destinations:
-            erosion[d.destination].addmaterial(d.degree, self.substance)
-        self.elevation -= m
-        self.thickness -= m
+            erosion[d.destination].addmaterial(d.degree, m, self.substance)
+        while m > 0:
+            l = self.layers.pop()
+            if l.thickness > m:
+                self.layers.append(Layer(l.rock, l.thickness - m))
+                m = 0
+            else:
+                m -= l.thickness
+        self.compact()
 
     def depositnew(self, materials):
         if sum([m.amount for m in materials]) > 1.5:
-            amount = sum([m.amount for m in materials])
-            self.elevation += amount
-            self.thickness += amount + 5
+            self.layers.append(Layer('S', sum([m.amount for m in materials])))
+            self.compact()
             return True
         else:
             return False
 
     def depositexisting(self, materials):
-        amount = sum([m.amount for m in materials])
-        self.elevation += amount
-        self.thickness += amount
+        if len(materials) == 0:
+            return
+        self.layers.append(Layer('S', sum([m.amount for m in materials])))
         self.limit()
+        self.compact()
 
     def emptyland(self):
-        self.elevation = 1
-        self.thickness = 10
+        self.bottom = -9
+        self.layers = [Layer('I', 10)]
 
     def emptyocean(self):
-        self.elevation = 0
-        self.thickness = 5
+        self.bottom = -5
+        self.layers = [Layer('I', 5)]
+
+    @property
+    def elevation(self):
+        return max(0, self.bottom + self.thickness)
+
+    @property
+    def thickness(self):
+        return sum([l.thickness for l in self.layers])
 
     def __repr__(self):
         return 'Tile({0}, {1})'.format(self.lat, self.lon)

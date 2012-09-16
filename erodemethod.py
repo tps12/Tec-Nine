@@ -4,8 +4,9 @@ class ErosionEvent(object):
         self.destination = destination
 
 class ErosionMaterial(object):
-    def __init__(self, amount, substance):
+    def __init__(self, amount, total, substance):
         self.amount = amount
+        self.total = total
         self.substance = substance
 
 class Erosion(object):
@@ -14,12 +15,8 @@ class Erosion(object):
         self.materials = []
         self.sources = []
 
-    def addmaterial(self, amount, substance):
-        self.materials.append(ErosionMaterial(amount, substance))
-
-# no longer exists; remains so tiles pickled pre-version 2 can be loaded
-class ErodedMaterial(object):
-    pass
+    def addmaterial(self, amount, total, substance):
+        self.materials.append(ErosionMaterial(amount, total, substance))
 
 def erode(tiles, adjacency):
     erosion = {}

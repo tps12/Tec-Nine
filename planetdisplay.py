@@ -98,16 +98,25 @@ def thicknesscolor(tile):
         color = (0, 0, 0)
     return color
 
+def rockcolor(tile):
+    h = tile.elevation
+
+    if h > 0:
+        value = int(128 + 12.5 * h)
+        if tile.layers[-1].rock == 'I':
+            color = (255, value, value)
+        else:
+            color = (value, value, 255)
+    else:
+        color = (0, 0, 0)
+    return color
+
 class PlanetDisplay(QWidget):
     dt = 0.01
 
     _projections = [mercator, sinusoidal, flat]
 
-    CLIMATE = 0
-    ELEVATION = 1
-    THICKNESS = 2
-
-    _colorfunctions = [climatecolor, elevationcolor, thicknesscolor]
+    _colorfunctions = [climatecolor, elevationcolor, rockcolor, thicknesscolor]
     
     def __init__(self, sim):
         QWidget.__init__(self)
@@ -115,7 +124,7 @@ class PlanetDisplay(QWidget):
         self._screen = None
         self._rotate = 0
         self._projection = 0
-        self._aspect = self.ELEVATION
+        self._aspect = self._colorfunctions.index(elevationcolor)
         self.selected = None
         self.dirty = True
 
