@@ -105,8 +105,10 @@ def rockcolor(tile):
         value = int(128 + 12.5 * h)
         if tile.layers[-1].rock == 'I':
             color = (255, value, value)
-        else:
+        elif tile.layers[-1].rock == 'S':
             color = (value, value, 255)
+        else:
+            color = (value, 255, value)
     else:
         color = (0, 0, 0)
     return color

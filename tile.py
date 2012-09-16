@@ -59,6 +59,23 @@ class Tile(object):
         if de > 0:
             self.bottom -= de
 
+    def metamorphose(self):
+        # accumulate depth from top down
+        t = 0
+        for i in range(len(self.layers)-1, -1, -1):
+            t += self.layers[i].thickness
+            dt = t - 5
+            # beneath 5km, everything metamorphoses
+            if dt >= 0:
+                layers = self.layers
+                # metamorphosed layers plus deep part of divided layer
+                self.layers = [Layer('M', sum([l.thickness for l in layers[:i]]) + dt)]
+                # remaining piece of divided layer
+                self.layers.append(Layer(layers[i].rock, layers[i].thickness - dt))
+                # un-metamorphosed layers
+                self.layers += layers[i+1:]
+                break
+
     def compact(self):
         """Merge adjacent identical layers."""
         i = 0
@@ -161,12 +178,14 @@ class Tile(object):
         self.bottom = sum([g[0] for g in gs])
         self.layers = [s for ss in [g[1] for g in gs] for s in ss]
         self.limit()
+        self.metamorphose()
         self.compact()
 
     def build(self, amount):
         self.bottom -= amount
         self.layers.insert(0, Layer('I', 2 * amount))
         self.limit()
+        self.metamorphose()
         self.compact()
 
     def erode(self, erosion):
@@ -186,6 +205,7 @@ class Tile(object):
     def depositnew(self, materials):
         if sum([m.amount for m in materials]) > 1.5:
             self.layers.append(Layer('S', sum([m.amount for m in materials])))
+            self.metamorphose()
             self.compact()
             return True
         else:
@@ -196,6 +216,7 @@ class Tile(object):
             return
         self.layers.append(Layer('S', sum([m.amount for m in materials])))
         self.limit()
+        self.metamorphose()
         self.compact()
 
     def emptyland(self):
