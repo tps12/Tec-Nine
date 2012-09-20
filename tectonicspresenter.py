@@ -61,7 +61,7 @@ class TectonicsPresenter(object):
         self._ticks = 0
         self._worker.start()
 
-        self._display = PlanetDisplay(self._model)
+        self._display = PlanetDisplay(self._model, self.selecttile)
 
         self._view.continents.setNum(self._model.continents)
         self._view.percent.setNum(self._model.land)
@@ -81,6 +81,13 @@ class TectonicsPresenter(object):
         self._view.pause.setVisible(False)
 
         self._uistack = uistack
+
+    def selecttile(self, pos):
+        self._view.details.clear()
+        tile = self._model.tiles[pos[1]][pos[0]] if pos is not None else None
+        if tile is not None:
+            for layer in reversed(tile.layers):
+                self._view.details.addItem(layer.rock)
 
     def rotate(self, value):
         self._display.rotate = value

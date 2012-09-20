@@ -1,7 +1,9 @@
 from PySide.QtCore import Qt
 from PySide.QtGui import QImage
 
-def sinusoidal(screen, size, tiles, rotate, tilecolor, backcolor = None):
+class Sinusoidal(object):
+    @staticmethod
+    def project(screen, size, tiles, rotate, tilecolor, backcolor = None):
         res = max([len(r) for r in tiles]), len(tiles)
         template = QImage(size[0]/res[0], size[1]/res[1], QImage.Format_RGB32)
 
@@ -22,7 +24,29 @@ def sinusoidal(screen, size, tiles, rotate, tilecolor, backcolor = None):
                
                 screen.drawImage((x + (res[0] - len(tiles[y]))/2)*block.width(), y*block.height(), block)
 
-def mercator(screen, size, tiles, rotate, tilecolor, backcolor = None):
+    @staticmethod
+    def unproject(size, tiles, rotate, pos):
+        mx, my = pos
+
+        res = max([len(r) for r in tiles]), len(tiles)
+
+        y = my / (size[1]/res[1])
+        x = mx / (size[0]/res[0]) - (res[0] - len(tiles[y]))/2
+
+        r = rotate
+        o = r * len(tiles[y])/360
+
+        xo = x + o
+        if xo > len(tiles[y])-1:
+            xo -= len(tiles[y])
+        elif xo < 0:
+            xo += len(tiles[y])
+
+        return xo, y
+
+class Mercator(object):
+    @staticmethod
+    def project(screen, size, tiles, rotate, tilecolor, backcolor = None):
         res = len(tiles)
         template = QImage(size[0]/res, size[1]/res, QImage.Format_RGB32)
 
@@ -43,7 +67,29 @@ def mercator(screen, size, tiles, rotate, tilecolor, backcolor = None):
 
                 screen.drawImage(x*block.width(), y*block.height(), block)
 
-def flat(screen, size, tiles, rotate, tilecolor, backcolor = None):
+    @staticmethod
+    def unproject(size, tiles, rotate, pos):
+        mx, my = pos
+
+        res = len(tiles)
+
+        y = my / (size[1]/res)
+        x = mx / (size[0]/res)
+
+        r = rotate
+        o = r * res/360
+        xo = (x + o) * len(tiles[y])/res
+
+        if xo > len(tiles[y])-1:
+            xo -= len(tiles[y])
+        elif xo < 0:
+            xo += len(tiles[y])
+
+        return xo, y
+
+class Flat(object):
+    @staticmethod
+    def project(screen, size, tiles, rotate, tilecolor, backcolor = None):
         backcolor = Qt.white if backcolor is None else backcolor
 
         res = len(tiles)
@@ -90,3 +136,6 @@ def flat(screen, size, tiles, rotate, tilecolor, backcolor = None):
 
                 screen.drawImage(sx*res*block.width()/2, sy*res*block.height()/2, block)
 
+    @staticmethod
+    def unproject(size, tiles, rotate, pos):
+        return None

@@ -116,17 +116,18 @@ def rockcolor(tile):
 class PlanetDisplay(QWidget):
     dt = 0.01
 
-    _projections = [mercator, sinusoidal, flat]
+    _projections = [Mercator, Sinusoidal, Flat]
 
     _colorfunctions = [climatecolor, elevationcolor, rockcolor, thicknesscolor]
     
-    def __init__(self, sim):
+    def __init__(self, sim, selecthandler):
         QWidget.__init__(self)
         self._sim = sim
         self._screen = None
         self._rotate = 0
         self._projection = 0
         self._aspect = self._colorfunctions.index(elevationcolor)
+        self._select = selecthandler
         self.selected = None
         self.dirty = True
 
@@ -157,35 +158,11 @@ class PlanetDisplay(QWidget):
         self._aspect = value
         self._dirty = True
     
-    @property
     def mousePressEvent(self, e):
-        mx, my = e.pos().toTuple()
-
-        res = max([len(r) for r in self._sim.tiles]), len(self._sim.tiles)
-
+        pos = e.pos().toTuple()
         size = self._screen.size().toTuple()
 
-        y = my / (size[1]/res[1])
-        x = mx / (size[0]/res[0]) - (res[0] - len(self._sim.tiles[y]))/2
-
-        r = self._rotate
-        o = r * len(self._sim.tiles[y])/360
-
-        xo = x + o
-        if xo > len(self._sim.tiles[y])-1:
-            xo -= len(self._sim.tiles[y])
-        elif xo < 0:
-            xo += len(self._sim.tiles[y])
-        
-        if 0 <= y < len(self._sim.tiles) and 0 <= xo < len(self._sim.tiles[y]):
-            if self.selected == (xo,y):
-                self.selected = None
-            else:
-                self.selected = (xo,y)
-   
-            self._dirty = True
-
-            return True
+        self._select(self._projections[self._projection].unproject(size, self._sim.tiles, self.rotate, pos))
 
     def tilecolor(self, tile):
         return QColor(*self._colorfunctions[self._aspect](tile))
@@ -195,7 +172,7 @@ class PlanetDisplay(QWidget):
         surface.begin(self)
         
         if (self._sim.dirty or self._dirty or
-            self._screen == None or self._screen.size() != surface.size()):
+            self._screen == None or self._screen.size() != surface.device().size()):
             self._screen = QImage(surface.device().width(), surface.device().height(),
                                   QImage.Format_RGB32)
             
@@ -206,7 +183,7 @@ class PlanetDisplay(QWidget):
             screen = QPainter()
             screen.begin(self._screen)
 
-            self._projections[self._projection](screen, size, self._sim.tiles, self.rotate, self.tilecolor, Qt.black)
+            self._projections[self._projection].project(screen, size, self._sim.tiles, self.rotate, self.tilecolor, Qt.black)
 
             screen.end()
 

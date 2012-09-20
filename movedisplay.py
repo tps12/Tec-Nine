@@ -5,7 +5,7 @@ from PySide.QtGui import QColor, QImage, QPainter, QWidget, QSizePolicy
 from projection import *
 
 class MoveDisplay(QWidget):
-    _projections = [mercator, sinusoidal, flat]   
+    _projections = [Mercator, Sinusoidal, Flat]
 
     def __init__(self, sim):
         QWidget.__init__(self)
@@ -72,7 +72,7 @@ class MoveDisplay(QWidget):
             screen = QPainter()
             screen.begin(self._screen)
 
-            self._projections[self._projection](screen, size, self._sim.tiles, self.rotate, self.tilecolor)
+            self._projections[self._projection].project(screen, size, self._sim.tiles, self.rotate, self.tilecolor)
 
             screen.end()
 
