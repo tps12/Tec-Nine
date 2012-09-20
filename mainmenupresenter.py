@@ -4,7 +4,6 @@ from options import Options
 from tectonics import Tectonics
 from split import Split
 from move import Move
-from holes import Holes
 
 class MainMenuPresenter(object):
     def __init__(self, view, uistack):
