@@ -1,4 +1,3 @@
-from cPickle import dump, load
 from itertools import combinations
 from math import asin, acos, atan2, pi, exp, sqrt, sin, cos
 import random
@@ -8,6 +7,7 @@ from adjacency import *
 from climatemethod import climate
 from erodemethod import erode
 from movemethod import move
+from planetdata import Data
 from pointtree import PointTree
 from shape import *
 from splitmethod import split
@@ -30,14 +30,7 @@ class NextTileValue(object):
         tile.mergesources(self._substances)
         tile.build(self._build)
 
-class Group(object):
-    def __init__(self, tiles, v):
-        self.tiles = tiles
-        self.v = v
-
 class PlanetSimulation(object):
-    EXTENSION = '.tec9'
-
     cells = 3
     spin = 1.0
     tilt = 23
@@ -134,38 +127,21 @@ class PlanetSimulation(object):
     def land(self):
         return int(100.0*sum([len(s.tiles) for s in self._shapes])/len(self._indexedtiles) + 0.5)
 
-    def data(self):
-        data = dict()
-        data['version'] = 4
-        data['random'] = random.getstate()
-        data['dp'] = self._dp
-        data['build'] = self._build
-        data['splitnum'] = self._splitnum
-        data['tiles'] = self.tiles
-        data['shapes'] = [([self._indexedtiles.index(t) for t in s.tiles], s.v) for s in self._shapes]
-        return data
+    def load(self, filename):
+        data = Data.load(filename)
 
-    def setdata(self, data):
-        if 'version' not in data or data['version'] < 4:
-            raise ValueError('File version is too old')
         random.setstate(data['random'])
         self._dp = data['dp']
         self._build = data['build']
         self._splitnum = data['splitnum']
         self.tiles = data['tiles']
+        self._shapes = data['shapes']
+
         self.initindexes()
-        self._shapes = [Group([self._indexedtiles[i] for i in tis], v) for (tis, v) in data['shapes']]
         self.dirty = True
 
-    def load(self, filename):
-        with open(filename, 'r') as f:
-            self.setdata(load(f))
-
     def save(self, filename):
-        if filename[-len(self.EXTENSION):] != self.EXTENSION:
-            filename += self.EXTENSION
-        with open(filename, 'w') as f:
-            dump(self.data(), f, 0)
+        Data.save(filename, random.getstate(), self._dp, self._build, self._splitnum, self.tiles, self._shapes)
 
     def update(self):
         """Update the simulation by one timestep."""

@@ -14,6 +14,11 @@ class Layer(object):
     def __repr__(self):
         return 'Layer({0}, {1})'.format(repr(self.rock), repr(self.thickness))
 
+class Group(object):
+    def __init__(self, tiles, v):
+        self.tiles = tiles
+        self.v = v
+
 class Tile(object):
     MAX_HEIGHT = 10
     MAX_THICKNESS = 75

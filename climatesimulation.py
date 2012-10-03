@@ -1,14 +1,12 @@
-from cPickle import load
 from math import pi, cos
 
 from adjacency import *
 from climatemethod import climate
 from earth import Earth
+from planetdata import Data
 from tile import *
 
 class ClimateSimulation(object):
-    EXTENSION = '.tec9'
-
     spin = 1.0
     tilt = 23
 
@@ -66,12 +64,7 @@ class ClimateSimulation(object):
             t.layers = [Layer('S', elevation + 1)]
         self.classify()
 
-    def setdata(self, data):
-        if 'version' not in data or data['version'] < 4:
-            raise ValueError('File version is too old')
-        self.tiles = data['tiles']
-
     def load(self, filename):
-        with open(filename, 'r') as f:
-            self.setdata(load(f))
+        data = Data.load(filename)
+        self.tiles = data['tiles']
         self.classify()

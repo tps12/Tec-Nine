@@ -3,6 +3,7 @@ from time import sleep
 from PySide.QtGui import QApplication, QGridLayout, QFileDialog
 from PySide.QtCore import QThread, Signal
 
+from planetdata import Data
 from planetdisplay import PlanetDisplay
 from planetsimulation import PlanetSimulation
 
@@ -105,7 +106,7 @@ class TectonicsPresenter(object):
         filename = QFileDialog.getOpenFileName(self._view,
                                                'Load simulation state',
                                                '',
-                                               '*{0}'.format(PlanetSimulation.EXTENSION))[0]
+                                               '*{0}'.format(Data.EXTENSION))[0]
         if len(filename) > 0:
             self._model.load(filename)
             self._view.content.update()
@@ -116,7 +117,7 @@ class TectonicsPresenter(object):
         filename = QFileDialog.getSaveFileName(self._view,
                                                'Save simulation state',
                                                '',
-                                               '*{0}'.format(PlanetSimulation.EXTENSION))[0]
+                                               '*{0}'.format(Data.EXTENSION))[0]
         if len(filename) > 0:
             self._model.save(filename)
 

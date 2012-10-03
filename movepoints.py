@@ -1,4 +1,3 @@
-from cPickle import dump, load
 from itertools import combinations
 from math import asin, acos, atan2, pi, exp, sqrt, sin, cos
 from multiprocessing import cpu_count, Pool

@@ -3,6 +3,7 @@ from PySide.QtGui import QApplication, QGridLayout, QFileDialog
 
 from erosiondisplay import ErosionDisplay
 from erosionsimulation import ErosionSimulation
+from planetdata import Data
 
 class ErosionPresenter(object):
     def __init__(self, view, uistack):
@@ -69,7 +70,7 @@ class ErosionPresenter(object):
         filename = QFileDialog.getOpenFileName(self._view,
                                                'Load simulation state',
                                                '',
-                                               '*{0}'.format(ErosionSimulation.EXTENSION))[0]
+                                               '*{0}'.format(Data.EXTENSION))[0]
         if len(filename) > 0:
             self._model.load(filename)
             self._display.invalidate()

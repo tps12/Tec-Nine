@@ -2,6 +2,7 @@ from PySide.QtGui import QApplication, QGridLayout, QFileDialog
 
 from climatedisplay import ClimateDisplay
 from climatesimulation import ClimateSimulation
+from planetdata import Data
 
 class ClimatePresenter(object):
     def __init__(self, view, uistack):
@@ -52,7 +53,7 @@ class ClimatePresenter(object):
         filename = QFileDialog.getOpenFileName(self._view,
                                                'Load simulation state',
                                                '',
-                                               '*{0}'.format(ClimateSimulation.EXTENSION))[0]
+                                               '*{0}'.format(Data.EXTENSION))[0]
         if len(filename) > 0:
             self._model.load(filename)
             self._display.invalidate()
