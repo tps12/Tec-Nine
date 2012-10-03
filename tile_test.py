@@ -2,6 +2,9 @@ from unittest import TestCase, main, skip
 
 from tile import *
 
+def layer(rock, thickness):
+    return { 'rock': rock, 'thickness': thickness }
+
 class TileTestCase(TestCase):
 
     def test_mergelayers(self):
@@ -22,7 +25,7 @@ class TileTestCase(TestCase):
         ]
 
         sources = [
-            (d[0], [Layer(s[0], s[1]) for s in d[1]])
+            (d[0], [layer(s[0], s[1]) for s in d[1]])
             for d in sourcedata]
 
         bottom, layers = Tile.mergelayers(sources)
@@ -33,44 +36,44 @@ class TileTestCase(TestCase):
         self.assertEqual(layerdata, [(A, 9),(D,11),(A, 4),(D, 4),(A, 2),(B,18),(C,17)])
 
     def test_mergelayers_preserve_height(self):
-        merged = Tile.mergelayers([(0, [Layer('A', 1)]), (0, [Layer('A', 2)])])
+        merged = Tile.mergelayers([(0, [layer('A', 1)]), (0, [layer('A', 2)])])
         self.assertEqual(merged[1][0].thickness, 2)
 
     def test_mergelayers_preserve_depth(self):
-        merged = Tile.mergelayers([(-5, [Layer('A', 10)]), (-2, [Layer('A', 10)])])
+        merged = Tile.mergelayers([(-5, [layer('A', 10)]), (-2, [layer('A', 10)])])
         self.assertEqual(merged[0], -5)
 
     def test_mergelayers_most_common(self):
-        merged = Tile.mergelayers([(0, [Layer('A', 1)]), (0, [Layer('B', 1)]), (0, [Layer('B', 1)])])
+        merged = Tile.mergelayers([(0, [layer('A', 1)]), (0, [layer('B', 1)]), (0, [layer('B', 1)])])
         self.assertEqual(merged[1][0].rock, 'B')
 
     def test_mergelayers_prefer_change(self):
-        merged = Tile.mergelayers([(0, [Layer('A', 2)]),
-                                   (0, [Layer('B', 1), Layer('A', 1)])])
+        merged = Tile.mergelayers([(0, [layer('A', 2)]),
+                                   (0, [layer('B', 1), layer('A', 1)])])
         self.assertEqual(merged[1][0].rock, 'B')
 
     def test_mergelayers_most_common_trumps_change(self):
-        merged = Tile.mergelayers([(0, [Layer('A', 2)]),
-                                   (0, [Layer('A', 2)]),
-                                   (0, [Layer('B', 1), Layer('A', 1)])])
+        merged = Tile.mergelayers([(0, [layer('A', 2)]),
+                                   (0, [layer('A', 2)]),
+                                   (0, [layer('B', 1), layer('A', 1)])])
         self.assertEqual(merged[1][0].rock, 'A')
 
     def test_mergelayers_prefer_first(self):
-        merged = Tile.mergelayers([(0, [Layer('A', 1), Layer('D', 1), Layer('G', 1)]),
-                                   (0, [Layer('B', 1), Layer('E', 1), Layer('H', 1)]),
-                                   (0, [Layer('C', 1), Layer('F', 1), Layer('I', 1)])])
+        merged = Tile.mergelayers([(0, [layer('A', 1), layer('D', 1), layer('G', 1)]),
+                                   (0, [layer('B', 1), layer('E', 1), layer('H', 1)]),
+                                   (0, [layer('C', 1), layer('F', 1), layer('I', 1)])])
         self.assertEqual([l.rock for l in merged[1]], ['A', 'D', 'G'])
 
     def test_mergelayers_prefer_first_among_most_common(self):
-        merged = Tile.mergelayers([(0, [Layer('A', 1), Layer('D', 1), Layer('G', 1)]),
-                                   (0, [Layer('A', 1), Layer('D', 1), Layer('G', 1)]),
-                                   (0, [Layer('B', 1), Layer('E', 1), Layer('H', 1)]),
-                                   (0, [Layer('B', 1), Layer('E', 1), Layer('H', 1)]),
-                                   (0, [Layer('C', 1), Layer('F', 1), Layer('I', 1)])])
+        merged = Tile.mergelayers([(0, [layer('A', 1), layer('D', 1), layer('G', 1)]),
+                                   (0, [layer('A', 1), layer('D', 1), layer('G', 1)]),
+                                   (0, [layer('B', 1), layer('E', 1), layer('H', 1)]),
+                                   (0, [layer('B', 1), layer('E', 1), layer('H', 1)]),
+                                   (0, [layer('C', 1), layer('F', 1), layer('I', 1)])])
         self.assertEqual([l.rock for l in merged[1]], ['A', 'D', 'G'])
 
     def test_mergelayers_identity(self):
-        merged = Tile.mergelayers([(0, [Layer('A', 1), Layer('B', 1), Layer('C', 1)])])
+        merged = Tile.mergelayers([(0, [layer('A', 1), layer('B', 1), layer('C', 1)])])
         self.assertEqual(merged, (0, [Layer('A', 1), Layer('B', 1), Layer('C', 1)]))
 
 if __name__ == '__main__':

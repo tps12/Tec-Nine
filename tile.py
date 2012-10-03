@@ -31,7 +31,7 @@ class Tile(object):
 
     @property
     def substance(self):
-        return self.bottom, list(self.layers)
+        return self.bottom, [{ 'rock': l.rock, 'thickness': l.thickness } for l in self.layers]
 
     def distance(self, other):
         lat1, lon1 = [c * pi/180 for c in self.lat, self.lon]
@@ -88,7 +88,8 @@ class Tile(object):
 
     @staticmethod
     def mergelayers(sources):
-        # each source is a (bottom, layer-list) tuple
+        # each source is a (bottom, substance-list) tuple; convert substance list to layers
+        sources = [(s[0], [Layer(l['rock'], l['thickness']) for l in s[1]]) for s in sources]
 
         # general approach is:
         #  - work from the highest elevation down
