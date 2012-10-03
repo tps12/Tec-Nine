@@ -28,7 +28,7 @@ class MainWindowPresenter(object):
 
     def pop(self):
         widget = self._widgets.pop()
-        widget.setParent(None)
+        widget.deleteLater()
         if len(self._widgets):
             widget = self._widgets[-1]
             widget.show()
