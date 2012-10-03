@@ -17,6 +17,9 @@ class GreatCircle(object):
                 maxz)
 
     def intersects(self, other):
+        if self.plane == (0,0,0) or other.plane == (0,0,0):
+            return []
+
         sa, sb, sc = self.plane
         oa, ob, oc = other.plane
 

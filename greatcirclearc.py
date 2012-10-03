@@ -27,11 +27,12 @@ class GreatCircleArc(object):
         lonrange = LonRange(s[1], e[1])
         latrange = LatRange(s[0], e[0])
 
-        inflection = self._coords(GreatCircle(self._start, self._end).inflection())
-        if lonrange.contains(inflection[1]):
-            latrange.max = inflection[0]
-        if lonrange.contains(inflection[1] - 180):
-            latrange.min = -inflection[0]
+        if latrange.min != latrange.max and lonrange.min != lonrange.max:
+            inflection = self._coords(GreatCircle(self._start, self._end).inflection())
+            if lonrange.contains(inflection[1]):
+                latrange.max = inflection[0]
+            if lonrange.contains(inflection[1] - 180):
+                latrange.min = -inflection[0]
 
         self._latrange, self._lonrange = latrange, lonrange
 
