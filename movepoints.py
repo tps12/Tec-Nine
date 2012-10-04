@@ -20,7 +20,8 @@ from tile import *
 def _setlat(lat, shape):
     """Set tile values for the given latitude array."""
     for x in range(len(lat)):
-        lat[x].elevation = 1 if shape.contains(lat[x].vector) else 0
+        lat[x].bottom = 0
+        lat[x].layers = [Layer('T', 1)] if shape.contains(lat[x].vector) else []
     return lat
 
 class MovePoints(object):
@@ -90,9 +91,9 @@ class MovePoints(object):
 
         group = [t for lat in self.tiles for t in lat if t.elevation == 1]
         for t in self._indexedtiles:
-            t.elevation = 0
+            t.layers = []
         for t in group:
-            t.elevation = 2
+            t.layers = [Layer('M', 2)]
 
         group, v = move(self._indexedtiles,
                         group,
@@ -100,7 +101,7 @@ class MovePoints(object):
                         self._adj,
                         self._index)
         for t, ts in group.iteritems():
-            t.elevation = 1
+            t.layers = [Layer('T', 1)]
 
         self._velocity = v
 

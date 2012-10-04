@@ -44,11 +44,11 @@ class MoveDisplay(QWidget):
         self._dirty = True
 
     def tilecolor(self, tile):
-        h = tile.elevation
+        h = tile.layers[0].rock if len(tile.layers) > 0 else None
 
-        if h == 1:
+        if h == 'T':
             color = (128, 128, 128)
-        elif h == 2 and self._trail:
+        elif h == 'M' and self._trail:
             color = (192, 192, 192)
         else:
             color = (255, 255, 255)
