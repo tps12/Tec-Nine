@@ -103,9 +103,13 @@ def rockcolor(tile):
 
     if h > 0:
         value = int(128 + 12.5 * h)
-        if tile.layers[-1].rock == 'I':
+        try:
+            rocktype = tile.layers[-1].rock['type']
+        except TypeError:
+            rocktype = tile.layers[-1].rock
+        if rocktype == 'I':
             color = (255, value, value)
-        elif tile.layers[-1].rock == 'S':
+        elif rocktype == 'S':
             color = (value, value, 255)
         else:
             color = (value, 255, value)

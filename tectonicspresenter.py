@@ -88,7 +88,11 @@ class TectonicsPresenter(object):
         tile = self._model.tiles[pos[1]][pos[0]] if pos is not None else None
         if tile is not None:
             for layer in reversed(tile.layers):
-                self._view.details.addItem(layer.rock)
+                try:
+                    name = layer.rock['name']
+                except TypeError:
+                    name = layer.rock
+                self._view.details.addItem(name)
 
     def rotate(self, value):
         self._display.rotate = value

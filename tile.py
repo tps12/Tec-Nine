@@ -187,9 +187,9 @@ class Tile(object):
         self.metamorphose()
         self.compact()
 
-    def build(self, amount):
+    def build(self, amount, rock):
         self.bottom -= amount
-        self.layers.insert(0, Layer('I', 2 * amount))
+        self.layers.insert(0, Layer(rock, 2 * amount))
         self.limit()
         self.metamorphose()
         self.compact()
@@ -225,13 +225,13 @@ class Tile(object):
         self.metamorphose()
         self.compact()
 
-    def emptyland(self):
+    def emptyland(self, rock = 'I', h = 1):
         self.bottom = -9
-        self.layers = [Layer('I', 10)]
+        self.layers = [Layer(rock, 9 + h)]
 
-    def emptyocean(self):
+    def emptyocean(self, rock = 'I'):
         self.bottom = -5
-        self.layers = [Layer('I', 5)]
+        self.layers = [Layer(rock, 5)]
 
     @property
     def elevation(self):

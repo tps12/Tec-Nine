@@ -28,7 +28,7 @@ class NextTileValue(object):
 
     def apply(self, tile):
         tile.mergesources(self._substances)
-        tile.build(self._build)
+        tile.build(self._build, PlanetSimulation.seafloor)
 
 class PlanetSimulation(object):
     cells = 3
@@ -36,6 +36,8 @@ class PlanetSimulation(object):
     tilt = 23
 
     temprange = (-25.0, 50.0)
+
+    seafloor = { 'type' : 'I', 'name': 'basalt', 'felsity': 0.5 }
 
     def __init__(self, r, dt):
         """Create a simulation for a planet of radius r km and timesteps of dt
@@ -94,9 +96,33 @@ class PlanetSimulation(object):
         shape = Shape(shape, p, o, v).projection()
 
         self._shapes = [Group([t for lat in self.tiles for t in lat if shape.contains(t.vector)], v)]
-        for t in self._shapes[0].tiles:
-            # initial landmass starts at elevation 1
-            t.emptyland()
+
+        # initial landmass starts at elevation based on distance from center
+        c = self._indexedtiles[self._index.nearest(p)[0]]
+        r2 = r*r
+
+        # on land, one random tile is the center of a felsic chunk
+        f = random.choice(self._shapes[0].tiles)
+
+        for t in self._indexedtiles:
+            if t in self._shapes[0].tiles:
+                dc = t.distance(c)
+                df = t.distance(f)
+
+                silica = max(0.5, 1 - df*df/r2)
+                if silica > 0.63:
+                    name = 'rhyolite'
+                elif silica > 0.52:
+                    name = 'dacite'
+                else:
+                    name = 'basalt'
+
+                r = { 'type': 'I', 'name': name, 'felsity': silica }
+                h = 1 - dc*dc/r2
+
+                t.emptyland(r, h)
+            else:
+                t.emptyocean(self.seafloor)
 
         for t in [t for lat in self.tiles for t in lat]:
             t.climate = None
@@ -196,7 +222,7 @@ class PlanetSimulation(object):
 
         # clear out abandoned tiles
         for t in old:
-            t.emptyocean()
+            t.emptyocean(self.seafloor)
 
         seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
         c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange)
