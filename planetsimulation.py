@@ -9,7 +9,7 @@ from erodemethod import erode
 from movemethod import move
 from planetdata import Data
 from pointtree import PointTree
-from rock import igneous, sedimentary
+from rock import igneous, sedimentary, metamorphic
 from shape import *
 from splitmethod import split
 from tile import *
@@ -247,7 +247,10 @@ class PlanetSimulation(object):
                     if not t in self._shapes[s].tiles:
                         self._shapes[s].tiles.append(t)
                 overlapping[t] = list(sourceshapes)
-               
+
+        for t in [t for lat in self.tiles for t in lat]:
+            t.transform(metamorphic.transform(t.substance[1]))
+
         # merge shapes that overlap a lot
         groups = []
         for pair, count in collisions.items():

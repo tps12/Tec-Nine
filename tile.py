@@ -64,32 +64,9 @@ class Tile(object):
         if de > 0:
             self.bottom -= de
 
-    def metamorphose(self):
-        # accumulate depth from top down
-        t = 0
-        for i in range(len(self.layers)-1, -1, -1):
-            t += self.layers[i].thickness
-            dt = t - 5
-            # beneath 5km, everything metamorphoses
-            if dt >= 0:
-                layers = self.layers
-                # metamorphosed layers
-                self.layers = [Layer(l.rock, l.thickness) for l in layers[:i]]
-                # deep part of divided layer
-                self.layers.append(Layer(layers[i].rock, dt))
-                # metamorphose
-                for l in self.layers:
-                    try:
-                        l.rock = l.rock.copy()
-                        l.rock['type'] = 'M'
-                        l.rock['name'] = 'M'
-                    except AttributeError:
-                        l.rock = { 'type': 'M', 'name': 'M' }
-                # remaining piece of divided layer
-                self.layers.append(Layer(layers[i].rock, layers[i].thickness - dt))
-                # un-metamorphosed layers
-                self.layers += layers[i+1:]
-                break
+    def transform(self, layers):
+        self.layers = [Layer(l['rock'], l['thickness']) for l in layers]
+        self.compact()
 
     def compact(self):
         """Merge adjacent identical layers."""
@@ -194,14 +171,12 @@ class Tile(object):
         self.bottom = sum([g[0] for g in gs])
         self.layers = [s for ss in [g[1] for g in gs] for s in ss]
         self.limit()
-        self.metamorphose()
         self.compact()
 
     def build(self, amount, rock):
         self.bottom -= amount
         self.layers.insert(0, Layer(rock, 2 * amount))
         self.limit()
-        self.metamorphose()
         self.compact()
 
     def erode(self, erosion):
@@ -221,7 +196,6 @@ class Tile(object):
     def deposit(self, substance):
         self.layers.append(Layer(substance['rock'], substance['thickness']))
         self.limit()
-        self.metamorphose()
         self.compact()
 
     def emptyland(self, rock = 'I', h = 1):
