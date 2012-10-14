@@ -27,7 +27,7 @@ def deposit(materials):
         depositkeys = depositkeys.union(rock.keys())
         contributions.append({ 'rock': rock, 'thickness': m.amount })
 
-    rock = { 'type': 'S', 'name': 'S' }
+    rock = { 'type': 'S', 'name': None }
     thickness = sum([c['thickness'] for c in contributions])
     for k in depositkeys:
         if k not in rock:
@@ -35,5 +35,17 @@ def deposit(materials):
             rock[k] = sum([float(c['thickness']) * c['rock'][k]
                            if k in c['rock'] else 0
                            for c in contributions])/thickness
+
+    rock['clasticity'] = rock['clasticity'] * 2 if 'clasticity' in rock else 1
+    grain = 1e-3/float(rock['clasticity'])
+    if grain < 4e-6:
+        name = 'claystone'
+    elif grain < 60e-6:
+        name = 'siltstone'
+    elif grain < 2e-3:
+        name = 'sandstone'
+    else:
+        name = 'conglomerate'
+    rock['name'] = name
 
     return { 'rock': rock, 'thickness': thickness }
