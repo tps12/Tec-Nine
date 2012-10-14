@@ -46,7 +46,7 @@ class SimThread(QThread):
             sleep(0.1)
 
 class TectonicsPresenter(object):
-    def __init__(self, view, uistack):
+    def __init__(self, view, uistack, listitemclass):
         self._view = view
         self._view.start.clicked.connect(self.start)
         self._view.pause.clicked.connect(self.pause)
@@ -70,6 +70,8 @@ class TectonicsPresenter(object):
         self._view.content.setLayout(QGridLayout())
         self._view.content.layout().addWidget(self._display)
 
+        self._listitemclass = listitemclass
+
         self._view.rotate.setValue(self._display.rotate)
         self._view.rotate.sliderMoved.connect(self.rotate)
 
@@ -88,10 +90,9 @@ class TectonicsPresenter(object):
         tile = self._model.tiles[pos[1]][pos[0]] if pos is not None else None
         if tile is not None:
             for layer in reversed(tile.layers):
-                try:
-                    name = layer.rock['name']
-                except TypeError:
-                    name = layer.rock
+                name = self._listitemclass(layer.rock['name'])
+                name.setToolTip(repr({ 'thickness': layer.thickness,
+                                       'rock': layer.rock }))
                 self._view.details.addItem(name)
 
     def rotate(self, value):
