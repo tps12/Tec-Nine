@@ -218,60 +218,8 @@ class Tile(object):
                 m -= l.thickness
         self.compact()
 
-    @staticmethod
-    def depositmaterials(materials):
-        contributions = []
-        depositkeys = set()
-        for m in materials:
-            t = 0
-            i = len(m.substance[1]) - 1
-            sources = []
-            keys = set()
-            while t < m.total:
-                dt = m.total - t
-                layer = m.substance[1][i]
-                if layer['thickness'] >= dt:
-                    sources.append({ 'rock': layer['rock'], 'thickness': dt })
-                else:
-                    sources.append(layer)
-                keys = keys.union(sources[-1]['rock'].keys())
-                t += sources[-1]['thickness']
-                i -= 1
-
-            rock = { 'type': 'S', 'name': 'S' }
-            for k in keys:
-                if k not in rock:
-                    # weight attributes by thickness
-                    rock[k] = sum([float(s['thickness']) * s['rock'][k]
-                                   if k in s['rock'] else 0
-                                   for s in sources])/m.total
-            depositkeys = depositkeys.union(rock.keys())
-            contributions.append({ 'rock': rock, 'thickness': m.amount })
-
-        rock = { 'type': 'S', 'name': 'S' }
-        thickness = sum([c['thickness'] for c in contributions])
-        for k in depositkeys:
-            if k not in rock:
-                # weight attributes by thickness
-                rock[k] = sum([float(c['thickness']) * c['rock'][k]
-                               if k in c['rock'] else 0
-                               for c in contributions])/thickness
-
-        return Layer(rock, thickness)
-
-    def depositnew(self, materials):
-        if sum([m.amount for m in materials]) > 1.5:
-            self.layers.append(self.depositmaterials(materials))
-            self.metamorphose()
-            self.compact()
-            return True
-        else:
-            return False
-
-    def depositexisting(self, materials):
-        if len(materials) == 0:
-            return
-        self.layers.append(self.depositmaterials(materials))
+    def deposit(self, substance):
+        self.layers.append(Layer(substance['rock'], substance['thickness']))
         self.limit()
         self.metamorphose()
         self.compact()

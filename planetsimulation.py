@@ -9,6 +9,7 @@ from erodemethod import erode
 from movemethod import move
 from planetdata import Data
 from pointtree import PointTree
+from rock import igneous, sedimentary
 from shape import *
 from splitmethod import split
 from tile import *
@@ -28,7 +29,7 @@ class NextTileValue(object):
 
     def apply(self, tile):
         tile.mergesources(self._substances)
-        tile.build(self._build, PlanetSimulation.seafloor)
+        tile.build(self._build, PlanetSimulation.seafloor())
 
 class PlanetSimulation(object):
     cells = 3
@@ -36,8 +37,6 @@ class PlanetSimulation(object):
     tilt = 23
 
     temprange = (-25.0, 50.0)
-
-    seafloor = { 'type' : 'I', 'name': 'basalt', 'felsity': 0.5 }
 
     def __init__(self, r, dt):
         """Create a simulation for a planet of radius r km and timesteps of dt
@@ -109,25 +108,21 @@ class PlanetSimulation(object):
                 dc = t.distance(c)
                 df = t.distance(f)
 
-                silica = max(0.5, 1 - df*df/r2)
-                if silica > 0.63:
-                    name = 'rhyolite'
-                elif silica > 0.52:
-                    name = 'dacite'
-                else:
-                    name = 'basalt'
-
-                r = { 'type': 'I', 'name': name, 'felsity': silica }
+                r = igneous.extrusive(max(0.5, 1 - df*df/r2))
                 h = 1 - dc*dc/r2
 
                 t.emptyland(r, h)
             else:
-                t.emptyocean(self.seafloor)
+                t.emptyocean(self.seafloor())
 
         for t in [t for lat in self.tiles for t in lat]:
             t.climate = None
 
         self.dirty = True
+
+    @staticmethod
+    def seafloor():
+        return igneous.extrusive(0.5)
 
     def initindexes(self):
         self._indexedtiles = []
@@ -222,7 +217,7 @@ class PlanetSimulation(object):
 
         # clear out abandoned tiles
         for t in old:
-            t.emptyocean(self.seafloor)
+            t.emptyocean(self.seafloor())
 
         seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
         c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange)
@@ -239,9 +234,11 @@ class PlanetSimulation(object):
         for t in [t for lat in self.tiles for t in lat]:
             # if the tile is in at least one shape, apply the erosion materials
             if len(overlapping[t]) > 0:
-                t.depositexisting(erosion[t].materials)
+                if len(erosion[t].materials) > 0:
+                    t.deposit(sedimentary.deposit(erosion[t].materials))
             # otherwise, require a certain threshold
-            elif t.depositnew(erosion[t].materials):
+            elif sum([m.amount for m in erosion[t].materials]) > 1.5:
+                t.deposit(sedimentary.deposit(erosion[t].materials))
                 sourceshapes = set()
                 for e in erosion[t].sources:
                     for shape in overlapping[e]:
