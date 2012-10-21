@@ -33,6 +33,11 @@ class Tile(object):
                        sin(self.lat * pi/180))
 
         self.emptyocean()
+        self._subduction = 0
+
+    @property
+    def subduction(self):
+        return self._subduction
 
     @property
     def substance(self):
@@ -172,12 +177,14 @@ class Tile(object):
         self.layers = [s for ss in [g[1] for g in gs] for s in ss]
         self.limit()
         self.compact()
+        self._subduction = 0
 
     def build(self, amount, rock):
         self.bottom -= amount
         self.layers.insert(0, Layer(rock, 2 * amount))
         self.limit()
         self.compact()
+        self._subduction = amount
 
     def erode(self, erosion):
         e = erosion[self]

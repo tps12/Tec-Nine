@@ -16,16 +16,44 @@ def zeolite(layer):
 def blueschist(layer):
     rock = layer['rock'].copy()
     rock['type'] = 'M'
-    rock['name'] = 'schist'
+    rock['name'] = 'blueschist'
     return { 'rock': rock, 'thickness': layer['thickness'] }
 
-facies = [
-    (10, lambda l: l),
-    (20, zeolite),
-    (float('inf'), blueschist)
+def greenschist(layer):
+    rock = layer['rock'].copy()
+    rock['type'] = 'M'
+    rock['name'] = 'greenschist'
+    return { 'rock': rock, 'thickness': layer['thickness'] }
+
+def amphibolite(layer):
+    rock = layer['rock'].copy()
+    rock['type'] = 'M'
+    rock['name'] = 'amphibolite'
+    return { 'rock': rock, 'thickness': layer['thickness'] }
+
+def eclogite(layer):
+    rock = layer['rock'].copy()
+    rock['type'] = 'M'
+    rock['name'] = 'eclogite'
+    return { 'rock': rock, 'thickness': layer['thickness'] }
+
+lowgrade = [
+    (5, lambda l: l),
+    (15, zeolite),
+    (30, greenschist),
+    (70, amphibolite),
+    (float('inf'), eclogite)
 ]
 
-def transform(layers):
+normal = [
+    (10, lambda l: l),
+    (20, zeolite),
+    (60, blueschist),
+    (float('inf'), eclogite)
+]
+
+def transform(layers, subduction):
+    facies = lowgrade if subduction else normal
     f = 0
     newlayers = []
     # accumulate depth from top down

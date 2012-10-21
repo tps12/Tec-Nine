@@ -124,6 +124,11 @@
          </item>
          <item>
           <property name="text">
+           <string>Subduction</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>Thickness</string>
           </property>
          </item>
