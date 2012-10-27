@@ -226,6 +226,9 @@ class PlanetSimulation(object):
             for x in range(len(self.tiles[y])):
                 self.tiles[y][x].climate = c[(x,y)]
 
+        # record each continent's total pre-erosion above-sea size
+        heights = [sum([t.elevation for t in s.tiles]) for s in self._shapes]
+
         erosion = erode(self.tiles, self.adj)
 
         for t in [t for lat in self.tiles for t in lat]:
@@ -247,6 +250,11 @@ class PlanetSimulation(object):
                     if not t in self._shapes[s].tiles:
                         self._shapes[s].tiles.append(t)
                 overlapping[t] = list(sourceshapes)
+
+        for s, h in zip(self._shapes, heights):
+            dh = (h - sum([t.elevation for t in s.tiles]))/float(len(s.tiles))
+            for t in s.tiles:
+                t.isostasize(dh)
 
         for t in [t for lat in self.tiles for t in lat]:
             if t.subduction > 0:

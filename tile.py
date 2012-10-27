@@ -209,6 +209,10 @@ class Tile(object):
         self.limit()
         self.compact()
 
+    def isostasize(self, amount):
+        self.bottom += amount
+        self.limit()
+
     def intrude(self, rock):
         # more mafic intrusions don't get as high
         depth = max(2, self.thickness * (1 - rock['felsity']))
