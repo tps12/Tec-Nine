@@ -249,7 +249,16 @@ class PlanetSimulation(object):
                 overlapping[t] = list(sourceshapes)
 
         for t in [t for lat in self.tiles for t in lat]:
-            t.transform(metamorphic.transform(t.substance[1], t.subduction > 0))
+            if t.subduction > 0:
+                if random.random() < 0.1:
+                    t.intrude(igneous.intrusive(max(0, min(1, random.gauss(0.85, 0.15)))))
+                    t.transform(metamorphic.contact(t.substance[1], t.intrusion))
+
+        for t in [t for lat in self.tiles for t in lat]:
+            t.transform(metamorphic.regional(t.substance[1], t.subduction > 0))
+
+        for t in [t for lat in self.tiles for t in lat]:
+            t.cleartemp()
 
         # merge shapes that overlap a lot
         groups = []

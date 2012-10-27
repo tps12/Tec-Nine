@@ -34,10 +34,15 @@ class Tile(object):
 
         self.emptyocean()
         self._subduction = 0
+        self._intrusion = None
 
     @property
     def subduction(self):
         return self._subduction
+
+    @property
+    def intrusion(self):
+        return self._intrusion
 
     @property
     def substance(self):
@@ -177,7 +182,6 @@ class Tile(object):
         self.layers = [s for ss in [g[1] for g in gs] for s in ss]
         self.limit()
         self.compact()
-        self._subduction = 0
 
     def build(self, amount, rock):
         self.bottom -= amount
@@ -204,6 +208,25 @@ class Tile(object):
         self.layers.append(Layer(substance['rock'], substance['thickness']))
         self.limit()
         self.compact()
+
+    def intrude(self, rock):
+        # more mafic intrusions don't get as high
+        depth = max(2, self.thickness * (1 - rock['felsity']))
+        l = len(self.layers) - 1
+        d = 0
+        while d < depth and l >= 0:
+            d += self.layers[l].thickness
+            l -= 1
+        intrusion = Layer(rock, 1)
+        self.layers[l:l] = [intrusion]
+        self.bottom -= intrusion.thickness
+        self.limit()
+        self.compact()
+        self._intrusion = d, d + intrusion.thickness
+
+    def cleartemp(self):
+        self._subduction = 0
+        self._intrusion = None
 
     def emptyland(self, rock = 'I', h = 1):
         self.bottom = -9
