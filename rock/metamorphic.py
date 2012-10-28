@@ -1,5 +1,7 @@
 from math import isinf, sqrt
 
+IDENTITY = object()
+
 def zeolite(layer):
     rock = layer['rock'].copy()
     if 'clasticity' in rock:
@@ -51,6 +53,11 @@ def granulite(layer):
     rock['name'] = 'granulite'
     return { 'rock': rock, 'thickness': layer['thickness'] }
 
+def marblize(rock):
+    if 'calcity' in rock and rock['calcity'] > 0.75:
+        rock['name'] = 'marble'
+    return rock
+
 def transform(layers, facies):
     f = 0
     newlayers = []
@@ -66,7 +73,11 @@ def transform(layers, facies):
             layers.append({ 'rock': l['rock'], 'thickness': dt })
             l['thickness'] -= dt
 
-        newlayers.append(facies[f][1](l))
+        if facies[f][1] is not IDENTITY:
+            l = facies[f][1](l)
+            l['rock'] = marblize(l['rock'])
+
+        newlayers.append(l)
         t += l['thickness']
         if dt > 0:
             f += 1
@@ -75,7 +86,7 @@ def transform(layers, facies):
 
 # max depth/facies function pairs
 normal = [
-    (5, lambda l: l),
+    (5, IDENTITY),
     (15, zeolite),
     (30, greenschist),
     (70, amphibolite),
@@ -83,7 +94,7 @@ normal = [
 ]
 
 lowtemp = [
-    (10, lambda l: l),
+    (10, IDENTITY),
     (20, zeolite),
     (60, blueschist),
     (float('inf'), eclogite)
@@ -94,7 +105,7 @@ def regional(layers, subduction):
 
 # max temperature/facies function pairs
 hightemp = [
-    (250, lambda l: l),
+    (250, IDENTITY),
     (800, hornfels),
     (float('inf'), granulite)
 ]
@@ -135,10 +146,8 @@ def contact(layers, intrusion):
     # gradient function below
     # t = -m(d - (bottom + thickness))
 
-    identity = hightemp[0][1]
-
     d0 = max(0, top - thickness)
-    facies = [(d0, identity)]
+    facies = [(d0, IDENTITY)]
 
     # approaching intrusion from above
     for t, f in hightemp:
@@ -151,7 +160,7 @@ def contact(layers, intrusion):
             facies.append((d, f))
 
     # intrusion stays the same
-    facies.append((bottom, identity))
+    facies.append((bottom, IDENTITY))
 
     # away from intrusion below
     for i in reversed(range(len(hightemp)-1)):
@@ -164,7 +173,7 @@ def contact(layers, intrusion):
         if d < bottom + thickness:
             facies.append((d, f))
 
-    facies.append((float('inf'), identity))
+    facies.append((float('inf'), IDENTITY))
 
     i = 0
     while i < len(facies) - 1:

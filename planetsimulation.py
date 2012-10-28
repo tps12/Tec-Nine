@@ -238,10 +238,10 @@ class PlanetSimulation(object):
             # if the tile is in at least one shape, apply the erosion materials
             if len(overlapping[t]) > 0:
                 if len(erosion[t].materials) > 0:
-                    t.deposit(sedimentary.deposit(erosion[t].materials))
+                    t.deposit(sedimentary.deposit(erosion[t].materials, True, False, t.climate))
             # otherwise, require a certain threshold
             elif sum([m.amount for m in erosion[t].materials]) > 1.5:
-                t.deposit(sedimentary.deposit(erosion[t].materials))
+                t.deposit(sedimentary.deposit(erosion[t].materials, True, True, t.climate))
                 sourceshapes = set()
                 for e in erosion[t].sources:
                     for shape in overlapping[e]:

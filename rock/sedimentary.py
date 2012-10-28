@@ -1,4 +1,4 @@
-def deposit(materials):
+def deposit(materials, life, sea, climate):
     contributions = []
     depositkeys = set()
     for m in materials:
@@ -37,15 +37,27 @@ def deposit(materials):
                            for c in contributions])/thickness
 
     rock['clasticity'] = rock['clasticity'] * 2 if 'clasticity' in rock else 1
-    grain = 1e-3/float(rock['clasticity'])
-    if grain < 4e-6:
-        name = 'claystone'
-    elif grain < 60e-6:
-        name = 'siltstone'
-    elif grain < 2e-3:
-        name = 'sandstone'
-    else:
-        name = 'conglomerate'
-    rock['name'] = name
+
+    if life:
+        if sea:
+            rock['calcity'] = max(0, min(1, float(climate.temperature - 18)/25))
+            if rock['calcity'] > 0.99:
+                rock['name'] = 'chalk'
+            elif rock['calcity'] > 0.75:
+                rock['name'] = 'limestone'
+        elif climate.koeppen[0] == u'C' and climate.temperature < 18:
+            rock['bogginess'] = max(0, (climate.precipitation - 0.75) * 4)
+
+    if rock['name'] is None:
+        grain = 1e-3/float(rock['clasticity'])
+        if grain < 4e-6:
+            name = 'claystone'
+        elif grain < 60e-6:
+            name = 'siltstone'
+        elif grain < 2e-3:
+            name = 'sandstone'
+        else:
+            name = 'conglomerate'
+        rock['name'] = name
 
     return { 'rock': rock, 'thickness': thickness }

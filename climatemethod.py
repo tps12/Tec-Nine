@@ -23,7 +23,8 @@ def bearing(c1, c2):
     return (theta * 180/pi) % 360
 
 class ClimateInfo(object):
-    def __init__(self, precipitation, koeppen):
+    def __init__(self, temperature, precipitation, koeppen):
+        self.temperature = temperature
         self.precipitation = precipitation
         self.koeppen = koeppen
 
@@ -313,5 +314,5 @@ def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange):
     cs = {}
     for y in range(len(tiles)):
         for x in range(len(tiles[y])):
-            cs[(x,y)] = ClimateInfo(cc.climate[y][x][2], cc.climate[y][x][4])
+            cs[(x,y)] = ClimateInfo(cc.climate[y][x][1], cc.climate[y][x][2], cc.climate[y][x][4])
     return cs

@@ -14,6 +14,10 @@ class Data(object):
             if 'version' not in data or data['version'] < 5:
                 raise ValueError('File version is too old')
 
+            if data['version'] < 6:
+                for t in [t for lat in data['tiles'] for t in lat]:
+                    t['climate']['temperature'] = 0
+
             data['tiles'] = [[cls._tile(t) for t in lat] for lat in data['tiles']]
 
             tileindex = cls._index(data['tiles'])
@@ -28,7 +32,7 @@ class Data(object):
             filename += cls.EXTENSION
         tileindex = cls._index(tiles)
         with open(filename, 'w') as f:
-            dump({'version': 5,
+            dump({'version': 6,
                   'random': random,
                   'dp': dp,
                   'build': build,
@@ -36,7 +40,8 @@ class Data(object):
                   'tiles': [[{ 'lat': t.lat,
                                'lon': t.lon,
                                'substance': t.substance,
-                               'climate': { 'precipitation': t.climate.precipitation,
+                               'climate': { 'temperature': t.climate.temperature,
+                                            'precipitation': t.climate.precipitation,
                                             'koeppen': t.climate.koeppen } }
                              for t in lat]
                             for lat in tiles],
@@ -49,7 +54,9 @@ class Data(object):
         t = Tile(data['lat'], data['lon'])
         t.bottom = data['substance'][0]
         t.layers = [Layer(l['rock'], l['thickness']) for l in data['substance'][1]]
-        t.climate = ClimateInfo(data['climate']['precipitation'], data['climate']['koeppen'])
+        t.climate = ClimateInfo(data['climate']['temperature'],
+                                data['climate']['precipitation'],
+                                data['climate']['koeppen'])
         return t
 
     @classmethod
