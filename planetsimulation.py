@@ -13,6 +13,7 @@ from rock import igneous, sedimentary, metamorphic
 from shape import *
 from splitmethod import split
 from tile import *
+from timing import Timing
 
 class TileMovement(object):
     def __init__(self, sources, speed):
@@ -42,6 +43,11 @@ class PlanetSimulation(object):
         """Create a simulation for a planet of radius r km and timesteps of dt
         million years.
         """
+
+        self._timing = Timing()
+
+        initt = self._timing.routine('simulation setup')
+
         # max speed is 100km per million years
         self._dp = 100.0/r * dt
 
@@ -50,6 +56,8 @@ class PlanetSimulation(object):
         tilearea = 4 * pi * r**2
 
         degrees = 2
+
+        initt.start('building grid')
 
         self.tiles = []
         for lat in range(-89, 91, degrees):
@@ -65,7 +73,11 @@ class PlanetSimulation(object):
                 lon += d
             self.tiles.append(row)
 
+        initt.start('building indexes')
+
         self.initindexes()
+
+        initt.start('creating initial landmass')
 
         tilearea /= len(self._indexedtiles)
 
@@ -118,6 +130,8 @@ class PlanetSimulation(object):
         for t in [t for lat in self.tiles for t in lat]:
             t.climate = None
 
+        initt.done()
+
         self.dirty = True
 
     @staticmethod
@@ -167,6 +181,10 @@ class PlanetSimulation(object):
     def update(self):
         """Update the simulation by one timestep."""
 
+        stept = self._timing.routine('simulation step')
+
+        stept.start('determining tile movements')
+
         old = set([t for shape in self._shapes for t in shape.tiles])
         new = dict()
 
@@ -188,6 +206,8 @@ class PlanetSimulation(object):
                 else:
                     new[dest] = [TileMovement(sources, speed)]
                 overlapping[dest].append(i)
+
+        stept.start('applying tile movements')
 
         collisions = {}
 
@@ -219,12 +239,16 @@ class PlanetSimulation(object):
         for t in old:
             t.emptyocean(self.seafloor())
 
+        stept.start('"simulating" climate')
+
         seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
         c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange)
 
         for y in range(len(self.tiles)):
             for x in range(len(self.tiles[y])):
                 self.tiles[y][x].climate = c[(x,y)]
+
+        stept.start('determining erosion')
 
         # record each continent's total pre-erosion above-sea size
         heights = [sum([t.elevation for t in s.tiles]) for s in self._shapes]
@@ -251,10 +275,14 @@ class PlanetSimulation(object):
                         self._shapes[s].tiles.append(t)
                 overlapping[t] = list(sourceshapes)
 
+        stept.start('applying isostatic effects')
+
         for s, h in zip(self._shapes, heights):
             dh = (h - sum([t.elevation for t in s.tiles]))/float(len(s.tiles))
             for t in s.tiles:
                 t.isostasize(dh)
+
+        stept.start('performing random intrusions')
 
         for t in [t for lat in self.tiles for t in lat]:
             if t.subduction > 0:
@@ -262,11 +290,15 @@ class PlanetSimulation(object):
                     t.intrude(igneous.intrusive(max(0, min(1, random.gauss(0.85, 0.15)))))
                     t.transform(metamorphic.contact(t.substance[1], t.intrusion))
 
+        stept.start('applying regional metamorphism')
+
         for t in [t for lat in self.tiles for t in lat]:
             t.transform(metamorphic.regional(t.substance[1], t.subduction > 0))
 
         for t in [t for lat in self.tiles for t in lat]:
             t.cleartemp()
+
+        stept.start('merging overlapping shapes')
 
         # merge shapes that overlap a lot
         groups = []
@@ -298,10 +330,14 @@ class PlanetSimulation(object):
         for s in gone:
             self._shapes.remove(s)
 
+        stept.start('randomly splitting shapes')
+
         # occaisionally split big shapes
         for i in range(len(self._shapes)):
             if random.uniform(0,1) > self._splitnum / len(self._shapes[i].tiles):
                 self._shapes[i:i+1] = [Group(ts, self._shapes[i].v + v * self._dp)
                                        for ts, v in split(self._shapes[i].tiles)]
+
+        stept.done()
 
         self.dirty = True
