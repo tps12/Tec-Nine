@@ -133,6 +133,8 @@ class PlanetSimulation(object):
 
         initt.done()
 
+        self._atmosphere = self._life = False
+
         self._climatemappings = {}
         self._climateprof = None
 
@@ -243,44 +245,49 @@ class PlanetSimulation(object):
         for t in old:
             t.emptyocean(self.seafloor())
 
-        stept.start('"simulating" climate')
-
-        seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
-        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self._climatemappings, self._climateprof)
-
-        if self._climateprof:
-            self._climateprof.dump_stats('climate.profile')
-
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                self.tiles[y][x].climate = c[(x,y)]
-
-        stept.start('determining erosion')
-
         # record each continent's total pre-erosion above-sea size
         heights = [sum([t.elevation for t in s.tiles]) for s in self._shapes]
 
-        erosion = erode(self.tiles, self.adj)
+        if self._atmosphere:
+            stept.start('"simulating" climate')
 
-        for t in [t for lat in self.tiles for t in lat]:
-            t.erode(erosion)
+            seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
+            c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self._life, self._climatemappings, self._climateprof)
 
-        for t in [t for lat in self.tiles for t in lat]:
-            # if the tile is in at least one shape, apply the erosion materials
-            if len(overlapping[t]) > 0:
-                if len(erosion[t].materials) > 0:
-                    t.deposit(sedimentary.deposit(erosion[t].materials, True, False, t.climate))
-            # otherwise, require a certain threshold
-            elif sum([m.amount for m in erosion[t].materials]) > 1.5:
-                t.deposit(sedimentary.deposit(erosion[t].materials, True, True, t.climate))
-                sourceshapes = set()
-                for e in erosion[t].sources:
-                    for shape in overlapping[e]:
-                        sourceshapes.add(shape)
-                for s in sourceshapes:
-                    if not t in self._shapes[s].tiles:
-                        self._shapes[s].tiles.append(t)
-                overlapping[t] = list(sourceshapes)
+            if self._climateprof:
+                self._climateprof.dump_stats('climate.profile')
+
+            for y in range(len(self.tiles)):
+                for x in range(len(self.tiles[y])):
+                    self.tiles[y][x].climate = c[(x,y)]
+
+            stept.start('determining erosion')
+
+            erosion = erode(self.tiles, self.adj)
+
+            for t in [t for lat in self.tiles for t in lat]:
+                t.erode(erosion)
+
+            for t in [t for lat in self.tiles for t in lat]:
+                # if the tile is in at least one shape, apply the erosion materials
+                if len(overlapping[t]) > 0:
+                    if len(erosion[t].materials) > 0:
+                        t.deposit(sedimentary.deposit(erosion[t].materials, self._life, False, t.climate))
+                # otherwise, require a certain threshold
+                elif sum([m.amount for m in erosion[t].materials]) > 1.5:
+                    t.deposit(sedimentary.deposit(erosion[t].materials, self._life, True, t.climate))
+                    sourceshapes = set()
+                    for e in erosion[t].sources:
+                        for shape in overlapping[e]:
+                            sourceshapes.add(shape)
+                    for s in sourceshapes:
+                        if not t in self._shapes[s].tiles:
+                            self._shapes[s].tiles.append(t)
+                    overlapping[t] = list(sourceshapes)
+            if not self._life:
+                self._life = random.random() < 0.05
+        elif random.random() < 0.05:
+            self._atmosphere = True
 
         stept.start('applying isostatic effects')
 

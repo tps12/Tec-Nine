@@ -45,6 +45,7 @@ def coolscale(v):
 def color(tile):
     h, c = tile.elevation, tile.climate
 
+    l = c.life if c else 0
     k = c.koeppen if c else None
 
     colors = {
@@ -69,17 +70,20 @@ def color(tile):
     }
 
     if h > 0:
-        if k:
-            color = colors[k[0]][k[1]]
-        else:
-            color = None
+        try:
+            f = tile.layers[-1].rock['felsity']
+        except KeyError:
+            f = 0
+        rockcolor = (128, 64 + 64 * f, 128 * f)
 
-        if not color:
-            try:
-                f = tile.layers[-1].rock['felsity']
-            except KeyError:
-                f = 0
-            color = (128, 64 + 64 * f, 128 * f)
+        if k:
+            if k[0] == u'E':
+                color = (255,255,255)
+            else:
+                lifecolor = (0,l*255,0)
+                color = tuple([(r+l)/2 for r,l in zip(rockcolor, lifecolor)])
+        else:
+            color = rockcolor
     else:
         color = (0, 0, 128)
 

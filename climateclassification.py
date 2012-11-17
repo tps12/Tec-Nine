@@ -1,5 +1,5 @@
 class ClimateClassification(object):
-    def __init__(self, summary, templimits):
+    def __init__(self, summary, templimits, life):
         self.climate = [[None for x in range(len(summary[y]))]
                         for y in range(len(summary))]
 
@@ -24,11 +24,17 @@ class ClimateClassification(object):
 
                 k = self.koeppen(ts, ps, byt, thr, tot)
 
+                l = self.life(ts, ps) if life else 0
+
                 self.climate[y][x] = (h,
                                       sum(ts)/len(ts),
                                       tot/(1800.0/len(ps))/len(ps),
                                       max(0, thr)/(20 * templimits[1] + 280.0),
-                                      k)
+                                      k,
+                                      l)
+
+    def life(self, ts, ps):
+        return 1 if any([t > 18 for t in ts]) else 0
 
     def koeppen(self, ts, ps, byt, thr, tot):
         if tot <= thr:

@@ -23,10 +23,11 @@ def bearing(c1, c2):
     return (theta * 180/pi) % 360
 
 class ClimateInfo(object):
-    def __init__(self, temperature, precipitation, koeppen):
+    def __init__(self, temperature, precipitation, koeppen, life):
         self.temperature = temperature
         self.precipitation = precipitation
         self.koeppen = koeppen
+        self.life = life
 
 class ClimateDict(object):
     def __init__(self, dimensions):
@@ -332,7 +333,7 @@ class Climate(object):
         if d or t or c or s or p:
             self._profile.runcall(self.resetclimate, d, t, c, s, p)
 
-def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange, tilemappings, profile = None):
+def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange, life, tilemappings, profile = None):
     c = Climate(tiles, adjacency, cells, spin, tilt, profile)
 
     if tilemappings:
@@ -354,9 +355,12 @@ def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange, tilemapping
                         [ss[i][y][x][1:] for i in range(len(ss))]))
         seasons.append(row)
 
-    cc = ClimateClassification(seasons, temprange)
+    cc = ClimateClassification(seasons, temprange, life)
     cs = {}
     for y in range(len(tiles)):
         for x in range(len(tiles[y])):
-            cs[(x,y)] = ClimateInfo(cc.climate[y][x][1], cc.climate[y][x][2], cc.climate[y][x][4])
+            cs[(x,y)] = ClimateInfo(cc.climate[y][x][1],
+                                    cc.climate[y][x][2],
+                                    cc.climate[y][x][4],
+                                    cc.climate[y][x][5])
     return cs

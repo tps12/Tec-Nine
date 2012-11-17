@@ -36,7 +36,7 @@ class ClimateSimulation(object):
     def classify(self, seasons = None):
         seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5] if seasons is None else seasons
 
-        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange)
+        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, True, {})
         for y in range(len(self.tiles)):
             for x in range(len(self.tiles[y])):
                 self.tiles[y][x].climate = c[(x,y)].koeppen
