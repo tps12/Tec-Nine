@@ -134,7 +134,7 @@ class PlanetSimulation(object):
         initt.done()
 
         self._climatemappings = {}
-        self._climateprof = Profile()
+        self._climateprof = None
 
         self.dirty = True
 
@@ -248,7 +248,8 @@ class PlanetSimulation(object):
         seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
         c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self._climatemappings, self._climateprof)
 
-        self._climateprof.dump_stats('climate.profile')
+        if self._climateprof:
+            self._climateprof.dump_stats('climate.profile')
 
         for y in range(len(self.tiles)):
             for x in range(len(self.tiles[y])):
