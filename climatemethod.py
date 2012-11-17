@@ -66,7 +66,7 @@ class ClimateDict(object):
 class Climate(object):
     breezedistance = 10
     
-    def __init__(self, tiles, adjacency, cells, spin, tilt):
+    def __init__(self, tiles, adjacency, cells, spin, tilt, profile = None):
         self.tiles = tiles
         self.adj = adjacency
 
@@ -76,6 +76,15 @@ class Climate(object):
         self.cells = cells
         self.spin = spin
         self.tilt = tilt
+
+        if profile is not None:
+            self._profile = profile
+        else:
+            class Profile(object):
+                @staticmethod
+                def runcall(f, *args, **kwargs):
+                    f(*args, **kwargs)
+            self._profile = Profile
 
     def initdicts(self):
         xmax = max([len(self.tiles[i]) for i in range(len(self.tiles))])
@@ -292,10 +301,10 @@ class Climate(object):
         d, t, c, s, p = [not dic for dic in
                       self.direction, self.temperature, self.convective, self.seabased, self.pressure]
         if d or t or c or s or p:
-            self.resetclimate(d, t, c, s, p)
+            self._profile.runcall(self.resetclimate, d, t, c, s, p)
 
-def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange):
-    c = Climate(tiles, adjacency, cells, spin, tilt)
+def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange, profile = None):
+    c = Climate(tiles, adjacency, cells, spin, tilt, profile)
 
     ss = []
     for s in seasons:

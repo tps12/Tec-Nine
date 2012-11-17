@@ -1,3 +1,4 @@
+from cProfile import Profile
 from itertools import combinations
 from math import asin, acos, atan2, pi, exp, sqrt, sin, cos
 import random
@@ -132,6 +133,8 @@ class PlanetSimulation(object):
 
         initt.done()
 
+        self._climateprof = Profile()
+
         self.dirty = True
 
     @staticmethod
@@ -242,7 +245,9 @@ class PlanetSimulation(object):
         stept.start('"simulating" climate')
 
         seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
-        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange)
+        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self._climateprof)
+
+        self._climateprof.dump_stats('climate.profile')
 
         for y in range(len(self.tiles)):
             for x in range(len(self.tiles[y])):
