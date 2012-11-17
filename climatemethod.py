@@ -44,14 +44,19 @@ class ClimateDict(object):
         return value
 
     def __setitem__(self, p, value):
+        wasset = self._list[self._index(p)][0]
         self._list[self._index(p)] = True, value
+        if not wasset:
+            self._len += 1
 
     def __delitem__(self, p):
         self._list[self._index(p)] = None, None
+        self._len -= 1
 
     def clear(self):
         for i in range(len(self._list)):
             self._list[i] = None, None
+        self._len = 0
 
     def iteritems(self):
         for y in range(self._ymax):
@@ -61,7 +66,7 @@ class ClimateDict(object):
                     yield (x,y), value
 
     def __len__(self):
-        return len(list(self.iteritems()))
+        return self._len
 
 class Climate(object):
     breezedistance = 10
