@@ -93,9 +93,10 @@ class Climate(object):
         (self.direction,
          self.precipitation,
          self.convective,
+         self.seabreeze,
          self.seabased,
          self.temperature,
-         self.pressure) = [ClimateDict(dimensions) for i in range(6)]
+         self.pressure) = [ClimateDict(dimensions) for i in range(7)]
 
     @property
     def season(self):
@@ -181,25 +182,29 @@ class Climate(object):
             self._totalprecipitation()
 
     def _seabreeze(self):
-        frontier = []
-        d = 0
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                if self.tiles[y][x].elevation <= 0:
-                    self.seabased[(x,y)] = d
-                    frontier.append((x,y))
-                    
-        while d < self.breezedistance and frontier:
-            d += 1
-            frontier = self._propagate(frontier, d)
+        if not self.seabreeze:
+            frontier = []
+            d = 0
+            for y in range(len(self.tiles)):
+                for x in range(len(self.tiles[y])):
+                    if self.tiles[y][x].elevation <= 0:
+                        self.seabreeze[(x,y)] = d
+                        frontier.append((x,y))
+                    else:
+                        self.seabreeze[(x,y)] = None
 
+            while d < self.breezedistance and frontier:
+                d += 1
+                frontier = self._propagate(frontier, d)
+
+        d = self.breezedistance
         for y in range(len(self.tiles)):
             for x in range(len(self.tiles[y])):
-                seabased = self.seabased[(x,y)]
-                if seabased is None:
+                breeze = self.seabreeze[(x,y)]
+                if breeze is None:
                     h = 0
                 else:
-                    h = ((d - seabased)/float(d))**2
+                    h = ((d - breeze)/float(d))**2
                 p = min(1.0, h + self.convective[(x,y)])
                 self.seabased[(x,y)] = h
 
@@ -214,8 +219,8 @@ class Climate(object):
         frontier = []
         for s in sources:
             for a in [p for (p,w) in self._destmap[s]]:
-                if self.seabased[a] is None:
-                    self.seabased[a] = d
+                if self.seabreeze[a] is None:
+                    self.seabreeze[a] = d
                     frontier.append(a)
         return frontier
 
