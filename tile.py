@@ -74,6 +74,8 @@ class Tile(object):
         if de > 0:
             self.bottom -= de
 
+        self._elevation = max(0, self.bottom + self.thickness)
+
     def transform(self, layers):
         self.layers = [Layer(l['rock'], l['thickness']) for l in layers]
         self.compact()
@@ -195,6 +197,7 @@ class Tile(object):
         m = sum([d.degree for d in e.destinations])
         for d in e.destinations:
             erosion[d.destination].addmaterial(d.degree, m, self.substance)
+        self._elevation -= m
         while m > 0:
             l = self.layers.pop()
             if l.thickness > m:
@@ -235,14 +238,16 @@ class Tile(object):
     def emptyland(self, rock = 'I', h = 1):
         self.bottom = -9
         self.layers = [Layer(rock, 9 + h)]
+        self._elevation = h
 
     def emptyocean(self, rock = 'I'):
         self.bottom = -5
         self.layers = [Layer(rock, 5)]
+        self._elevation = 0
 
     @property
     def elevation(self):
-        return max(0, self.bottom + self.thickness)
+        return self._elevation
 
     @property
     def thickness(self):
