@@ -42,6 +42,48 @@ def coolscale(v):
          255)
     return r, g, b
 
+def color(tile):
+    h, c = tile.elevation, tile.climate
+
+    k = c.koeppen if c else None
+
+    colors = {
+        u'A' : {
+            u'f' : (0,96,48),
+            u'm' : (0,168,84),
+            u'w' : (0,255,128) },
+        u'B' : {
+            u'S' : (208,208,208),
+            u'W' : None },
+        u'C' : {
+            u'f' : (0,96,0),
+            u's' : (0,168,0),
+            u'w' : (0,255,0) },
+        u'D' : {
+            u'f' : (48,96,48),
+            u's' : (84,168,84),
+            u'w' : (128,255,128) },
+        u'E' : {
+            u'F' : (255, 255, 255),
+            u'T' : (255, 255, 255) }
+    }
+
+    if h > 0:
+        if k:
+            color = colors[k[0]][k[1]]
+        else:
+            color = None
+
+        if not color:
+            try:
+                f = tile.layers[-1].rock['felsity']
+            except KeyError:
+                f = 0
+            color = (128, 64 + 64 * f, 128 * f)
+    else:
+        color = (0, 0, 128)
+
+    return color
 
 def climatecolor(tile):
     h, c = tile.elevation, tile.climate
@@ -137,7 +179,7 @@ class PlanetDisplay(QWidget):
 
     _projections = [Mercator, Sinusoidal, Flat]
 
-    _colorfunctions = [climatecolor, elevationcolor, rockcolor, subductioncolor, thicknesscolor]
+    _colorfunctions = [climatecolor, color, elevationcolor, rockcolor, subductioncolor, thicknesscolor]
     
     def __init__(self, sim, selecthandler):
         QWidget.__init__(self)
