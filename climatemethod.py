@@ -68,6 +68,7 @@ class ClimateDict(object):
     def __len__(self):
         return self._len
 
+
 class Climate(object):
     breezedistance = 10
     
@@ -289,6 +290,24 @@ class Climate(object):
             t = sum([w for (d, w) in dws])
             self._destmap[s] = [(d, w/t) for (d,w) in dws]
 
+    @property
+    def tilemappings(self):
+        return { 'params': (self.cells, self.spin),
+                 'fwd_map': self._mapping,
+                 'rev_map': self._destmap,
+                 'wind_dir': self.direction,
+                 'sorted_adj': self.sadj }
+
+    @tilemappings.setter
+    def tilemappings(self, value):
+        if value['params'] != (self.cells, self.spin):
+            raise ValueError('Params mismatch')
+
+        self._mapping = value['fwd_map']
+        self._destmap = value['rev_map']
+        self.direction = value['wind_dir']
+        self.sadj = value['sorted_adj']
+
     def sources(self, p):
         return self._mapping[p]
 
@@ -313,13 +332,19 @@ class Climate(object):
         if d or t or c or s or p:
             self._profile.runcall(self.resetclimate, d, t, c, s, p)
 
-def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange, profile = None):
+def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange, tilemappings, profile = None):
     c = Climate(tiles, adjacency, cells, spin, tilt, profile)
+
+    if tilemappings:
+        c.tilemappings = tilemappings
 
     ss = []
     for s in seasons:
         c.season = s
         ss.append(c.average())
+
+    if not tilemappings:
+        tilemappings.update(c.tilemappings)
         
     seasons = []
     for y in range(len(ss[0])):
