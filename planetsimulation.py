@@ -52,7 +52,8 @@ class PlanetSimulation(object):
         # max speed is 100km per million years
         self._dp = 100.0/r * dt
 
-        self._build = dt
+        self._build = dt/5.0
+        self._erode = dt
 
         tilearea = 4 * pi * r**2
 
@@ -266,7 +267,7 @@ class PlanetSimulation(object):
             erosion = erode(self.tiles, self.adj)
 
             for t in [t for lat in self.tiles for t in lat]:
-                t.erode(erosion)
+                t.erode(erosion, self._erode)
 
             for t in [t for lat in self.tiles for t in lat]:
                 # if the tile is in at least one shape, apply the erosion materials

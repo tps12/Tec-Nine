@@ -15,42 +15,49 @@ def zeolite(layer):
             name = 'psephite'
         del rock['clasticity']
         rock['name'] = name
+        rock['toughness'] = max(0.25, rock['toughness'])
     return { 'rock': rock, 'thickness': layer['thickness'] }
 
 def blueschist(layer):
     rock = layer['rock'].copy()
     rock['type'] = 'M'
     rock['name'] = 'blueschist'
+    rock['toughness'] = max(0.75, rock['toughness'])
     return { 'rock': rock, 'thickness': layer['thickness'] }
 
 def greenschist(layer):
     rock = layer['rock'].copy()
     rock['type'] = 'M'
     rock['name'] = 'greenschist'
+    rock['toughness'] = max(0.75, rock['toughness'])
     return { 'rock': rock, 'thickness': layer['thickness'] }
 
 def amphibolite(layer):
     rock = layer['rock'].copy()
     rock['type'] = 'M'
     rock['name'] = 'amphibolite'
+    rock['toughness'] = max(0.8, rock['toughness'])
     return { 'rock': rock, 'thickness': layer['thickness'] }
 
 def eclogite(layer):
     rock = layer['rock'].copy()
     rock['type'] = 'M'
     rock['name'] = 'eclogite'
+    rock['toughness'] = max(0.85, rock['toughness'])
     return { 'rock': rock, 'thickness': layer['thickness'] }
 
 def hornfels(layer):
     rock = layer['rock'].copy()
     rock['type'] = 'M'
     rock['name'] = 'hornfels'
+    rock['toughness'] = 1
     return { 'rock': rock, 'thickness': layer['thickness'] }
 
 def granulite(layer):
     rock = layer['rock'].copy()
     rock['type'] = 'M'
     rock['name'] = 'granulite'
+    rock['toughness'] = 1
     return { 'rock': rock, 'thickness': layer['thickness'] }
 
 def marblize(rock):

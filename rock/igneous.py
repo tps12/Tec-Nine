@@ -6,7 +6,7 @@ def extrusive(silica):
     else:
         name = 'basalt'
 
-    return { 'type': 'I', 'name': name, 'felsity': silica }
+    return { 'type': 'I', 'name': name, 'felsity': silica, 'toughness': silica }
 
 def intrusive(silica):
     if silica > 0.63:
@@ -16,4 +16,4 @@ def intrusive(silica):
     else:
         name = 'gabbro'
 
-    return { 'type': 'I', 'name': name, 'felsity': silica }
+    return { 'type': 'I', 'name': name, 'felsity': silica, 'toughness': silica }

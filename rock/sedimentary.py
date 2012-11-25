@@ -3,12 +3,12 @@ def deposit(materials, life, sea, climate):
     depositkeys = set()
     for m in materials:
         t = 0
-        i = len(m.substance[1]) - 1
+        i = len(m.substance) - 1
         sources = []
         keys = set()
         while t < m.total:
             dt = m.total - t
-            layer = m.substance[1][i]
+            layer = m.substance[i]
             if layer['thickness'] >= dt:
                 sources.append({ 'rock': layer['rock'], 'thickness': dt })
             else:
@@ -27,7 +27,7 @@ def deposit(materials, life, sea, climate):
         depositkeys = depositkeys.union(rock.keys())
         contributions.append({ 'rock': rock, 'thickness': m.amount })
 
-    rock = { 'type': 'S', 'name': None }
+    rock = { 'type': 'S', 'toughness': 0, 'name': None }
     thickness = sum([c['thickness'] for c in contributions])
     for k in depositkeys:
         if k not in rock:

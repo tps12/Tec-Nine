@@ -10,8 +10,10 @@ class ClimateClassification(object):
             for x in range(len(summary[y])):                    
                 h, cs = summary[y][x]
 
-                ts = [tf(t) for (t,p) in cs]
-                ps = [pf(p) for (t,p) in cs]
+                rts, rps = zip(*cs)
+
+                ts = map(tf, rts)
+                ps = map(pf, rps)
 
                 thr = sum(ts)/len(cs) * 20
                 byt = sorted(range(len(ts)), key=lambda i: ts[i])
@@ -27,8 +29,8 @@ class ClimateClassification(object):
                 l = self.life(ts, ps) if life else 0
 
                 self.climate[y][x] = (h,
-                                      sum(ts)/len(ts),
-                                      tot/(1800.0/len(ps))/len(ps),
+                                      sum(rts)/len(rts),
+                                      sum(rps)/len(rps),
                                       max(0, thr)/(20 * templimits[1] + 280.0),
                                       k,
                                       l)

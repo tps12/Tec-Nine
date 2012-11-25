@@ -29,21 +29,12 @@ def erode(tiles, adjacency):
         for j in range(len(tiles[i])):
             tile = tiles[i][j]
             if tile.elevation > 0:
+                c = tile.climate
+                d = (tile.elevation/10.0) * c.precipitation * (1 - c.temperature)
                 adj = adjacency[(j,i)]
                 for (j2,i2) in adj:
                     other = tiles[i2][j2]
-                    d = tile.elevation - other.elevation
-                    c = tile.climate
-                    if c is not None:
-                        # glaciers erode a lot
-                        if c.koeppen[0] == u'E':
-                            pass
-                        # everything else erodes according to precipitation
-                        else:
-                            d *= c.precipitation
-                    if d > 0:
-                        d /= len(adj)
-                        erosion[tile].destinations.append(ErosionEvent(d, other))
-                        erosion[other].sources.append(tile)
+                    erosion[tile].destinations.append(ErosionEvent(d, other))
+                    erosion[other].sources.append(tile)
 
     return erosion

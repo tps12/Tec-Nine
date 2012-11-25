@@ -192,19 +192,39 @@ class Tile(object):
         self.compact()
         self._subduction = amount
 
-    def erode(self, erosion):
+    def erode(self, erosion, dt):
         e = erosion[self]
-        m = sum([d.degree for d in e.destinations])
-        for d in e.destinations:
-            erosion[d.destination].addmaterial(d.degree, m, self.substance)
-        self._elevation -= m
-        while m > 0:
-            l = self.layers.pop()
-            if l.thickness > m:
-                self.layers.append(Layer(l.rock, l.thickness - m))
-                m = 0
+
+        if len(e.destinations) == 0:
+            return
+
+        totaldegree = sum([d.degree for d in e.destinations])
+        degree = totaldegree/len(e.destinations)
+
+        materials = []
+        while degree > 0:
+            layer = self.layers.pop()
+            rock = layer.rock
+            rate = 0.5 + 9.5 * (1 - rock['toughness'])
+
+            # if we had an infinitely thick rock layer to draw from,
+            # this is the amount of rock that would be eroded
+            potential = min(self._elevation, degree * rate * dt)
+            if potential < layer.thickness:
+                self._elevation -= potential
+                materials.append({ 'rock': layer.rock, 'thickness': potential })
+                self.layers.append(Layer(layer.rock, layer.thickness - potential))
+                break
             else:
-                m -= l.thickness
+                self._elevation -= layer.thickness
+                materials.append({ 'rock': layer.rock, 'thickness': layer.thickness })
+                degree -= layer.thickness/(rate * dt)
+
+        m = sum([m['thickness'] for m in materials])
+        for d in e.destinations:
+            erosion[d.destination].addmaterial(m * d.degree/totaldegree, m, materials)
+        self._elevation -= m
+
         self.compact()
 
     def deposit(self, substance):
