@@ -21,6 +21,7 @@ def _setlat(lat, shape):
     for x in range(len(lat)):
         lat[x].bottom = 0
         lat[x].layers = [Layer('T', 1)] if shape.contains(lat[x].vector) else []
+        lat[x].limit()
     return lat
 
 class MovePoints(object):

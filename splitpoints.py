@@ -18,6 +18,7 @@ def _setlat(lat, shape):
     for x in range(len(lat)):
         lat[x].bottom = 0
         lat[x].layers = [Layer('T', 1)] if shape.contains(lat[x].vector) else []
+        lat[x].limit()
     return lat
 
 class SplitPoints(object):
@@ -75,4 +76,5 @@ class SplitPoints(object):
         for lat in self.tiles:
             for t in lat:
                 t.layers = [Layer('T', 1)] if len(t.layers) > 0 and t.layers[0].rock == match else []
+                t.limit()
         self.split()
