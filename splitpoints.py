@@ -8,39 +8,37 @@ from numpy.linalg import norm
 from latrange import *
 from sphericalpolygon import *
 
-from adjacency import *
+from grid import Grid
+from hexadjacency import *
 from shape import *
 from splitmethod import split
 from tile import *
 
-def _setlat(lat, shape):
-    """Set tile values for the given latitude array."""
-    for x in range(len(lat)):
-        lat[x].bottom = 0
-        lat[x].layers = [Layer('T', 1)] if shape.contains(lat[x].vector) else []
-        lat[x].limit()
-    return lat
-
 class SplitPoints(object):
     def __init__(self, r):
+        grid = Grid()
+        while grid.size < 6:
+            grid = Grid(grid)
+            grid.populate()
+        self._grid = grid
 
-        degrees = 2
+        self.tiles = {}
+        for v in self._grid.faces:
+            x, y, z = v
+            lat = 180/pi * atan2(z, sqrt(x*x + y*y))
+            lon = 180/pi * atan2(y, x)
+            self.tiles[v] = Tile(lat, lon)
 
-        self.tiles = []
-        for lat in range(-89, 91, degrees):
-            r = cos(lat * pi/180)
-            row = []
-            d = 2 / r
-            lon = d/2
-            while lon <= 180:
-                flat = float(lat)
-                row = ([Tile(flat, -lon)] +
-                       row +
-                       [Tile(flat, lon)])
-                lon += d
-            self.tiles.append(row)
+        adj = Adjacency(self._grid)
+        self._adj = dict()
+        for v in self._grid.faces:
+            self._adj[self.tiles[v]] = set([self.tiles[nv] for nv in adj[v]])
 
         self.reset()
+
+    @property
+    def grid(self):
+        return self._grid
 
     def reset(self):
         # initial location
@@ -61,11 +59,15 @@ class SplitPoints(object):
                        for th in [i*pi/8 for i in range(16)]],
                        p, o, v).projection()
 
-        self.tiles = [_setlat(lat, shape) for lat in self.tiles]
+        for t in self.tiles.itervalues():
+            t.bottom = 0
+            t.layers = [Layer('T', 1)] if shape.contains(t.vector) else []
+            t.limit()
+
         self.split()
 
     def split(self):
-        a, b = [tiles for (tiles, v) in split([t for lat in self.tiles for t in lat if t.elevation == 1])]
+        a, b = [tiles for (tiles, v) in split([t for t in self.tiles.itervalues() if t.elevation == 1])]
         for t in a:
             t.layers = [Layer('R', 1)]
         for t in b:
@@ -73,8 +75,7 @@ class SplitPoints(object):
 
     def iterate(self, red):
         match = 'R' if red else 'B'
-        for lat in self.tiles:
-            for t in lat:
-                t.layers = [Layer('T', 1)] if len(t.layers) > 0 and t.layers[0].rock == match else []
-                t.limit()
+        for t in self.tiles.itervalues():
+            t.layers = [Layer('T', 1)] if len(t.layers) > 0 and t.layers[0].rock == match else []
+            t.limit()
         self.split()
