@@ -24,9 +24,6 @@ class SplitPresenter(object):
         self._view.time.setValue(self._display.time)
         self._view.time.sliderMoved.connect(self.time)
 
-        self._view.projection.setCurrentIndex(self._display.projection)
-        self._view.projection.currentIndexChanged[int].connect(self.project)
-
         self._view.iterate.clicked.connect(self.iterate)
         iterate = QMenu()
         iterate.addAction(self._view.red)
@@ -59,10 +56,6 @@ class SplitPresenter(object):
 
     def time(self, value):
         self._display.time = value
-        self._view.content.update()
-
-    def project(self, value):
-        self._display.projection = value
         self._view.content.update()
 
     def done(self):
