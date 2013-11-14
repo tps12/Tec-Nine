@@ -11,45 +11,37 @@ from latrange import *
 from pointtree import PointTree
 from sphericalpolygon import *
 
-from adjacency import *
+from grid import Grid
+from hexadjacency import *
 from shape import *
 from movemethod import move, average, rotate
 from tile import *
 
-def _setlat(lat, shape):
-    """Set tile values for the given latitude array."""
-    for x in range(len(lat)):
-        lat[x].bottom = 0
-        lat[x].layers = [Layer('T', 1)] if shape.contains(lat[x].vector) else []
-        lat[x].limit()
-    return lat
-
 class MovePoints(object):
     def __init__(self, r):
+        grid = Grid()
+        while grid.size < 6:
+            grid = Grid(grid)
+            grid.populate()
+        self._grid = grid
 
-        degrees = 2
+        self.tiles = {}
+        for v in self._grid.faces:
+            x, y, z = v
+            lat = 180/pi * atan2(z, sqrt(x*x + y*y))
+            lon = 180/pi * atan2(y, x)
+            self.tiles[v] = Tile(lat, lon)
 
-        self.tiles = []
-        for lat in range(-89, 91, degrees):
-            r = cos(lat * pi/180)
-            row = []
-            d = 2 / r
-            lon = d/2
-            while lon <= 180:
-                flat = float(lat)
-                row = ([Tile(flat, -lon)] +
-                       row +
-                       [Tile(flat, lon)])
-                lon += d
-            self.tiles.append(row)
-
-        adj = Adjacency(self.tiles)
+        adj = Adjacency(self._grid)
         self._adj = dict()
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                self._adj[self.tiles[y][x]] = [self.tiles[j][i] for i, j in adj[(x,y)]]
+        for v in self._grid.faces:
+            self._adj[self.tiles[v]] = set([self.tiles[nv] for nv in adj[v]])
 
         self.reset(0, 1)
+
+    @property
+    def grid(self):
+        return self._grid
 
     def reset(self, direction, speed):
         # initial location
@@ -72,13 +64,14 @@ class MovePoints(object):
                        for th in [i*pi/8 for i in range(16)]],
                        p, o, v).projection()
 
-        self.tiles = [_setlat(lat, shape) for lat in self.tiles]
+        for t in self.tiles.itervalues():
+            t.bottom = 0
+            t.layers = [Layer('T', 1)] if shape.contains(t.vector) else []
+            t.limit()
 
         self._indexedtiles = []
-        for lat in self.tiles:
-            for t in lat:
-                i = len(self._indexedtiles)
-                self._indexedtiles.append(t)
+        for t in self.tiles.itervalues():
+            self._indexedtiles.append(t)
 
         self._index = PointTree(dict([[self._indexedtiles[i].vector, i]
                                       for i in range(len(self._indexedtiles))]))
@@ -89,7 +82,7 @@ class MovePoints(object):
     def step(self):
         start = time()
 
-        group = [t for lat in self.tiles for t in lat if t.elevation == 1]
+        group = [t for t in self.tiles.itervalues() if t.elevation == 1]
         for t in self._indexedtiles:
             t.layers = []
         for t in group:
@@ -108,7 +101,7 @@ class MovePoints(object):
         self.time = time() - start
 
     def direction(self, value):
-        a = average([t.vector for lat in self.tiles for t in lat if t.elevation == 1])
+        a = average([t.vector for t in self.tiles.itervalues() if t.elevation == 1])
         a /= norm(a)
         self._velocity = rotate(self._velocity, a, value - self._direction)
         self._direction = value
@@ -119,4 +112,4 @@ class MovePoints(object):
 
     @property
     def count(self):
-        return sum([1 for lat in self.tiles for t in lat if t.elevation == 1])
+        return sum([t.elevation for t in self.tiles.itervalues()])

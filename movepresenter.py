@@ -25,9 +25,6 @@ class MovePresenter(object):
         self._view.trail.setCheckState(Qt.Checked if self._display.trail else Qt.Unchecked)
         self._view.trail.stateChanged.connect(self.trail)
 
-        self._view.projection.setCurrentIndex(self._display.projection)
-        self._view.projection.currentIndexChanged[int].connect(self.project)
-
         self._view.step.clicked.connect(self.step)
 
         self._view.direction.sliderMoved.connect(self.direction)
@@ -61,10 +58,6 @@ class MovePresenter(object):
     def trail(self, state):
         self._display.trail = state == Qt.Checked
         self._display.invalidate()
-        self._view.content.update()
-
-    def project(self, value):
-        self._display.projection = value
         self._view.content.update()
 
     def done(self):
