@@ -42,7 +42,8 @@ class Data(object):
                                'substance': t.substance,
                                'climate': { 'temperature': t.climate.temperature,
                                             'precipitation': t.climate.precipitation,
-                                            'koeppen': t.climate.koeppen } }
+                                            'koeppen': t.climate.koeppen }
+                                          if t.climate is not None else None }
                              for t in lat]
                             for lat in tiles],
                   'shapes': [([tileindex.index(t) for t in s.tiles], s.v) for s in shapes]},
@@ -54,9 +55,13 @@ class Data(object):
         t = Tile(data['lat'], data['lon'])
         t.bottom = data['substance'][0]
         t.layers = [Layer(l['rock'], l['thickness']) for l in data['substance'][1]]
-        t.climate = ClimateInfo(data['climate']['temperature'],
-                                data['climate']['precipitation'],
-                                data['climate']['koeppen'])
+        t.limit()
+        if data['climate'] is not None:
+            t.climate = ClimateInfo(data['climate']['temperature'],
+                                    data['climate']['precipitation'],
+                                    data['climate']['koeppen'])
+        else:
+            t.climate = None
         return t
 
     @classmethod
