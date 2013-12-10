@@ -62,6 +62,7 @@ class ClimateSimulation(object):
                 elevation = 0
             t.bottom = -1
             t.layers = [Layer('S', elevation + 1)]
+            t.limit()
         self.classify()
 
     def load(self, filename):
