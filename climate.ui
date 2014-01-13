@@ -16,6 +16,9 @@
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QWidget" name="content" native="true">
        <property name="sizePolicy">
@@ -60,7 +63,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="projection">
+        <widget class="QComboBox" name="attribute">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -69,19 +72,48 @@
          </property>
          <item>
           <property name="text">
-           <string>Mercator</string>
+           <string>Köppen classification</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Sinusoidal</string>
+           <string>Insolation</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Flat</string>
+           <string>Precipitation</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Temperature</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Season:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="season">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
         </widget>
        </item>
       </layout>
