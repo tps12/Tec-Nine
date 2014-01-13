@@ -1,39 +1,35 @@
 class ClimateClassification(object):
     def __init__(self, summary, templimits, life):
-        self.climate = [[None for x in range(len(summary[y]))]
-                        for y in range(len(summary))]
+        self.climate = {}
 
         tf = lambda c: c * (templimits[1] - templimits[0]) + templimits[0]
         pf = lambda c: c * 1800.0/len(cs)
 
-        for y in range(len(summary)):
-            for x in range(len(summary[y])):                    
-                h, cs = summary[y][x]
+        for v, (h, cs) in summary.iteritems():
+            rts, rps, _ = zip(*cs)
 
-                rts, rps = zip(*cs)
+            ts = map(tf, rts)
+            ps = map(pf, rps)
 
-                ts = map(tf, rts)
-                ps = map(pf, rps)
+            thr = sum(ts)/len(cs) * 20
+            byt = sorted(range(len(ts)), key=lambda i: ts[i])
+            tot = sum(ps)
+            inh = sum([ps[i] for i in byt[-len(byt)/2:]])
+            if inh >= 0.7 * tot:
+                thr += 280
+            elif inh >= 0.3 * tot:
+                thr += 140
 
-                thr = sum(ts)/len(cs) * 20
-                byt = sorted(range(len(ts)), key=lambda i: ts[i])
-                tot = sum(ps)
-                inh = sum([ps[i] for i in byt[-len(byt)/2:]])
-                if inh >= 0.7 * tot:
-                    thr += 280
-                elif inh >= 0.3 * tot:
-                    thr += 140
+            k = self.koeppen(ts, ps, byt, thr, tot)
 
-                k = self.koeppen(ts, ps, byt, thr, tot)
+            l = self.life(ts, ps) if life else 0
 
-                l = self.life(ts, ps) if life else 0
-
-                self.climate[y][x] = (h,
-                                      sum(rts)/len(rts),
-                                      sum(rps)/len(rps),
-                                      max(0, thr)/(20 * templimits[1] + 280.0),
-                                      k,
-                                      l)
+            self.climate[v] = (h,
+                               sum(rts)/len(rts),
+                               sum(rps)/len(rps),
+                               max(0, thr)/(20 * templimits[1] + 280.0),
+                               k,
+                               l)
 
     def life(self, ts, ps):
         return 1 if any([t > 18 for t in ts]) else 0

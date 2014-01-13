@@ -253,14 +253,18 @@ class PlanetSimulation(object):
             stept.start('"simulating" climate')
 
             seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
-            c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self._life, self._climatemappings, self._climateprof)
+            climatetiles = {}
+            for y in range(len(self.tiles)):
+                for x in range(len(self.tiles[y])):
+                    climatetiles[(x,y)] = self.tiles[y][x]
+            c = climate(climatetiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self._life, self._climatemappings, self._climateprof)
 
             if self._climateprof:
                 self._climateprof.dump_stats('climate.profile')
 
             for y in range(len(self.tiles)):
                 for x in range(len(self.tiles[y])):
-                    self.tiles[y][x].climate = c[(x,y)]
+                    self.tiles[y][x].climate = c[(x,y)]['classification']
 
             stept.start('determining erosion')
 

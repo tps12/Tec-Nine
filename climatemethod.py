@@ -29,46 +29,13 @@ class ClimateInfo(object):
         self.koeppen = koeppen
         self.life = life
 
-class ClimateDict(object):
-    def __init__(self, dimensions):
-        self._xmax, self._ymax = dimensions
-        self._list = [None for i in range(self._xmax * self._ymax)]
-        self.clear()
-
-    def _index(self, p):
-        return p[0] + p[1] * self._xmax
-
-    def __getitem__(self, p):
-        isset, value = self._list[self._index(p)]
-        if not isset:
-            raise KeyError
-        return value
-
-    def __setitem__(self, p, value):
-        wasset = self._list[self._index(p)][0]
-        self._list[self._index(p)] = True, value
-        if not wasset:
-            self._len += 1
-
-    def __delitem__(self, p):
-        self._list[self._index(p)] = None, None
-        self._len -= 1
-
-    def clear(self):
-        for i in range(len(self._list)):
-            self._list[i] = None, None
-        self._len = 0
-
-    def iteritems(self):
-        for y in range(self._ymax):
-            for x in range(self._xmax):
-                isset, value = self._list[self._index((x,y))]
-                if isset:
-                    yield (x,y), value
-
-    def __len__(self):
-        return self._len
-
+def memoize(fn):
+    c = {}
+    def mf(*args):
+        if not args in c:
+            c[args] = fn(*args)
+        return c[args]
+    return mf
 
 class Climate(object):
     breezedistance = 10
@@ -94,16 +61,14 @@ class Climate(object):
             self._profile = Profile
 
     def initdicts(self):
-        xmax = max([len(self.tiles[i]) for i in range(len(self.tiles))])
-
-        dimensions = xmax, len(self.tiles)
         (self.direction,
          self.precipitation,
          self.convective,
          self.seabreeze,
          self.seabased,
+         self.sun,
          self.temperature,
-         self.pressure) = [ClimateDict(dimensions) for i in range(7)]
+         self.pressure) = [{} for _ in range(8)]
 
     @property
     def season(self):
@@ -118,68 +83,68 @@ class Climate(object):
             self.seabased.clear()
             self.pressure.clear()
 
-    def insolation(self, y):
-        theta = 2 * pi * (y - len(self.tiles)/2)/len(self.tiles)/2
-        theta += (self.tilt * pi/180) * self.season
+    @staticmethod
+    def insolation(lat, season, tilt):
+        theta = lat * pi/180
+        theta += (tilt * pi/180) * season
         ins = max(0, cos(theta))
-        return 0.5 + (ins - 0.5) * cos(self.tilt * pi/180)
+        return 0.5 + (ins - 0.5) * cos(tilt * pi/180)
+
+    @staticmethod
+    def winddirection(lat, c, s):
+        n = abs(lat)/(90.0/c)
+        n = int(n) & 1
+        n = n if lat > 0 else not n
+        d = 180 - 180 * n
+
+        ce = 2 * s * sin(pi * (180-lat)/180.0)
+        d += atan2(ce, 1) * 180/pi
+        return d % 360
 
     def resetclimate(self, direction, temperature, convective, seabased, pressure):
-        res = max([len(r) for r in self.tiles]), len(self.tiles)
-        
+        #res = max([len(r) for r in self.tiles]), len(self.tiles)
         c = self.cells
 
         e2 = 2 * exp(1)
-        for y in range(res[1]):
-            if direction:
-                n = abs(y + 0.5 - res[1]/2)/(float(res[1]/2)/c)
-                n = int(n) & 1
-                n = n if y >= res[1]/2 else not n
-                d = 180 - 180 * n
 
-                s = self.spin
-                ce = 2 * s * sin(2 * pi * (y - res[1]/2)/res[1]/2)
-                d += atan2(ce, 1) * 180/pi
-                d %= 360
+        direction_fn = memoize(self.winddirection)
+        insolation_fn = memoize(self.insolation)
+        for v, tile in self.tiles.iteritems():
+            if direction:
+                self.direction[v] = direction_fn(tile.lat, c, self.spin)
 
             if temperature:
-                ins = self.insolation(y)
-            
-            for x in range(len(self.tiles[y])):
-                if direction:
-                    self.direction[(x,y)] = d
+                self.sun[v] = ins = insolation_fn(tile.lat, self.season, self.tilt)
+                h = tile.elevation
+                t = (ins * (1 - h/10.0) if h > 0 else ins)
+                self.temperature[v] = t
 
-                if temperature:                    
-                    h = self.tiles[y][x].elevation
-                    t = (ins * (1 - h/10.0) if h > 0 else ins)
-                    self.temperature[(x,y)] = t
+            if convective:
+                p = (cos((tile.lat*2*c + self.tilt*self.season)*pi/180) + 1)/2
+                self.convective[v] = p
 
-                if convective:
-                    p = (cos((self.tiles[y][x].lat*2*c + self.tilt*self.season)*pi/180) + 1)/2
-                    self.convective[(x,y)] = p
+            if pressure:
+                h = tile.elevation
+                if h > 0:
+                    p = 0.5
+                else:
+                    p = 1-(cos((tile.lat*2*c + self.tilt*self.season)*pi/180) + 1)/2
+                self.pressure[v] = p
 
-                if pressure:
-                    h = self.tiles[y][x].elevation
-                    if h > 0:
-                        p = 0.5
-                    else:
-                        p = 1-(cos((self.tiles[y][x].lat*2*c + self.tilt*self.season)*pi/180) + 1)/2
-                    self.pressure[(x,y)] = p
-                    
-                if direction or seabased:
-                    self.seabased[(x,y)] = None
+            if direction or seabased:
+                self.seabased[v] = None
 
         if direction:
             self.sadj = {}
-            for (x,y), ns in self.adj._adj.iteritems():
-                c = self.tiles[y][x].lat, self.tiles[y][x].lon
-                d = self.direction[(x,y)]
-                self.sadj[(x,y)] = sorted(self.adj[(x,y)],
-                                          key=lambda a: cos(
-                                              (bearing(c,
-                                                       (self.tiles[a[1]][a[0]].lat,
-                                                        self.tiles[a[1]][a[0]].lon))
-                                               - d) * pi / 180))
+            for v, ns in self.adj._adj.iteritems():
+                c = tile.lat, tile.lon
+                d = self.direction[v]
+                self.sadj[v] = sorted(self.adj[v],
+                                      key=lambda a: cos(
+                                          (bearing(c,
+                                                   (self.tiles[a].lat,
+                                                    self.tiles[a].lon))
+                                           - d) * pi / 180))
             self._definemapping()
 
         if direction or seabased:
@@ -192,35 +157,32 @@ class Climate(object):
         if not self.seabreeze:
             frontier = []
             d = 0
-            for y in range(len(self.tiles)):
-                for x in range(len(self.tiles[y])):
-                    if self.tiles[y][x].elevation <= 0:
-                        self.seabreeze[(x,y)] = d
-                        frontier.append((x,y))
-                    else:
-                        self.seabreeze[(x,y)] = None
+            for v, tile in self.tiles.iteritems():
+                if tile.elevation <= 0:
+                    self.seabreeze[v] = d
+                    frontier.append(v)
+                else:
+                    self.seabreeze[v] = None
 
             while d < self.breezedistance and frontier:
                 d += 1
                 frontier = self._propagate(frontier, d)
 
         d = self.breezedistance
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                breeze = self.seabreeze[(x,y)]
-                if breeze is None:
-                    h = 0
-                else:
-                    h = ((d - breeze)/float(d))**2
-                p = min(1.0, h + self.convective[(x,y)])
-                self.seabased[(x,y)] = h
+        for v in self.tiles:
+            breeze = self.seabreeze[v]
+            if breeze is None:
+                h = 0
+            else:
+                h = ((d - breeze)/float(d))**2
+            p = min(1.0, h + self.convective[v])
+            self.seabased[v] = h
 
     def _totalprecipitation(self):
         d = self.breezedistance
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                p = min(1.0, self.seabased[(x,y)] + self.convective[(x,y)])
-                self.precipitation[(x,y)] = p
+        for v in self.tiles:
+            p = min(1.0, self.seabased[v] + self.convective[v])
+            self.precipitation[v] = p
                 
     def _propagate(self, sources, d):
         frontier = []
@@ -253,32 +215,30 @@ class Climate(object):
         seen = set()
 
         # map destinations for every tile
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                nws = [(a, cos((bearing(
-                    (self.tiles[y][x].lat, self.tiles[y][x].lon),
-                    (self.tiles[a[1]][a[0]].lat, self.tiles[a[1]][a[0]].lon))
-                        - self.direction[(x,y)])*pi/180))
-                       for a in self.sadj[(x,y)]]
+        for v, tile in self.tiles.iteritems():
+            nws = [(a, cos((bearing(
+                (tile.lat, tile.lon),
+                (self.tiles[a].lat, self.tiles[a].lon))
+                    - self.direction[v])*pi/180))
+                   for a in self.sadj[v]]
+            nws = [nw for nw in nws if nw[1] > 0]
+
+            for n, w in nws:
+                addmap(v, n, w)
+                seen.add(n)
+
+        # map from sources for any tile that hasn't been targeted
+        for v, tile in self.tiles.iteritems():
+            if v not in seen:
+                nws = [(a, -cos((bearing(
+                    (tile.lat, tile.lon),
+                    (self.tiles[a].lat, tile.lon))
+                        - self.direction[a])*pi/180))
+                       for a in self.sadj[v]]
                 nws = [nw for nw in nws if nw[1] > 0]
 
                 for n, w in nws:
-                    addmap((x,y), n, w)
-                    seen.add(n)
-
-        # map from sources for any tile that hasn't been targeted
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                if (x,y) not in seen:
-                    nws = [(a, -cos((bearing(
-                        (self.tiles[y][x].lat, self.tiles[y][x].lon),
-                        (self.tiles[a[1]][a[0]].lat, self.tiles[y][x].lon))
-                            - self.direction[a])*pi/180))
-                           for a in self.sadj[(x,y)]]
-                    nws = [nw for nw in nws if nw[1] > 0]
-                    
-                    for n, w in nws:
-                        addmap(n, (x,y), w)
+                    addmap(n, v, w)
 
         # normalize weights
         self._mapping = {}
@@ -317,13 +277,12 @@ class Climate(object):
         return self._getaverage()
 
     def _getaverage(self):
-        c = [[(0,0) for x in range(len(self.tiles[y]))]
-             for y in range(len(self.tiles))]
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                c[y][x] = (self.tiles[y][x].elevation,
-                           self.temperature[(x,y)],
-                           self.precipitation[(x,y)])
+        c = {}
+        for v, tile in self.tiles.iteritems():
+            c[v] = (self.tiles[v].elevation,
+                    self.temperature[v],
+                    self.precipitation[v],
+                    self.sun[v])
 
         return c
     
@@ -347,20 +306,20 @@ def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange, life, tilem
     if not tilemappings:
         tilemappings.update(c.tilemappings)
         
-    seasons = []
-    for y in range(len(ss[0])):
-        row = []
-        for x in range(len(ss[0][y])):
-            row.append((ss[0][y][x][0],
-                        [ss[i][y][x][1:] for i in range(len(ss))]))
-        seasons.append(row)
+    seasons = {}
+    for v in ss[0]:
+        season = (ss[0][v][0], [ss[i][v][1:] for i in range(len(ss))])
+        seasons[v] = season
 
     cc = ClimateClassification(seasons, temprange, life)
     cs = {}
-    for y in range(len(tiles)):
-        for x in range(len(tiles[y])):
-            cs[(x,y)] = ClimateInfo(cc.climate[y][x][1],
-                                    cc.climate[y][x][2],
-                                    cc.climate[y][x][4],
-                                    cc.climate[y][x][5])
+    for v in tiles:
+        cs[v] = { 'classification': ClimateInfo(cc.climate[v][1],
+                                    cc.climate[v][2],
+                                    cc.climate[v][4],
+                                    cc.climate[v][5]),
+                  'seasons': [{ 'temperature': s[0],
+                                'precipitation': s[1],
+                                'insolation': s[2] }
+                              for s in seasons[v][1]] }
     return cs
