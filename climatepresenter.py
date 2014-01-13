@@ -17,14 +17,16 @@ class ClimatePresenter(object):
 
         self._view.earth.setEnabled(self._model.earthavailable)
 
+        self._view.attribute.setCurrentIndex(self._display.shownattribute)
+        self._view.attribute.currentIndexChanged[int].connect(self.showattribute)
+
+        self._view.season.sliderMoved.connect(self.season)
+
         self._view.content.setLayout(QGridLayout())
         self._view.content.layout().addWidget(self._display)
 
         self._view.rotate.setValue(self._display.rotate)
         self._view.rotate.sliderMoved.connect(self.rotate)
-
-        self._view.projection.setCurrentIndex(self._display.projection)
-        self._view.projection.currentIndexChanged[int].connect(self.project)
 
         self._view.cells.setValue(self._model.cells)
         self._view.cells.valueChanged[int].connect(self.cells)
@@ -35,8 +37,15 @@ class ClimatePresenter(object):
         self._display.rotate = value
         self._view.content.update()
 
-    def project(self, value):
-        self._display.projection = value
+    def showattribute(self, value):
+        self._display.shownattribute = value
+        self._view.season.setEnabled(self._display.shownattribute != 0)
+        self._display.invalidate()
+        self._view.content.update()
+
+    def season(self, value):
+        self._display.season = value
+        self._display.invalidate()
         self._view.content.update()
 
     def cells(self, value):
@@ -46,6 +55,8 @@ class ClimatePresenter(object):
 
     def earth(self):
         self._model.earth()
+        self._view.season.setValue(0)
+        self._view.season.setMaximum(self._model.seasoncount)
         self._display.invalidate()
         self._view.content.update()
 

@@ -1,6 +1,7 @@
 from math import pi, cos
 
-from adjacency import *
+from grid import Grid
+from hexadjacency import *
 from climatemethod import climate
 from earth import Earth
 from planetdata import Data
@@ -14,36 +15,37 @@ class ClimateSimulation(object):
     
     def __init__(self, r):
         """Create a simulation for a planet of radius r km."""
-        degrees = 2
+        grid = Grid()
+        while grid.size < 6:
+            grid = Grid(grid)
+            grid.populate()
+        self._grid = grid
 
-        self.tiles = []
-        for lat in range(-89, 91, degrees):
-            r = cos(lat * pi/180)
-            row = []
-            d = 2 / r
-            lon = d/2
-            while lon <= 180:
-                flat = float(lat)
-                row = ([Tile(flat, -lon)] +
-                       row +
-                       [Tile(flat, lon)])
-                lon += d
-            self.tiles.append(row)
+        self.tiles = {}
+        for v in self._grid.faces:
+            x, y, z = v
+            lat = 180/pi * atan2(y, sqrt(x*x + z*z))
+            lon = 180/pi * atan2(-x, z)
+            self.tiles[v] = Tile(lat, lon)
 
-        self.adj = Adjacency(self.tiles)
+        self.adj = Adjacency(self._grid)
         self.cells = 3
+
+    @property
+    def grid(self):
+        return self._grid
 
     def classify(self, seasons = None):
         seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5] if seasons is None else seasons
+        self.seasoncount = len(seasons)
 
-        climatetiles = {}
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                climatetiles[(x,y)] = self.tiles[y][x]
-        c = climate(climatetiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, True, {})
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                self.tiles[y][x].climate = c[(x,y)]['classification'].koeppen
+        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, True, {})
+        for v, tile in self.tiles.iteritems():
+            tile.climate = {
+                'koeppen': c[v]['classification'].koeppen,
+                'insolation': [s['insolation'] for s in c[v]['seasons']],
+                'precipitation': [s['precipitation'] for s in c[v]['seasons']],
+                'temperature': [s['temperature'] for s in c[v]['seasons']] }
     
     @property
     def cells(self):
@@ -60,7 +62,7 @@ class ClimateSimulation(object):
 
     def earth(self):
         earth = Earth()
-        for t in [t for lat in self.tiles for t in lat]:
+        for t in self.tiles.itervalues():
             elevation = earth.sample(t.lat, t.lon) / 900.0
             if elevation < 0:
                 elevation = 0
