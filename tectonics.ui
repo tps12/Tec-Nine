@@ -139,31 +139,6 @@
          </item>
         </widget>
        </item>
-       <item>
-        <widget class="QComboBox" name="projection">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <item>
-          <property name="text">
-           <string>Mercator</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Sinusoidal</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Flat</string>
-          </property>
-         </item>
-        </widget>
-       </item>
       </layout>
      </item>
     </layout>
