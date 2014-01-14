@@ -4,7 +4,8 @@ from math import asin, acos, atan2, pi, exp, sqrt, sin, cos
 import random
 from time import time
 
-from adjacency import *
+from grid import Grid
+from hexadjacency import *
 from climatemethod import climate
 from erodemethod import erode
 from movemethod import move
@@ -57,23 +58,20 @@ class PlanetSimulation(object):
 
         tilearea = 4 * pi * r**2
 
-        degrees = 2
-
         initt.start('building grid')
 
-        self.tiles = []
-        for lat in range(-89, 91, degrees):
-            r = cos(lat * pi/180)
-            row = []
-            d = 2 / r
-            lon = d/2
-            while lon <= 180:
-                flat = float(lat)
-                row = ([Tile(flat, -lon)] +
-                       row +
-                       [Tile(flat, lon)])
-                lon += d
-            self.tiles.append(row)
+        grid = Grid()
+        while grid.size < 6:
+            grid = Grid(grid)
+            grid.populate()
+        self._grid = grid
+
+        self.tiles = {}
+        for v in self._grid.faces:
+            x, y, z = v
+            lat = 180/pi * atan2(y, sqrt(x*x + z*z))
+            lon = 180/pi * atan2(-x, z)
+            self.tiles[v] = Tile(lat, lon)
 
         initt.start('building indexes')
 
@@ -88,10 +86,6 @@ class PlanetSimulation(object):
         # a 50M km^2 continent has a 50/50 chance of splitting in a given step
         self._splitnum = 25e6/tilearea
 
-        xmax = max([len(self.tiles[i]) for i in range(len(self.tiles))])
-
-        dimensions = xmax, len(self.tiles)
-   
         # initial location
         p = (0, 1, 0)
 
@@ -108,7 +102,7 @@ class PlanetSimulation(object):
 
         shape = Shape(shape, p, o, v).projection()
 
-        self._shapes = [Group([t for lat in self.tiles for t in lat if shape.contains(t.vector)], v)]
+        self._shapes = [Group([t for t in self.tiles.itervalues() if shape.contains(t.vector)], v)]
 
         # initial landmass starts at elevation based on distance from center
         c = self._indexedtiles[self._index.nearest(p)[0]]
@@ -129,7 +123,7 @@ class PlanetSimulation(object):
             else:
                 t.emptyocean(self.seafloor())
 
-        for t in [t for lat in self.tiles for t in lat]:
+        for t in self.tiles.itervalues():
             t.climate = None
 
         initt.done()
@@ -141,22 +135,24 @@ class PlanetSimulation(object):
 
         self.dirty = True
 
+    @property
+    def grid(self):
+        return self._grid
+
     @staticmethod
     def seafloor():
         return igneous.extrusive(0.5)
 
     def initindexes(self):
         self._indexedtiles = []
-        for lat in self.tiles:
-            for t in lat:
-                self._indexedtiles.append(t)
+        for t in self.tiles.itervalues():
+            self._indexedtiles.append(t)
 
-        self.adj = Adjacency(self.tiles)
+        self.adj = Adjacency(self._grid)
                 
         self._tileadj = dict()
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                self._tileadj[self.tiles[y][x]] = [self.tiles[j][i] for i, j in self.adj[(x,y)]]
+        for v in self._grid.faces:
+            self._tileadj[self.tiles[v]] = set([self.tiles[nv] for nv in self.adj[v]])
        
         self._index = PointTree(dict([[self._indexedtiles[i].vector, i]
                                       for i in range(len(self._indexedtiles))]))
@@ -253,27 +249,22 @@ class PlanetSimulation(object):
             stept.start('"simulating" climate')
 
             seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
-            climatetiles = {}
-            for y in range(len(self.tiles)):
-                for x in range(len(self.tiles[y])):
-                    climatetiles[(x,y)] = self.tiles[y][x]
-            c = climate(climatetiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self._life, self._climatemappings, self._climateprof)
+            c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self._life, self._climatemappings, self._climateprof)
 
             if self._climateprof:
                 self._climateprof.dump_stats('climate.profile')
 
-            for y in range(len(self.tiles)):
-                for x in range(len(self.tiles[y])):
-                    self.tiles[y][x].climate = c[(x,y)]['classification']
+            for v, tile in self.tiles.iteritems():
+                tile.climate = c[v]['classification']
 
             stept.start('determining erosion')
 
             erosion = erode(self.tiles, self.adj)
 
-            for t in [t for lat in self.tiles for t in lat]:
+            for t in self.tiles.itervalues():
                 t.erode(erosion, self._erode)
 
-            for t in [t for lat in self.tiles for t in lat]:
+            for t in self.tiles.itervalues():
                 # if the tile is in at least one shape, apply the erosion materials
                 if len(overlapping[t]) > 0:
                     if len(erosion[t].materials) > 0:
@@ -303,7 +294,7 @@ class PlanetSimulation(object):
 
         stept.start('performing random intrusions')
 
-        for t in [t for lat in self.tiles for t in lat]:
+        for t in self.tiles.itervalues():
             if t.subduction > 0:
                 if random.random() < 0.1:
                     t.intrude(igneous.intrusive(max(0, min(1, random.gauss(0.85, 0.15)))))
@@ -311,10 +302,10 @@ class PlanetSimulation(object):
 
         stept.start('applying regional metamorphism')
 
-        for t in [t for lat in self.tiles for t in lat]:
+        for t in self.tiles.itervalues():
             t.transform(metamorphic.regional(t.substance[1], t.subduction > 0))
 
-        for t in [t for lat in self.tiles for t in lat]:
+        for t in self.tiles.itervalues():
             t.cleartemp()
 
         stept.start('merging overlapping shapes')

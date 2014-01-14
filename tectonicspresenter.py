@@ -78,9 +78,6 @@ class TectonicsPresenter(object):
         self._view.aspect.setCurrentIndex(self._display.aspect)
         self._view.aspect.currentIndexChanged[int].connect(self.aspect)
 
-        self._view.projection.setCurrentIndex(self._display.projection)
-        self._view.projection.currentIndexChanged[int].connect(self.project)
-
         self._view.pause.setVisible(False)
 
         self._uistack = uistack
@@ -101,10 +98,7 @@ class TectonicsPresenter(object):
 
     def aspect(self, value):
         self._display.aspect = value
-        self._view.content.update()
-
-    def project(self, value):
-        self._display.projection = value
+        self._display.invalidate()
         self._view.content.update()
 
     def load(self):
@@ -157,4 +151,5 @@ class TectonicsPresenter(object):
         self._view.ticks.setNum(self._ticks)
         self._view.continents.setNum(self._model.continents)
         self._view.percent.setNum(self._model.land)
+        self._display.invalidate()
         self._view.content.update()
