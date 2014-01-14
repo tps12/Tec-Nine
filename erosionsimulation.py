@@ -37,36 +37,21 @@ class ErosionSimulation(object):
             t.climate = None
 
         self.adj = Adjacency(self.tiles)
-        
-        self._climate = False
 
     def erode(self):
         seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5]
 
-        if self.climate:
-            c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange)
-        else:
-            c = None
+        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, True, {})
 
         for y in range(len(self.tiles)):
             for x in range(len(self.tiles[y])):
-                self.tiles[y][x].climate = c[(x,y)] if c is not None else None
+                self.tiles[y][x].climate = c[(x,y)]
 
         erosion = erode(self.tiles, self.adj)
 
         for t in [t for lat in self.tiles for t in lat]:
-            t.erode(erosion)
+            t.erode(erosion, 1.0)
             t.eroding = erosion[t]
-
-    @property
-    def climate(self):
-        return self._climate
-
-    @climate.setter
-    def climate(self, value):
-        if self._climate != value:
-            self._climate = value
-            self.erode()
 
     @property
     def earthavailable(self):
@@ -79,7 +64,8 @@ class ErosionSimulation(object):
             if elevation < 0:
                 elevation = 0
             t.bottom = -1
-            t.layers = [Layer('S', elevation + 1)]
+            t.layers = [Layer({ 'type': 'S', 'toughness': 0.5 }, elevation + 1)]
+            t.limit()
         self.erode()
 
     def load(self, filename):

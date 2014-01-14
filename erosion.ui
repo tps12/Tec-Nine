@@ -128,13 +128,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="climate">
-       <property name="text">
-        <string>Use Climate</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="done">
        <property name="text">
         <string>Done</string>
