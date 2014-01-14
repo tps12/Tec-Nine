@@ -1,9 +1,9 @@
 from math import sin, cos, pi
 
 from PySide.QtCore import Qt
-from PySide.QtGui import QColor, QImage, QPainter, QWidget, QSizePolicy
+from PySide.QtGui import QColor, QGridLayout, QImage, QPainter, QWidget, QSizePolicy
 
-from projection import *
+from sphereview import SphereView
 
 def redbluescale(v):
     r = 255 - 255 * v 
@@ -181,8 +181,6 @@ def rockcolor(tile):
 class PlanetDisplay(QWidget):
     dt = 0.01
 
-    _projections = [Mercator, Sinusoidal, Flat]
-
     _colorfunctions = [climatecolor, color, elevationcolor, rockcolor, subductioncolor, thicknesscolor]
     
     def __init__(self, sim, selecthandler):
@@ -190,11 +188,11 @@ class PlanetDisplay(QWidget):
         self._sim = sim
         self._screen = None
         self._rotate = 0
-        self._projection = 0
         self._aspect = self._colorfunctions.index(elevationcolor)
         self._select = selecthandler
         self.selected = None
-        self.dirty = True
+        self.setLayout(QGridLayout())
+        self.invalidate()
 
     @property
     def rotate(self):
@@ -203,16 +201,7 @@ class PlanetDisplay(QWidget):
     @rotate.setter
     def rotate(self, value):
         self._rotate = value
-        self._dirty = True
-    
-    @property
-    def projection(self):
-        return self._projection
-
-    @projection.setter
-    def projection(self, value):
-        self._projection = value
-        self._dirty = True
+        self._screen.rotate(self._rotate)
 
     @property
     def aspect(self):
@@ -221,38 +210,17 @@ class PlanetDisplay(QWidget):
     @aspect.setter
     def aspect(self, value):
         self._aspect = value
-        self._dirty = True
-    
-    def mousePressEvent(self, e):
-        pos = e.pos().toTuple()
-        size = self._screen.size().toTuple()
-
-        self._select(self._projections[self._projection].unproject(size, self._sim.tiles, self.rotate, pos))
+        self.invalidate()
 
     def tilecolor(self, tile):
-        return QColor(*self._colorfunctions[self._aspect](tile))
+        return self._colorfunctions[self._aspect](tile)
    
-    def paintEvent(self, e):
-        surface = QPainter()
-        surface.begin(self)
-        
-        if (self._sim.dirty or self._dirty or
-            self._screen == None or self._screen.size() != surface.device().size()):
-            self._screen = QImage(surface.device().width(), surface.device().height(),
-                                  QImage.Format_RGB32)
-            
-            size = self._screen.width(), self._screen.height()
-        
-            self._screen.fill(QColor(255,255,255).rgb())
-
-            screen = QPainter()
-            screen.begin(self._screen)
-
-            self._projections[self._projection].project(screen, size, self._sim.tiles, self.rotate, self.tilecolor, Qt.black)
-
-            screen.end()
-
-            self._dirty = False
-
-        surface.drawImage(0, 0, self._screen)
-        surface.end()
+    def invalidate(self):
+        if self._screen is not None:
+            self._screen.deleteLater()
+        self._screen = SphereView(
+            self._sim.grid,
+            { v: self.tilecolor(t) for (v, t) in self._sim.tiles.iteritems() },
+            self)
+        self._screen.rotate(self._rotate)
+        self.layout().addWidget(self._screen)
