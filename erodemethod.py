@@ -21,20 +21,18 @@ class Erosion(object):
 def erode(tiles, adjacency):
     erosion = {}
 
-    for t in [t for lat in tiles for t in lat]:
+    for t in tiles.itervalues():
         erosion[t] = Erosion()
 
     # erode to lower adjacent tiles
-    for i in range(len(tiles)):
-        for j in range(len(tiles[i])):
-            tile = tiles[i][j]
-            if tile.elevation > 0:
-                c = tile.climate
-                d = (tile.elevation/10.0) * c.precipitation * (1 - c.temperature)
-                adj = adjacency[(j,i)]
-                for (j2,i2) in adj:
-                    other = tiles[i2][j2]
-                    erosion[tile].destinations.append(ErosionEvent(d, other))
-                    erosion[other].sources.append(tile)
+    for (v, tile) in tiles.iteritems():
+        if tile.elevation > 0:
+            c = tile.climate
+            d = (tile.elevation/10.0) * c.precipitation * (1 - c.temperature)
+            adj = adjacency[v]
+            for v2 in adj:
+                other = tiles[v2]
+                erosion[tile].destinations.append(ErosionEvent(d, other))
+                erosion[other].sources.append(tile)
 
     return erosion

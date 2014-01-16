@@ -52,7 +52,7 @@ class ErosionSimulation(object):
             for x in range(len(self.tiles[y])):
                 self.tiles[y][x].climate = c[(x,y)]['classification']
 
-        erosion = erode(self.tiles, self.adj)
+        erosion = erode(climatetiles, self.adj)
 
         for t in [t for lat in self.tiles for t in lat]:
             t.erode(erosion, 1.0)

@@ -268,7 +268,7 @@ class PlanetSimulation(object):
 
             stept.start('determining erosion')
 
-            erosion = erode(self.tiles, self.adj)
+            erosion = erode(climatetiles, self.adj)
 
             for t in [t for lat in self.tiles for t in lat]:
                 t.erode(erosion, self._erode)
