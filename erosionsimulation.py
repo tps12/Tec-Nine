@@ -1,6 +1,7 @@
 from math import pi, cos
 
-from adjacency import *
+from grid import Grid
+from hexadjacency import *
 from climatemethod import climate
 from earth import Earth
 from erodemethod import erode, Erosion
@@ -16,45 +17,40 @@ class ErosionSimulation(object):
     
     def __init__(self, r):
         """Create a simulation for a planet of radius r km."""
-        degrees = 2
+        grid = Grid()
+        while grid.size < 6:
+            grid = Grid(grid)
+            grid.populate()
+        self._grid = grid
 
-        self.tiles = []
-        for lat in range(-89, 91, degrees):
-            r = cos(lat * pi/180)
-            row = []
-            d = 2 / r
-            lon = d/2
-            while lon <= 180:
-                flat = float(lat)
-                row = ([Tile(flat, -lon)] +
-                       row +
-                       [Tile(flat, lon)])
-                lon += d
-            self.tiles.append(row)
+        self.tiles = {}
+        for v in self._grid.faces:
+            x, y, z = v
+            lat = 180/pi * atan2(y, sqrt(x*x + z*z))
+            lon = 180/pi * atan2(-x, z)
+            self.tiles[v] = Tile(lat, lon)
 
-        for t in [t for lat in self.tiles for t in lat]:
+        for t in self.tiles.itervalues():
             t.eroding = Erosion()
             t.climate = None
 
-        self.adj = Adjacency(self.tiles)
+        self.adj = Adjacency(self._grid)
+
+    @property
+    def grid(self):
+        return self._grid
 
     def erode(self):
         seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5]
 
-        climatetiles = {}
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                climatetiles[(x,y)] = self.tiles[y][x]
+        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, True, {})
 
-        c = climate(climatetiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, True, {})
+        for v, tiles in self.tiles.iteritems():
+            self.tiles[v].climate = c[v]['classification']
 
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                self.tiles[y][x].climate = c[(x,y)]['classification']
+        erosion = erode(self.tiles, self.adj)
 
-        erosion = erode(climatetiles, self.adj)
-
-        for t in [t for lat in self.tiles for t in lat]:
+        for t in self.tiles.itervalues():
             t.erode(erosion, 1.0)
             t.eroding = erosion[t]
 
@@ -64,7 +60,7 @@ class ErosionSimulation(object):
 
     def earth(self):
         earth = Earth()
-        for t in [t for lat in self.tiles for t in lat]:
+        for t in self.tiles.itervalues():
             elevation = earth.sample(t.lat, t.lon) / 900.0
             if elevation < 0:
                 elevation = 0
