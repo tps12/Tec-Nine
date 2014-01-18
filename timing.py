@@ -1,4 +1,5 @@
 from time import time
+from sys import stdout
 
 class Timing(object):
     def routine(self, name):
@@ -15,13 +16,14 @@ class Timing(object):
 
         def _record(self):
             t = time()
-            if self._current is not None:
-                print self._current, t - self._t
+            if self._t is not None:
+                print t - self._t
             self._t = t
 
         def start(self, section):
             self._record()
-            self._current = section
+            stdout.write(section + ' ')
+            stdout.flush()
 
         def done(self):
             self._record()
