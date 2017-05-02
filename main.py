@@ -1,5 +1,5 @@
 from sys import argv, exit
-from PySide.QtGui import QApplication, QFont, QFontMetrics, QX11Info
+from PySide.QtGui import QApplication, QFont, QFontMetrics
 from mainwindow import MainWindow
 
 app = QApplication(argv)
