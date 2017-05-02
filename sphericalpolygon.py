@@ -11,7 +11,6 @@ class SphericalPolygon(object):
                       for i in range(-1, len(self._vectors)-1)]
         self._centroid = centroid
         self._externalvector = self._guessexternal(self._vectors)
-        self.latrange, self.lonrange = self._range()
 
     @staticmethod
     def _getarc(v1, v2):
@@ -30,21 +29,6 @@ class SphericalPolygon(object):
     def _eacharc(self, f):
         for arc in self._arcs:
             yield f(arc)
-
-    def _range(self):
-        def meld(a, b):
-            alat, alon = a
-            blat, blon = b
-            return LatRange.meld(alat, blat), LonRange.meld(alon, blon)
-
-        latrange, lonrange = reduce(meld, self._eacharc(lambda a: a.range()))
-        # extend latitude range to pole if wraps all the way around
-        if lonrange.min == -180 and lonrange.max == 180:
-            if self._centroid[2] < 0:
-                latrange.min = -90.0
-            else:
-                latrange.max = 90.0
-        return latrange, lonrange
 
     def contains(self, vector):
         count = 0
