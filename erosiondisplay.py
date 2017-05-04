@@ -44,12 +44,9 @@ class ErosionDisplay(QWidget):
             self.invalidate()
 
     def invalidate(self):
-        if self._screen is not None:
-            self._screen.deleteLater()
-        self._screen = SphereView(
-            self._sim.grid,
-            { v: self.tilecolor(t) for (v, t) in self._sim.tiles.iteritems() },
-            self)
+        if self._screen is None:
+            self._screen = SphereView(self._sim.grid, self)
+        self._screen.usecolors({ v: self.tilecolor(t) for (v, t) in self._sim.tiles.iteritems() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)
 

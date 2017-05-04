@@ -98,16 +98,13 @@ class ClimateDisplay(QWidget):
         self._screen.rotate(self._rotate)
 
     def invalidate(self):
-        if self._screen is not None:
-            self._screen.deleteLater()
+        if self._screen is None:
+            self._screen = SphereView(self._sim.grid, self)
         attribute = self._attributes[self.shownattribute]
         if attribute['seasonal']:
             fn = lambda t: attribute['function'](t, self.season)
         else:
             fn = attribute['function']
-        self._screen = SphereView(
-            self._sim.grid,
-            { v: fn(t) for (v, t) in self._sim.tiles.iteritems() },
-            self)
+        self._screen.usecolors({ v: fn(t) for (v, t) in self._sim.tiles.iteritems() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)
