@@ -11,18 +11,12 @@ class Data(object):
         with open(filename, 'r') as f:
             data = load(f)
 
-            if 'version' not in data or data['version'] < 5:
+            if 'version' not in data or data['version'] < 7:
                 raise ValueError('File version is too old')
 
-            if data['version'] < 6:
-                for t in [t for lat in data['tiles'] for t in lat]:
-                    t['climate']['temperature'] = 0
+            data['tiles'] = {v: cls._tile(t) for v,t in data['tiles'].iteritems()}
 
-            data['tiles'] = [[cls._tile(t) for t in lat] for lat in data['tiles']]
-
-            tileindex = cls._index(data['tiles'])
-
-            data['shapes'] = [Group([tileindex[i] for i in tis], v) for (tis, v) in data['shapes']]
+            data['shapes'] = [Group([data['tiles'][tv] for tv in tvs], v) for (tvs, v) in data['shapes']]
 
             return data
 
@@ -32,21 +26,22 @@ class Data(object):
             filename += cls.EXTENSION
         tileindex = cls._index(tiles)
         with open(filename, 'w') as f:
-            dump({'version': 6,
+            dump({'version': 7,
                   'random': random,
                   'dp': dp,
                   'build': build,
                   'splitnum': splitnum,
-                  'tiles': [[{ 'lat': t.lat,
+                  'tiles': {v:
+                             { 'lat': t.lat,
                                'lon': t.lon,
                                'substance': t.substance,
                                'climate': { 'temperature': t.climate.temperature,
                                             'precipitation': t.climate.precipitation,
-                                            'koeppen': t.climate.koeppen }
+                                            'koeppen': t.climate.koeppen,
+                                            'life': t.climate.life }
                                           if t.climate is not None else None }
-                             for t in lat]
-                            for lat in tiles],
-                  'shapes': [([tileindex.index(t) for t in s.tiles], s.v) for s in shapes]},
+                             for v,t in tiles.iteritems()},
+                  'shapes': [([tileindex[t.vector] for t in s.tiles], s.v) for s in shapes]},
                  f,
                  0)
 
@@ -59,17 +54,17 @@ class Data(object):
         if data['climate'] is not None:
             t.climate = ClimateInfo(data['climate']['temperature'],
                                     data['climate']['precipitation'],
-                                    data['climate']['koeppen'])
+                                    data['climate']['koeppen'],
+                                    data['climate']['life'])
         else:
             t.climate = None
         return t
 
     @classmethod
     def _index(cls, tiles):
-        tileindex = []
-        for lat in tiles:
-            for t in lat:
-                tileindex.append(t)
+        tileindex = {}
+        for v,t in tiles.iteritems():
+            tileindex[t.vector] = v
         return tileindex
 
 
