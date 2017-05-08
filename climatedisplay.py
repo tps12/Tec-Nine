@@ -35,11 +35,14 @@ def koeppencolor(tile):
 
     return color
 
+def seasonindex(s, ss):
+  return ss[int(round((len(ss)-1) * s/100.0))]
+
 def precipcolor(tile, season):
     h, s = tile.elevation, tile.climate['precipitation']
 
     if h > 0:
-        value = 128 + 127 * s[season]
+        value = 128 + 127 * seasonindex(season, s)
         color = (value, value, value)
     else:
         color = 0, 0, 0
@@ -47,7 +50,7 @@ def precipcolor(tile, season):
     return color
 
 def tempcolor(tile, season):
-    h, s = tile.elevation, tile.climate['temperature'][season]
+    h, s = tile.elevation, seasonindex(season, tile.climate['temperature'])
 
     if h > 0:
         g = 0
@@ -59,7 +62,7 @@ def tempcolor(tile, season):
     return r, g, b
 
 def suncolor(tile, season):
-    h, s = tile.elevation, tile.climate['insolation'][season]
+    h, s = tile.elevation, seasonindex(season, tile.climate['insolation'])
     if h > 0:
         r = 255
         g = 255 * (1 if s >= 0.5 else s/0.5)
