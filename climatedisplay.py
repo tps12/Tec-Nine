@@ -88,6 +88,7 @@ class ClimateDisplay(QWidget):
         self._rotate = 0
         self.shownattribute = 0
         self.season = 0
+        self.glaciation = 0.5
         self.setLayout(QGridLayout())
         self.invalidate()
 

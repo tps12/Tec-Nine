@@ -249,7 +249,7 @@ class PlanetSimulation(object):
             stept.start('"simulating" climate')
 
             seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
-            c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self._life, self._climatemappings, self._climateprof)
+            c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, 0.5, self._life, self._climatemappings, self._climateprof)
 
             if self._climateprof:
                 self._climateprof.dump_stats('climate.profile')

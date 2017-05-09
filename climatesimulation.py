@@ -11,7 +11,7 @@ class ClimateSimulation(object):
     spin = 1.0
     tilt = 23
 
-    temprange = (-25.0, 50.0)
+    mean_temprange = (-25.0, 50.0)
     
     def __init__(self, r):
         """Create a simulation for a planet of radius r km."""
@@ -28,8 +28,10 @@ class ClimateSimulation(object):
             lon = 180/pi * atan2(-x, z)
             self.tiles[v] = Tile(lat, lon)
 
+
         self.adj = Adjacency(self._grid)
         self.cells = 3
+        self.glaciation = 0.5
 
     @property
     def grid(self):
@@ -38,8 +40,7 @@ class ClimateSimulation(object):
     def classify(self, seasons = None):
         seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5] if seasons is None else seasons
         self.seasoncount = len(seasons)
-
-        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, True, {})
+        c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self.glaciation, True, {})
         for v, tile in self.tiles.iteritems():
             tile.climate = {
                 'koeppen': c[v]['classification'].koeppen,
@@ -55,6 +56,20 @@ class ClimateSimulation(object):
     def cells(self, value):
         self._cells = value
         self.classify()
+
+    @property
+    def glaciation(self):
+      return self._glaciation if hasattr(self, '_glaciation') else 0.5
+
+    @glaciation.setter
+    def glaciation(self, value):
+        self._glaciation = value
+        self.classify()
+
+    @property
+    def temprange(self):
+      dtemp = 5 * (self.glaciation / 0.5)
+      return (self.mean_temprange[0] + dtemp, self.mean_temprange[1] + dtemp)
 
     @property
     def earthavailable(self):

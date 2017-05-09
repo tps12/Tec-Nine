@@ -40,7 +40,7 @@ def memoize(fn):
 class Climate(object):
     breezedistance = 10
     
-    def __init__(self, tiles, adjacency, cells, spin, tilt, profile = None):
+    def __init__(self, tiles, adjacency, cells, glaciation, spin, tilt, profile = None):
         self.tiles = tiles
         self.adj = adjacency
 
@@ -48,6 +48,8 @@ class Climate(object):
 
         self._season = None
         self.cells = cells
+        self.glacial_dt = 0.15 * (glaciation - 0.5)/0.5
+        self.glacial_dp = 0.2 * (0.5 - glaciation)/0.5
         self.spin = spin
         self.tilt = tilt
 
@@ -117,7 +119,7 @@ class Climate(object):
                 self.sun[v] = ins = insolation_fn(tile.lat, self.season, self.tilt)
                 h = tile.elevation
                 t = (ins * (1 - h/10.0) if h > 0 else ins)
-                self.temperature[v] = t
+                self.temperature[v] = t + self.glacial_dt
 
             if convective:
                 p = (cos((tile.lat*2*c + self.tilt*self.season)*pi/180) + 1)/2
@@ -181,7 +183,7 @@ class Climate(object):
     def _totalprecipitation(self):
         d = self.breezedistance
         for v in self.tiles:
-            p = min(1.0, self.seabased[v] + self.convective[v])
+            p = min(1.0, self.seabased[v] + self.convective[v] + self.glacial_dp)
             self.precipitation[v] = p
                 
     def _propagate(self, sources, d):
@@ -292,8 +294,8 @@ class Climate(object):
         if d or t or c or s or p:
             self._profile.runcall(self.resetclimate, d, t, c, s, p)
 
-def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange, life, tilemappings, profile = None):
-    c = Climate(tiles, adjacency, cells, spin, tilt, profile)
+def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange, glaciation, life, tilemappings, profile = None):
+    c = Climate(tiles, adjacency, cells, glaciation, spin, tilt, profile)
 
     if tilemappings:
         c.tilemappings = tilemappings

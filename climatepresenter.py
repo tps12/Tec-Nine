@@ -22,6 +22,8 @@ class ClimatePresenter(object):
 
         self._view.season.sliderMoved.connect(self.season)
 
+        self._view.glaciation.sliderMoved.connect(self.glaciation)
+
         self._view.content.setLayout(QGridLayout())
         self._view.content.layout().addWidget(self._display)
 
@@ -45,6 +47,11 @@ class ClimatePresenter(object):
 
     def season(self, value):
         self._display.season = value
+        self._display.invalidate()
+        self._view.content.update()
+
+    def glaciation(self, value):
+        self._model.glaciation = value/100.0
         self._display.invalidate()
         self._view.content.update()
 
