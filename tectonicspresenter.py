@@ -1,5 +1,3 @@
-from time import sleep
-
 from PySide.QtGui import QApplication, QGridLayout, QFileDialog
 from PySide.QtCore import QThread, Signal
 
@@ -43,7 +41,6 @@ class SimThread(QThread):
                 if self._stopping:
                     self.simstopped.emit()
                     self._stopping = False
-            sleep(0.1)
 
 class TectonicsPresenter(object):
     def __init__(self, view, uistack, listitemclass):
