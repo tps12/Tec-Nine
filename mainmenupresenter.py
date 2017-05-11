@@ -1,6 +1,7 @@
 from climate import Climate
 from erosion import Erosion
 from options import Options
+from population import Population
 from tectonics import Tectonics
 from split import Split
 from move import Move
@@ -11,6 +12,7 @@ class MainMenuPresenter(object):
         self._view.start.clicked.connect(self.start)
         self._view.climate.clicked.connect(self.climate)
         self._view.erosion.clicked.connect(self.erosion)
+        self._view.population.clicked.connect(self.population)
         self._view.split.clicked.connect(self.split)
         self._view.movepoints.clicked.connect(self.move)
         self._view.options.clicked.connect(self.options)
@@ -28,6 +30,9 @@ class MainMenuPresenter(object):
 
     def erosion(self):
         self._uistack.push(Erosion(self._uistack))
+
+    def population(self):
+        self._uistack.push(Population(self._uistack))
 
     def split(self):
         self._uistack.push(Split(self._uistack))

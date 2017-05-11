@@ -48,6 +48,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="population">
+     <property name="text">
+      <string>Population</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="split">
      <property name="text">
       <string>Split</string>
