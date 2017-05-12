@@ -28,6 +28,8 @@ class PopulationSimulation(object):
             t.climate = None
             t.candidate = False
 
+        self._range = 6
+
         self.adj = Adjacency(self._grid)
         self.initindexes()
         self.populated = set()
@@ -41,13 +43,22 @@ class PopulationSimulation(object):
         if not self.populated:
             self.sea = sea(self.tiles)
             self.frontier = eden(self.tiles, self.sea, self._tileadj)
-        self.populated, self.frontier = expandfrontier(self.frontier, self.sea, self._tileadj, self.populated)
+        self.populated, self.frontier = expandfrontier(self.frontier, self.sea, self._tileadj, self.populated, self.range)
         if not self.frontier:
             return True
+        time.sleep(0.1)
 
     @property
     def grid(self):
         return self._grid
+
+    @property
+    def range(self): return self._range
+
+    @range.setter
+    def range(self, value):
+        self._range = value
+        self.frontier = {t for t in self.populated}
 
     @staticmethod
     def seafloor():

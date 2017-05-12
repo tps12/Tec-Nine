@@ -31,11 +31,17 @@ class PopulationPresenter(object):
 
         self._view.pause.setVisible(False)
 
+        self._view.range.setValue(self._model.range)
+        self._view.range.valueChanged[int].connect(self.range)
+
         self._uistack = uistack
 
     def rotate(self, value):
         self._display.rotate = value
         self._view.content.update()
+
+    def range(self, value):
+        self._model.range = value
 
     def load(self):
         filename = QFileDialog.getOpenFileName(self._view,

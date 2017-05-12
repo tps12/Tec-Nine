@@ -26,12 +26,26 @@ def eden(tiles, seatiles, adj):
                   any([n in o for n in adj[t]])]
     return {random.choice(candidates)} if candidates else set()
 
-def expandfrontier(frontier, seatiles, adj, populated):
+def passable(t):
+    return t.elevation <= 0 or (t.climate and t.climate.koeppen != u'BW' and t.climate.koeppen[0] != u'E')
+
+def expandfrontier(frontier, seatiles, adj, populated, travelrange):
     newfrontier = set()
     for t in frontier:
-        for n in adj[t]:
-            if (n not in seatiles and any([nn in seatiles for nn in adj[n]]) and  # On coast
-                n not in frontier and n not in populated and  # Not visited yet
-                (n.climate.koeppen == u'Aw' or n.climate.koeppen[0] in u'CD')):  # Savannah or temperate/cold
-                newfrontier.add(n)
+        distance = 0
+        adjs = adj[t]
+        while distance < travelrange:
+            added = False
+            for n in adjs:
+                if (n not in seatiles and any([nn in seatiles for nn in adj[n]]) and  # On coast
+                    n not in frontier and n not in populated and  # Not visited yet
+                    (n.climate.koeppen == u'Aw' or n.climate.koeppen[0] in u'CD')):  # Savannah or temperate/cold
+                    newfrontier.add(n)
+                    added = True
+            if added: break
+            nextadjs = set()
+            for n in adjs:
+                nextadjs |= set([a for a in adj[n] if passable(a)])
+            adjs = sorted(list(nextadjs))
+            distance += 1
     return (populated | frontier), newfrontier
