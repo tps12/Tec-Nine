@@ -1,29 +1,23 @@
 import random
 
+import disjoint
+
 def sea(tiles):
   return [t for t in tiles.itervalues() if t.elevation <= 0]
 
-# TODO: optimize (currently O(n^2), could be O(nlogn)?)
 def mainocean(seatiles, adj):
-  bodies = []
+  seas = {t: disjoint.set() for t in seatiles}
   for t in seatiles:
     for n in adj[t]:
       if n in seatiles:
-        equiv = set()
-        for i in range(len(bodies)):
-          if n in bodies[i]:
-            bodies[i].add(t)
-            equiv.add(i)
-          if t in bodies[i]:
-            bodies[i].add(n)
-            equiv.add(i)
-        if not equiv:
-          bodies.append({t,n})
-        else:
-          bodies = (
-              [reduce(lambda a,b: a|b, [bodies[i] for i in equiv], set())] +
-              [bodies[i] for i in range(len(bodies)) if i not in equiv])
-  return sorted(bodies, key=len)[-1]
+        disjoint.union(seas[t], seas[n])
+  bodies = {}
+  for t in seatiles:
+    s = seas[t].root()
+    if s not in bodies:
+      bodies[s] = set()
+    bodies[s].add(t)
+  return sorted(bodies.values(), key=len)[-1]
 
 def eden(tiles, seatiles, adj):
     o = mainocean(seatiles, adj)
