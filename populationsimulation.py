@@ -28,6 +28,7 @@ class PopulationSimulation(object):
             t.climate = None
             t.candidate = False
 
+        self._coastprox = 2
         self._range = 6
 
         self.adj = Adjacency(self._grid)
@@ -43,7 +44,7 @@ class PopulationSimulation(object):
         if not self.populated:
             self.sea = sea(self.tiles)
             self.frontier = eden(self.tiles, self.sea, self._tileadj)
-        self.populated, self.frontier = expandfrontier(self.frontier, self.sea, self._tileadj, self.populated, self.range)
+        self.populated, self.frontier = expandfrontier(self.frontier, self.sea, self._tileadj, self.populated, self.range, self.coastprox)
         if not self.frontier:
             return True
         time.sleep(0.1)
@@ -58,6 +59,14 @@ class PopulationSimulation(object):
     @range.setter
     def range(self, value):
         self._range = value
+        self.frontier = {t for t in self.populated}
+
+    @property
+    def coastprox(self): return self._coastprox
+
+    @coastprox.setter
+    def coastprox(self, value):
+        self._coastprox = value
         self.frontier = {t for t in self.populated}
 
     @staticmethod

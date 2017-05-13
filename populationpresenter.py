@@ -31,6 +31,9 @@ class PopulationPresenter(object):
 
         self._view.pause.setVisible(False)
 
+        self._view.coastprox.setValue(self._model.coastprox)
+        self._view.coastprox.valueChanged[int].connect(self.coastprox)
+
         self._view.range.setValue(self._model.range)
         self._view.range.valueChanged[int].connect(self.range)
 
@@ -39,6 +42,9 @@ class PopulationPresenter(object):
     def rotate(self, value):
         self._display.rotate = value
         self._view.content.update()
+
+    def coastprox(self, value):
+        self._model.coastprox = value
 
     def range(self, value):
         self._model.range = value
