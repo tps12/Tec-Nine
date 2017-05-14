@@ -2,6 +2,7 @@ from climate import Climate
 from erosion import Erosion
 from options import Options
 from population import Population
+from prehistory import Prehistory
 from racination import Racination
 from tectonics import Tectonics
 from split import Split
@@ -15,6 +16,7 @@ class MainMenuPresenter(object):
         self._view.erosion.clicked.connect(self.erosion)
         self._view.population.clicked.connect(self.population)
         self._view.racination.clicked.connect(self.racination)
+        self._view.prehistory.clicked.connect(self.prehistory)
         self._view.split.clicked.connect(self.split)
         self._view.movepoints.clicked.connect(self.move)
         self._view.options.clicked.connect(self.options)
@@ -38,6 +40,9 @@ class MainMenuPresenter(object):
 
     def racination(self):
         self._uistack.push(Racination(self._uistack))
+
+    def prehistory(self):
+        self._uistack.push(Prehistory(self._uistack))
 
     def split(self):
         self._uistack.push(Split(self._uistack))

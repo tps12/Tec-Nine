@@ -77,6 +77,7 @@ class RacinationSimulation(object):
                     self.populated.add(t)
             else:
                 t.emptyocean()
+                t.climate = None
 
     def isolate(self):
         for c in self.continents:
