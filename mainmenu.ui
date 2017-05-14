@@ -55,6 +55,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="racination">
+     <property name="text">
+      <string>Racination</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="split">
      <property name="text">
       <string>Split</string>

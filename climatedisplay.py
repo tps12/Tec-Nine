@@ -2,34 +2,14 @@ from math import sin, cos, pi
 
 from PySide.QtGui import QColor, QGridLayout, QImage, QPainter, QWidget, QSizePolicy
 
+from koeppencolor import values as koeppenvalues
 from sphereview import SphereView
-
-koeppencolors = {
-    u'A' : {
-        u'f' : (0,0,255),
-        u'm' : (0,63,255),
-        u'w' : (0,127,255) },
-    u'B' : {
-        u'S' : (255,127,0),
-        u'W' : (255,0,0) },
-    u'C' : {
-        u'f' : (0,255,0),
-        u's' : (255,255,0),
-        u'w' : (127,255,0) },
-    u'D' : {
-        u'f' : (0,255,255),
-        u's' : (255,0,255),
-        u'w' : (127,127,255) },
-    u'E' : {
-        u'F' : (127,127,127),
-        u'T' : (191,191,191) }
-}
 
 def koeppencolor(tile):
     h, k = tile.elevation, tile.climate['koeppen']
 
     if h > 0:
-        color = koeppencolors[k[0]][k[1]]
+        color = koeppenvalues[k[0]][k[1]]
     else:
         color = 0, 0, 0
 

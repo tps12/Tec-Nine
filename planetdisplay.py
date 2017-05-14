@@ -4,6 +4,7 @@ from PySide.QtCore import Qt
 from PySide.QtGui import QColor, QGridLayout, QImage, QPainter, QWidget, QSizePolicy
 
 import color
+import koeppencolor
 from sphereview import SphereView
 
 def redbluescale(v):
@@ -51,29 +52,8 @@ def climatecolor(tile):
 
     k = c.koeppen
 
-    colors = {
-        u'A' : {
-            u'f' : (0,0,255),
-            u'm' : (0,63,255),
-            u'w' : (0,127,255) },
-        u'B' : {
-            u'S' : (255,127,0),
-            u'W' : (255,0,0) },
-        u'C' : {
-            u'f' : (0,255,0),
-            u's' : (255,255,0),
-            u'w' : (127,255,0) },
-        u'D' : {
-            u'f' : (0,255,255),
-            u's' : (255,0,255),
-            u'w' : (127,127,255) },
-        u'E' : {
-            u'F' : (127,127,127),
-            u'T' : (191,191,191) }
-    }
-
     if h > 0:
-        color = colors[k[0]][k[1]]
+        color = koeppencolor.values[k[0]][k[1]]
     else:
         color = 0, 0, 0
     return color
