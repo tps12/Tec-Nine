@@ -4,27 +4,6 @@ def value(tile):
     l = c.life if c else 0
     k = c.koeppen if c else None
 
-    colors = {
-        u'A' : {
-            u'f' : (0,96,48),
-            u'm' : (0,168,84),
-            u'w' : (0,255,128) },
-        u'B' : {
-            u'S' : (208,208,208),
-            u'W' : None },
-        u'C' : {
-            u'f' : (0,96,0),
-            u's' : (0,168,0),
-            u'w' : (0,255,0) },
-        u'D' : {
-            u'f' : (48,96,48),
-            u's' : (84,168,84),
-            u'w' : (128,255,128) },
-        u'E' : {
-            u'F' : (255, 255, 255),
-            u'T' : (255, 255, 255) }
-    }
-
     if h > 0:
         try:
             f = tile.layers[-1].rock['felsity']
