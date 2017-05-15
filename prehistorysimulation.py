@@ -20,6 +20,7 @@ class PrehistorySimulation(object):
     tilt = 23
     mean_temprange = (-25.0, 50.0)
     glaciationstep = 16
+    anthroglacial = 2
 
     def __init__(self):
         grid = Grid()
@@ -53,22 +54,23 @@ class PrehistorySimulation(object):
             self._tileadj[self.tiles[v]] = set([self.tiles[nv] for nv in self.adj[v]])
 
     def update(self):
-        if not self.frontier:
-            glaciation = 0.5 - math.cos(self._glaciationt*math.pi/self.glaciationstep)/2
-            dtemp = 5 * (glaciation / 0.5)
-            temprange = (self.mean_temprange[0] + dtemp, self.mean_temprange[1] + dtemp)
-            c = climate(self.tiles, self.adj, self.seasons, self.cells, self.spin, self.tilt, temprange, glaciation, True, {})
-            for v, tile in self.tiles.iteritems():
-                tile.climate = c[v]['classification']
-                if not habitable(tile) and tile in self.populated:
-                    self.populated.remove(tile)
-            self._glaciationt += 1
+        glaciation = 0.5 - math.cos(self._glaciationt*math.pi/self.glaciationstep)/2
+        dtemp = 5 * (glaciation / 0.5)
+        temprange = (self.mean_temprange[0] + dtemp, self.mean_temprange[1] + dtemp)
+        c = climate(self.tiles, self.adj, self.seasons, self.cells, self.spin, self.tilt, temprange, glaciation, True, {})
+        for v, tile in self.tiles.iteritems():
+            tile.climate = c[v]['classification']
+            if not habitable(tile) and tile in self.populated:
+                self.populated.remove(tile)
+        self._glaciationt += 1
 
         if not self.populated:
             self.sea = sea(self.tiles)
             self.frontier = eden(self.tiles, self.sea, self._tileadj)
 
-        self.populated, self.frontier = expandfrontier(self.frontier, self.sea, self._tileadj, self.populated, self.range, self.coastprox)
+        for _ in range(self.anthroglacial):
+            if self.frontier:
+                self.populated, self.frontier = expandfrontier(self.frontier, self.sea, self._tileadj, self.populated, self.range, self.coastprox)
         self.races = racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
 
     @property

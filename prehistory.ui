@@ -100,7 +100,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>anthroticks</string>
+          <string>glacioticks</string>
          </property>
         </widget>
        </item>
