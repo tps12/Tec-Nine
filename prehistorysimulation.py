@@ -6,7 +6,7 @@ from climatemethod import climate
 from grid import Grid
 from hexadjacency import Adjacency
 from planetdata import Data
-from populationmethod import eden, expandfrontier, habitable, sea
+from populationmethod import eden, expandpopulation, habitable, sea
 from racinatemethod import racinate
 from rock import igneous
 from tile import *
@@ -45,7 +45,6 @@ class PrehistorySimulation(object):
         self._glaciationt = 0
         self.initindexes()
         self.populated = set()
-        self.frontier = set()
         self.races = [self.populated]
 
     def initindexes(self):
@@ -66,11 +65,10 @@ class PrehistorySimulation(object):
 
         if not self.populated:
             self.sea = sea(self.tiles)
-            self.frontier = eden(self.tiles, self.sea, self._tileadj)
+            self.populated = eden(self.tiles, self.sea, self._tileadj)
 
         for _ in range(self.anthroglacial):
-            if self.frontier:
-                self.populated, self.frontier = expandfrontier(self.frontier, self.sea, self._tileadj, self.populated, self.range, self.coastprox)
+            self.populated = expandpopulation(self.sea, self._tileadj, self.populated, self.range, self.coastprox)
         self.races = racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
 
     @property
@@ -86,6 +84,5 @@ class PrehistorySimulation(object):
 
         random.setstate(data['random'])
         self.tiles = data['tiles']
-        self.frontier = set()
         self._glaciationt = random.randint(0,self.glaciationstep-1)
         self.initindexes()

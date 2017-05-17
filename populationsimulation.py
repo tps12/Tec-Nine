@@ -4,7 +4,7 @@ import time
 from grid import Grid
 from hexadjacency import Adjacency
 from planetdata import Data
-from populationmethod import eden, expandfrontier, sea
+from populationmethod import eden, expandpopulation, sea
 from rock import igneous
 from tile import *
 
@@ -43,9 +43,11 @@ class PopulationSimulation(object):
     def update(self):
         if not self.populated:
             self.sea = sea(self.tiles)
-            self.frontier = eden(self.tiles, self.sea, self._tileadj)
-        self.populated, self.frontier = expandfrontier(self.frontier, self.sea, self._tileadj, self.populated, self.range, self.coastprox)
-        if not self.frontier:
+            self.populated = eden(self.tiles, self.sea, self._tileadj)
+        populated = expandpopulation(self.sea, self._tileadj, self.populated, self.range, self.coastprox)
+        unchanged = populated == self.populated
+        self.populated = populated
+        if unchanged:
             return True
         time.sleep(0.1)
 
@@ -59,7 +61,6 @@ class PopulationSimulation(object):
     @range.setter
     def range(self, value):
         self._range = value
-        self.frontier = {t for t in self.populated}
 
     @property
     def coastprox(self): return self._coastprox
@@ -67,7 +68,6 @@ class PopulationSimulation(object):
     @coastprox.setter
     def coastprox(self, value):
         self._coastprox = value
-        self.frontier = {t for t in self.populated}
 
     @staticmethod
     def seafloor():
