@@ -2,6 +2,7 @@ import random
 
 import disjoint
 import passability
+import race
 
 def sea(tiles):
   return [t for t in tiles.itervalues() if t.elevation <= 0]
@@ -25,7 +26,7 @@ def eden(tiles, seatiles, adj):
     candidates = [t for t in tiles.itervalues()
                   if t.climate and t.climate.koeppen == u'Aw' and
                   any([n in o for n in adj[t]])]
-    return {random.choice(candidates)} if candidates else set()
+    return {random.choice(candidates): race.Heritage()} if candidates else set()
 
 def nearcoast(t, adj, d):
     return t.elevation > 0 and any([n.elevation <= 0 for n in passability.within(t, adj, d)])
@@ -34,7 +35,7 @@ def habitable(t):
     return t.elevation > 0 and (t.climate.koeppen == u'Aw' or t.climate.koeppen[0] in u'CD')  # Savannah or temperate/cold
 
 def expandpopulation(seatiles, adj, populated, travelrange, coastalproximity):
-    frontier = set()
+    frontier = {}
     for t in populated:
         distance = 0
         adjs = adj[t]
@@ -44,9 +45,12 @@ def expandpopulation(seatiles, adj, populated, travelrange, coastalproximity):
                 if (nearcoast(n, adj, coastalproximity) and
                     n not in populated and  # Not visited yet
                     habitable(n)):
-                    frontier.add(n)
+                    frontier[n] = populated[t]
                     added = True
             if added: break
             adjs = sorted(list(passability.expand(adjs, adj)))
             distance += 1
-    return populated | frontier
+    if not frontier:
+        return False
+    populated.update(frontier)
+    return True

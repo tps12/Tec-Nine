@@ -60,7 +60,7 @@ class PrehistorySimulation(object):
         for v, tile in self.tiles.iteritems():
             tile.climate = c[v]['classification']
             if not habitable(tile) and tile in self.populated:
-                self.populated.remove(tile)
+                del self.populated[tile]
         self._glaciationt += 1
 
         if not self.populated:
@@ -68,7 +68,7 @@ class PrehistorySimulation(object):
             self.populated = eden(self.tiles, self.sea, self._tileadj)
 
         for _ in range(self.anthroglacial):
-            self.populated = expandpopulation(self.sea, self._tileadj, self.populated, self.range, self.coastprox)
+            expandpopulation(self.sea, self._tileadj, self.populated, self.range, self.coastprox)
         self.races = racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
 
     @property

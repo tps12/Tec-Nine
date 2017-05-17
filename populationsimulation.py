@@ -44,10 +44,7 @@ class PopulationSimulation(object):
         if not self.populated:
             self.sea = sea(self.tiles)
             self.populated = eden(self.tiles, self.sea, self._tileadj)
-        populated = expandpopulation(self.sea, self._tileadj, self.populated, self.range, self.coastprox)
-        unchanged = populated == self.populated
-        self.populated = populated
-        if unchanged:
+        if not expandpopulation(self.sea, self._tileadj, self.populated, self.range, self.coastprox):
             return True
         time.sleep(0.1)
 

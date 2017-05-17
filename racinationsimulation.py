@@ -7,6 +7,7 @@ from numpy.linalg import norm
 from climatemethod import ClimateInfo
 from grid import Grid
 from hexadjacency import Adjacency
+import race
 from racinatemethod import racinate
 from rock import igneous
 from shape import Shape
@@ -45,8 +46,8 @@ class RacinationSimulation(object):
 
         for t in self.tiles.itervalues():
             t.emptyocean(self.seafloor())
-        self.populated = set()
-        self.races = [self.populated]
+        self.populated = {}
+        self.races = [set()]
         self.range = 6
 
         self.adj = Adjacency(self._grid)
@@ -74,7 +75,7 @@ class RacinationSimulation(object):
                 t.limit()
                 t.climate = ClimateInfo(None, None, u'Cw', None)
                 if not any([c.inner.contains(t.vector) for c in self.continents]):
-                    self.populated.add(t)
+                    self.populated[t] = race.Heritage()
             else:
                 t.emptyocean()
                 t.climate = None
@@ -90,7 +91,7 @@ class RacinationSimulation(object):
                 if swath.contains(t.vector) and c.outer.contains(t.vector):
                     t.climate = ClimateInfo(None, None, k, None)
                     if t in self.populated:
-                        self.populated.remove(t)
+                        del self.populated[t]
         self.races = racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
 
     @property
