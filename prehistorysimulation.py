@@ -41,6 +41,7 @@ class PrehistorySimulation(object):
             t.climate = None
             t.candidate = False
 
+        self.shapes = []
         self.adj = Adjacency(self._grid)
         self._glaciationt = 0
         self.initindexes()
@@ -52,6 +53,8 @@ class PrehistorySimulation(object):
             self._tileadj[self.tiles[v]] = set([self.tiles[nv] for nv in self.adj[v]])
 
     def update(self):
+        gs = [sum([1 for t in s.tiles if t.climate and t.climate.koeppen[0] == u'E']) for s in self.shapes]
+
         glaciation = 0.5 - math.cos(self._glaciationt*math.pi/self.glaciationstep)/2
         dtemp = 5 * (glaciation / 0.5)
         temprange = (self.mean_temprange[0] + dtemp, self.mean_temprange[1] + dtemp)
@@ -60,6 +63,13 @@ class PrehistorySimulation(object):
             tile.climate = c[v]['classification']
             if not habitable(tile) and tile in self.populated:
                 del self.populated[tile]
+
+        for s, g in zip(self.shapes, gs):
+            dg = sum([1 for t in s.tiles if t.climate and t.climate.koeppen[0] == u'E']) - g
+            dh = 0.6 * dg / len(s.tiles)
+            for t in s.tiles:
+                t.isostasize(dh)
+
         self._glaciationt += 1
 
         if not self.populated:
@@ -87,5 +97,6 @@ class PrehistorySimulation(object):
 
         random.setstate(data['random'])
         self.tiles = data['tiles']
+        self.shapes = data['shapes']
         self._glaciationt = random.randint(0,self.glaciationstep-1)
         self.initindexes()
