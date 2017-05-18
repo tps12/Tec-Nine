@@ -47,7 +47,6 @@ class RacinationSimulation(object):
         for t in self.tiles.itervalues():
             t.emptyocean(self.seafloor())
         self.populated = {}
-        self.races = [set()]
         self.range = 6
 
         self.adj = Adjacency(self._grid)
@@ -68,6 +67,7 @@ class RacinationSimulation(object):
 
         self.continents = [Continent(p, r) for p, r in [(p1, 0.75), (p2, 0.5)]]
 
+        h = race.Heritage()
         for t in self.tiles.itervalues():
             if any([c.outer.contains(t.vector) for c in self.continents]):
                 t.bottom = 0
@@ -75,7 +75,7 @@ class RacinationSimulation(object):
                 t.limit()
                 t.climate = ClimateInfo(None, None, u'Cw', None)
                 if not any([c.inner.contains(t.vector) for c in self.continents]):
-                    self.populated[t] = race.Heritage()
+                    self.populated[t] = h
             else:
                 t.emptyocean()
                 t.climate = None
@@ -92,7 +92,7 @@ class RacinationSimulation(object):
                     t.climate = ClimateInfo(None, None, k, None)
                     if t in self.populated:
                         del self.populated[t]
-        self.races = racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
+        racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
 
     @property
     def grid(self):
@@ -100,7 +100,7 @@ class RacinationSimulation(object):
 
     @property
     def peoples(self):
-        return len(self.races)
+        return len({p for p in self.populated.itervalues()})
 
     @staticmethod
     def seafloor():

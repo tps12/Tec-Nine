@@ -44,8 +44,7 @@ class PrehistorySimulation(object):
         self.adj = Adjacency(self._grid)
         self._glaciationt = 0
         self.initindexes()
-        self.populated = set()
-        self.races = [self.populated]
+        self.populated = {}
 
     def initindexes(self):
         self._tileadj = dict()
@@ -69,11 +68,15 @@ class PrehistorySimulation(object):
 
         for _ in range(self.anthroglacial):
             expandpopulation(self.sea, self._tileadj, self.populated, self.range, self.coastprox)
-        self.races = racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
+        racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
 
     @property
     def grid(self):
         return self._grid
+
+    @property
+    def peoples(self):
+        return len({p for p in self.populated.itervalues()})
 
     @staticmethod
     def seafloor():

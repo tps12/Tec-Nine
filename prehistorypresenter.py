@@ -74,6 +74,6 @@ class PrehistoryPresenter(object):
     def tick(self):
         self._ticks += 1
         self._view.ticks.setNum(self._ticks)
-        self._view.races.setNum(len(self._model.races))
+        self._view.races.setNum(self._model.peoples)
         self._display.invalidate()
         self._view.content.update()
