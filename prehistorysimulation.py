@@ -6,7 +6,7 @@ from climatemethod import climate
 from grid import Grid
 from hexadjacency import Adjacency
 from planetdata import Data
-from populationmethod import eden, expandpopulation, habitable, sea
+from populationmethod import eden, expandpopulation, habitable
 from racinatemethod import racinate
 from riversmethod import run
 from rock import igneous
@@ -74,12 +74,11 @@ class PrehistorySimulation(object):
         self._glaciationt += 1
 
         if not self.populated:
-            self.sea = sea(self.tiles)
-            self.populated = eden(self.tiles, self.sea, self._tileadj)
+            self.populated = eden(self.tiles, self._tileadj)
 
         rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
         for _ in range(self.anthroglacial):
-            expandpopulation(self.sea, rivers, self._tileadj, self.populated, self.range, self.coastprox)
+            expandpopulation(rivers, self._tileadj, self.populated, self.range, self.coastprox)
         racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
 
     @property

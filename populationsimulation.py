@@ -4,7 +4,7 @@ import time
 from grid import Grid
 from hexadjacency import Adjacency
 from planetdata import Data
-from populationmethod import eden, expandpopulation, sea
+from populationmethod import eden, expandpopulation
 from riversmethod import run
 from rock import igneous
 from tile import *
@@ -43,10 +43,9 @@ class PopulationSimulation(object):
 
     def update(self):
         if not self.populated:
-            self.sea = sea(self.tiles)
             self.rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
-            self.populated = eden(self.tiles, self.sea, self._tileadj)
-        if not expandpopulation(self.sea, self.rivers, self._tileadj, self.populated, self.range, self.coastprox):
+            self.populated = eden(self.tiles, self._tileadj)
+        if not expandpopulation(self.rivers, self._tileadj, self.populated, self.range, self.coastprox):
             return True
         time.sleep(0.1)
 

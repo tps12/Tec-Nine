@@ -21,8 +21,8 @@ def mainocean(seatiles, adj):
     bodies[s].add(t)
   return sorted(bodies.values(), key=len)[-1]
 
-def eden(tiles, seatiles, adj):
-    o = mainocean(seatiles, adj)
+def eden(tiles, adj):
+    o = mainocean(sea(tiles), adj)
     candidates = [t for t in tiles.itervalues()
                   if t.climate and t.climate.koeppen == u'Aw' and
                   any([n in o for n in adj[t]])]
@@ -34,7 +34,7 @@ def nearcoast(t, adj, d):
 def habitable(t):
     return t.elevation > 0 and (t.climate.koeppen == u'Aw' or t.climate.koeppen[0] in u'CD')  # Savannah or temperate/cold
 
-def expandpopulation(seatiles, rivers, adj, populated, travelrange, coastalproximity):
+def expandpopulation(rivers, adj, populated, travelrange, coastalproximity):
     frontier = {}
     for t in populated:
         distance = 0
