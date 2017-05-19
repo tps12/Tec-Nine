@@ -34,7 +34,7 @@ def nearcoast(t, adj, d):
 def habitable(t):
     return t.elevation > 0 and (t.climate.koeppen == u'Aw' or t.climate.koeppen[0] in u'CD')  # Savannah or temperate/cold
 
-def expandpopulation(seatiles, adj, populated, travelrange, coastalproximity):
+def expandpopulation(seatiles, rivers, adj, populated, travelrange, coastalproximity):
     frontier = {}
     for t in populated:
         distance = 0
@@ -42,9 +42,9 @@ def expandpopulation(seatiles, adj, populated, travelrange, coastalproximity):
         while distance < travelrange:
             added = False
             for n in adjs:
-                if (nearcoast(n, adj, coastalproximity) and
-                    n not in populated and  # Not visited yet
-                    habitable(n)):
+                if (((nearcoast(n, adj, coastalproximity) and habitable(n)) or  # Coastal habitat
+                     any([n in r for r in rivers])) and  # Elsewhere near river
+                    n not in populated):  # Not visited yet
                     frontier[n] = populated[t]
                     added = True
             if added: break

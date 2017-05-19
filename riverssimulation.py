@@ -4,12 +4,11 @@ import time
 from grid import Grid
 from hexadjacency import Adjacency
 from planetdata import Data
-from populationmethod import eden, expandpopulation, sea
 from riversmethod import run
 from rock import igneous
 from tile import *
 
-class PopulationSimulation(object):
+class RiversSimulation(object):
     def __init__(self):
         grid = Grid()
         while grid.size < 6:
@@ -29,12 +28,12 @@ class PopulationSimulation(object):
             t.climate = None
             t.candidate = False
 
-        self._coastprox = 2
-        self._range = 6
+        self._hmin = 5
+        self._pmin = 0.5
 
         self.adj = Adjacency(self._grid)
         self.initindexes()
-        self.populated = set()
+        self.rivers = []
 
     def initindexes(self):
         self._tileadj = dict()
@@ -42,31 +41,27 @@ class PopulationSimulation(object):
             self._tileadj[self.tiles[v]] = set([self.tiles[nv] for nv in self.adj[v]])
 
     def update(self):
-        if not self.populated:
-            self.sea = sea(self.tiles)
-            self.rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
-            self.populated = eden(self.tiles, self.sea, self._tileadj)
-        if not expandpopulation(self.sea, self.rivers, self._tileadj, self.populated, self.range, self.coastprox):
-            return True
-        time.sleep(0.1)
+       self.rivers = run(self.tiles.values(), self._tileadj, self._hmin, self._pmin)
 
     @property
     def grid(self):
         return self._grid
 
     @property
-    def range(self): return self._range
+    def hmin(self): return self._hmin
 
-    @range.setter
-    def range(self, value):
-        self._range = value
+    @hmin.setter
+    def hmin(self, value):
+        self._hmin = value
+        self.update()
 
     @property
-    def coastprox(self): return self._coastprox
+    def pmin(self): return self._pmin
 
-    @coastprox.setter
-    def coastprox(self, value):
-        self._coastprox = value
+    @pmin.setter
+    def pmin(self, value):
+        self._pmin = value
+        self.update()
 
     @staticmethod
     def seafloor():
@@ -78,3 +73,4 @@ class PopulationSimulation(object):
         random.setstate(data['random'])
         self.tiles = data['tiles']
         self.initindexes()
+        self.update()

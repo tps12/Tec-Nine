@@ -8,6 +8,7 @@ from hexadjacency import Adjacency
 from planetdata import Data
 from populationmethod import eden, expandpopulation, habitable, sea
 from racinatemethod import racinate
+from riversmethod import run
 from rock import igneous
 from tile import *
 
@@ -76,8 +77,9 @@ class PrehistorySimulation(object):
             self.sea = sea(self.tiles)
             self.populated = eden(self.tiles, self.sea, self._tileadj)
 
+        rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
         for _ in range(self.anthroglacial):
-            expandpopulation(self.sea, self._tileadj, self.populated, self.range, self.coastprox)
+            expandpopulation(self.sea, rivers, self._tileadj, self.populated, self.range, self.coastprox)
         racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
 
     @property
