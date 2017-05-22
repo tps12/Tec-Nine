@@ -28,6 +28,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="tectonics">
+     <property name="text">
+      <string>Tectonics</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="climate">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">

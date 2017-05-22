@@ -7,12 +7,14 @@ from racination import Racination
 from rivers import Rivers
 from tectonics import Tectonics
 from split import Split
+from world import World
 from move import Move
 
 class MainMenuPresenter(object):
     def __init__(self, view, uistack):
         self._view = view
         self._view.start.clicked.connect(self.start)
+        self._view.tectonics.clicked.connect(self.tectonics)
         self._view.climate.clicked.connect(self.climate)
         self._view.rivers.clicked.connect(self.rivers)
         self._view.erosion.clicked.connect(self.erosion)
@@ -29,6 +31,9 @@ class MainMenuPresenter(object):
         self._uistack.pop()
 
     def start(self):
+        self._uistack.push(World(self._uistack))
+
+    def tectonics(self):
         self._uistack.push(Tectonics(self._uistack))
 
     def climate(self):

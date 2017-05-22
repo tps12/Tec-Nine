@@ -139,6 +139,10 @@ class PlanetSimulation(object):
     def grid(self):
         return self._grid
 
+    @property
+    def haslife(self):
+        return self._life
+
     @staticmethod
     def seafloor():
         return igneous.extrusive(0.5)
@@ -165,21 +169,27 @@ class PlanetSimulation(object):
     def land(self):
         return int(100.0*sum([len(s.tiles) for s in self._shapes])/len(self._indexedtiles) + 0.5)
 
-    def load(self, filename):
-        data = Data.load(filename)
-
+    def loaddata(self, data):
         random.setstate(data['random'])
         self._dp = data['dp']
         self._build = data['build']
         self._splitnum = data['splitnum']
         self.tiles = data['tiles']
         self._shapes = data['shapes']
+        self._atmosphere = data['hasatm']
+        self._life = data['haslife']
 
         self.initindexes()
         self.dirty = True
 
+    def load(self, filename):
+        self.loaddata(Data.load(filename))
+
+    def savedata(self):
+        return Data.savedata(random.getstate(), 0, self._dp, self._build, self._splitnum, self.tiles, self._shapes, self._atmosphere, self._life)
+
     def save(self, filename):
-        Data.save(filename, random.getstate(), self._dp, self._build, self._splitnum, self.tiles, self._shapes)
+        Data.save(filename, self.savedata())
 
     def update(self):
         """Update the simulation by one timestep."""
