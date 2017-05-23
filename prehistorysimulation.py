@@ -11,6 +11,7 @@ from racinatemethod import racinate
 from riversmethod import run
 from rock import igneous
 from tile import *
+from timing import Timing
 
 class PrehistorySimulation(object):
     coastprox = 2
@@ -24,6 +25,12 @@ class PrehistorySimulation(object):
     anthroglacial = 2
 
     def __init__(self):
+        self._timing = Timing()
+
+        initt = self._timing.routine('simulation setup')
+
+        initt.start('building grid')
+
         grid = Grid()
         while grid.size < 6:
             grid = Grid(grid)
@@ -42,11 +49,14 @@ class PrehistorySimulation(object):
             t.climate = None
             t.candidate = False
 
+        initt.start('building indexes')
         self.shapes = []
         self.adj = Adjacency(self._grid)
         self._glaciationt = 0
         self.initindexes()
         self.populated = {}
+
+        initt.done()
 
     def initindexes(self):
         self._tileadj = dict()
@@ -54,8 +64,12 @@ class PrehistorySimulation(object):
             self._tileadj[self.tiles[v]] = set([self.tiles[nv] for nv in self.adj[v]])
 
     def update(self):
+        stept = self._timing.routine('simulation step')
+
+        stept.start('identifying glaciers')
         gs = [sum([1 for t in s.tiles if t.climate and t.climate.koeppen[0] == u'E']) for s in self.shapes]
 
+        stept.start('iterating climate')
         glaciation = 0.5 - math.cos(self._glaciationt*math.pi/self.glaciationstep)/2
         dtemp = 5 * (glaciation / 0.5)
         temprange = (self.mean_temprange[0] + dtemp, self.mean_temprange[1] + dtemp)
@@ -65,6 +79,7 @@ class PrehistorySimulation(object):
             if not habitable(tile) and tile in self.populated:
                 del self.populated[tile]
 
+        stept.start('applying isostasy')
         for s, g in zip(self.shapes, gs):
             dg = sum([1 for t in s.tiles if t.climate and t.climate.koeppen[0] == u'E']) - g
             dh = 0.6 * dg / len(s.tiles)
@@ -74,12 +89,18 @@ class PrehistorySimulation(object):
         self._glaciationt += 1
 
         if not self.populated:
+            stept.start('genesis')
             self.populated = eden(self.tiles, self._tileadj)
 
+        stept.start('running rivers')
         rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
-        for _ in range(self.anthroglacial):
+        for i in range(self.anthroglacial):
+            stept.start('migration {}'.format(i))
             expandpopulation(rivers, self._tileadj, self.populated, self.range, self.coastprox)
+        stept.start('identifying distinct populations')
         racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
+
+        stept.done()
 
     @property
     def grid(self):
