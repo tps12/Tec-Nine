@@ -35,6 +35,7 @@ class PopulationSimulation(object):
         self.adj = Adjacency(self._grid)
         self.initindexes()
         self.populated = set()
+        self.popcache = {}
 
     def initindexes(self):
         self._tileadj = dict()
@@ -45,7 +46,7 @@ class PopulationSimulation(object):
         if not self.populated:
             self.rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
             self.populated = eden(self.tiles, self._tileadj)
-        if not expandpopulation(self.rivers, self._tileadj, self.populated, self.range, self.coastprox):
+        if not expandpopulation(self.rivers, self._tileadj, self.populated, self.range, self.coastprox, self.popcache):
             return True
         time.sleep(0.1)
 
@@ -77,3 +78,4 @@ class PopulationSimulation(object):
         random.setstate(data['random'])
         self.tiles = data['tiles']
         self.initindexes()
+        self.popcache = {}

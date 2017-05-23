@@ -94,9 +94,10 @@ class PrehistorySimulation(object):
 
         stept.start('running rivers')
         rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
+        popcache = {}
         for i in range(self.anthroglacial):
             stept.start('migration {}'.format(i))
-            expandpopulation(rivers, self._tileadj, self.populated, self.range, self.coastprox)
+            expandpopulation(rivers, self._tileadj, self.populated, self.range, self.coastprox, popcache)
         stept.start('identifying distinct populations')
         racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
 
