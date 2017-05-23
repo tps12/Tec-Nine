@@ -93,11 +93,20 @@ class PrehistorySimulation(object):
     def seafloor():
         return igneous.extrusive(0.5)
 
-    def load(self, filename):
-        data = Data.load(filename)
-
+    def loaddata(self, data):
         random.setstate(data['random'])
         self.tiles = data['tiles']
         self.shapes = data['shapes']
-        self._glaciationt = random.randint(0,self.glaciationstep-1)
+        self.populated = data['population']
+        self.agricultural = data['agricultural']
+        self._glaciationt = data['glaciationtime']
         self.initindexes()
+
+    def load(self, filename):
+        self.loaddata(Data.load(filename))
+
+    def savedata(self):
+        return Data.savedata(random.getstate(), 0, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, True, True)
+
+    def save(self, filename):
+        Data.save(filename, self.savedata())

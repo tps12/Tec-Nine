@@ -2,6 +2,7 @@ import random
 
 from planetdata import Data
 from planetsimulation import PlanetSimulation
+from prehistorysimulation import PrehistorySimulation
 
 class WorldSimulation(object):
   tecdt = 5
@@ -9,6 +10,7 @@ class WorldSimulation(object):
 
   def __init__(self):
     self._tectonics = PlanetSimulation(6400, self.tecdt)
+    self._prehistory = PrehistorySimulation()
     self._ticks = [0]
     self._stage = 0
 
@@ -16,6 +18,8 @@ class WorldSimulation(object):
   def sim(self):
     if self._stage == 0:
       return self._tectonics
+    elif self._stage == 1:
+      return self._prehistory
 
   @property
   def grid(self):
@@ -24,6 +28,10 @@ class WorldSimulation(object):
   @property
   def tiles(self):
     return self.sim.tiles
+
+  @property
+  def populated(self):
+    return self.sim.populated if 'populated' in self.sim.__dict__ else {}
 
   @property
   def years(self):
@@ -43,3 +51,8 @@ class WorldSimulation(object):
   def update(self):
     self.sim.update()
     self._ticks[self._stage] += 1
+    if self._stage == 0 and self.sim.haslife and random.random() < 0.05:
+      data = self.sim.savedata()
+      self._stage += 1
+      self._ticks += [0]
+      self.sim.loaddata(Data.loaddata(data))

@@ -4,7 +4,7 @@ import color
 import koeppencolor
 from sphereview import SphereView
 
-def climatecolor(tile):
+def climatecolor(tile, _):
     h, c = tile.elevation, tile.climate
 
     if c == None:
@@ -18,17 +18,22 @@ def climatecolor(tile):
         color = 0, 0, 0
     return color
 
-population = color.value
+colorvalue = lambda t, _: color.value(t)
+
+def population(tile, populated):
+  if tile.elevation > 0 and tile in populated:
+      return (192,192,0)
+  return color.value(tile)
 
 class WorldDisplay(QWidget):
-    _colorfunctions = [climatecolor, color.value, population]
+    _colorfunctions = [climatecolor, colorvalue, population]
 
     def __init__(self, sim):
         QWidget.__init__(self)
         self._sim = sim
         self._screen = None
         self._rotate = 0
-        self._aspect = self._colorfunctions.index(color.value)
+        self._aspect = self._colorfunctions.index(colorvalue)
         self.selected = None
         self.setLayout(QGridLayout())
         self.invalidate()
@@ -52,7 +57,7 @@ class WorldDisplay(QWidget):
         self.invalidate()
 
     def tilecolor(self, tile):
-        return self._colorfunctions[self._aspect](tile)
+        return self._colorfunctions[self._aspect](tile, self._sim.populated)
 
     def invalidate(self):
         if self._screen is None:

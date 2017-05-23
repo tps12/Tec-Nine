@@ -11,6 +11,7 @@ class PrehistoryPresenter(object):
         self._view.start.clicked.connect(self.start)
         self._view.pause.clicked.connect(self.pause)
         self._view.load.clicked.connect(self.load)
+        self._view.save.clicked.connect(self.save)
         self._view.done.clicked.connect(self.done)
 
         self._model = PrehistorySimulation()
@@ -46,6 +47,14 @@ class PrehistoryPresenter(object):
             self._model.load(filename)
             self._display.invalidate()
             self._view.content.update()
+
+    def save(self):
+        filename = QFileDialog.getSaveFileName(self._view,
+                                               'Save simulation state',
+                                               '',
+                                               '*{0}'.format(Data.EXTENSION))[0]
+        if len(filename) > 0:
+            self._model.save(filename)
 
     def done(self):
         self._uistack.pop()

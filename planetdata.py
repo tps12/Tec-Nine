@@ -1,6 +1,7 @@
 from cPickle import dump, load
 
 from climatemethod import ClimateInfo
+from race import Heritage
 from tile import Group, Layer, Tile
 
 class Data(object):
@@ -8,12 +9,16 @@ class Data(object):
 
     @classmethod
     def loaddata(cls, data):
-        if 'version' not in data or data['version'] < 7:
+        if 'version' not in data or data['version'] < 8:
                 raise ValueError('File version is too old')
+
+        races = cls._population(data['races'], data['tiles'].iteritems())
 
         data['tiles'] = {v: cls._tile(t) for v,t in data['tiles'].iteritems()}
 
         data['shapes'] = [Group([data['tiles'][tv] for tv in tvs], v) for (tvs, v) in data['shapes']]
+
+        data['population'] = {data['tiles'][v]: r for v, r in races.iteritems()}
 
         return data
 
@@ -23,9 +28,10 @@ class Data(object):
             return cls.loaddata(load(f))
 
     @classmethod
-    def savedata(cls, random, stage, dp, build, splitnum, tiles, shapes, hasatm, haslife):
+    def savedata(cls, random, stage, dp, build, splitnum, tiles, shapes, glaciationtime, population, hasatm, haslife):
         tileindex = cls._index(tiles)
-        return {'version': 7,
+        rs, rindex = cls._raceindex(population)
+        return {'version': 8,
                 'random': random,
                 'stage': stage,
                 'dp': dp,
@@ -39,9 +45,12 @@ class Data(object):
                                           'precipitation': t.climate.precipitation,
                                           'koeppen': t.climate.koeppen,
                                           'life': t.climate.life }
-                                        if t.climate is not None else None }
+                                        if t.climate is not None else None,
+                             'race': rs.index(population[t]) if t in population else None }
                            for v,t in tiles.iteritems()},
                 'shapes': [([tileindex[t.vector] for t in s.tiles], s.v) for s in shapes],
+                'races': rindex,
+                'glaciationtime': glaciationtime,
                 'hasatm': hasatm,
                 'haslife': haslife}
 
@@ -74,4 +83,33 @@ class Data(object):
             tileindex[t.vector] = v
         return tileindex
 
+    @classmethod
+    def _raceindex(cls, population):
+        def addh(h):
+            hs = {h}
+            if h.ancestry:
+                for a in h.ancestry:
+                    hs |= addh(a)
+            return hs
+        hset = set()
+        for h in population.itervalues():
+            hset |= addh(h)
+        hs = list(hset)
+        index = [({hs.index(a) for a in h.ancestry} if h.ancestry else set()) for h in hs]
+        return hs, index
 
+    @classmethod
+    def _population(cls, races, tiles):
+        hs = []
+        def reify(i, ais):
+            while i > len(hs)-1:
+                hs.append(None)
+            if hs[i] is None:
+                hs[i] = Heritage({reify(ai, races[ai]) for ai in ais}) if ais else Heritage()
+            return hs[i]
+        population = {}
+        for v, t in tiles:
+            i = t['race']
+            if i is not None:
+                population[v] = reify(i, races[i])
+        return population
