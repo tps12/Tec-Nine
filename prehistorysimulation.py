@@ -22,7 +22,7 @@ class PrehistorySimulation(object):
     tilt = 23
     mean_temprange = (-25.0, 50.0)
     glaciationstep = 16
-    anthroglacial = 2
+    anthroglacial = 6
 
     def __init__(self):
         self._timing = Timing()
@@ -97,7 +97,8 @@ class PrehistorySimulation(object):
         popcache = {}
         for i in range(self.anthroglacial):
             stept.start('migration {}'.format(i))
-            expandpopulation(rivers, self._tileadj, self.populated, self.range, self.coastprox, popcache)
+            if not expandpopulation(rivers, self._tileadj, self.populated, self.range, self.coastprox, popcache):
+                break
         stept.start('identifying distinct populations')
         racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
 

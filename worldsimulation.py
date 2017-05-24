@@ -6,7 +6,7 @@ from prehistorysimulation import PrehistorySimulation
 
 class WorldSimulation(object):
   tecdt = 5
-  scales = [tecdt * 1000000, 2000]
+  scales = [tecdt * 1000000, PrehistorySimulation.glaciationstep * 250]
 
   def __init__(self):
     self._tectonics = PlanetSimulation(6400, self.tecdt)
