@@ -21,6 +21,7 @@ class Group(object):
 
 class Tile(object):
     MAX_HEIGHT = 10
+    MIN_THICKNESS = 4
     MAX_THICKNESS = 75
 
     def __init__(self, lat, lon):
@@ -73,6 +74,9 @@ class Tile(object):
         de = self.elevation - self.MAX_HEIGHT
         if de > 0:
             self.bottom -= de
+
+        if self.bottom > 0:
+            self.bottom = -self.thickness
 
         self._elevation = max(0, self.bottom + self.thickness)
 
@@ -214,6 +218,13 @@ class Tile(object):
                 self._elevation -= potential
                 materials.append({ 'rock': layer.rock, 'thickness': potential })
                 self.layers.append(Layer(layer.rock, layer.thickness - potential))
+                break
+            elif not self.layers:
+                # can't use everything up, so fudge this and leave some behind
+                amount = potential - self.MIN_THICKNESS
+                if amount > 0.0001:
+                    materials.append({ 'rock': layer.rock, 'thickness': amount })
+                    self.layers.append(Layer(layer.rock, layer.thickness - amount))
                 break
             else:
                 self._elevation -= layer.thickness
