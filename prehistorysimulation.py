@@ -13,6 +13,17 @@ from rock import igneous
 from tile import *
 from timing import Timing
 
+def agprob(k):
+  if k[0] == u'B':
+    return 0.05
+  if k[0] == u'C':
+    return 0.005
+  if k[0] == u'D':
+    return 0.001
+  if k == u'Aw':
+    return 0.0001
+  return 0
+
 class PrehistorySimulation(object):
     coastprox = 2
     range = 6
@@ -55,6 +66,7 @@ class PrehistorySimulation(object):
         self._glaciationt = 0
         self.initindexes()
         self.populated = {}
+        self.agricultural = set()
 
         initt.done()
 
@@ -94,13 +106,20 @@ class PrehistorySimulation(object):
 
         stept.start('running rivers')
         rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
+
+        stept.start('sparking agriculture')
+        for r in rivers:
+            for t in r:
+                if t in self.populated and t not in self.agricultural and random.random() < agprob(t.climate.koeppen):
+                    self.agricultural.add(self.populated[t])
+
         popcache = {}
         for i in range(self.anthroglacial):
             stept.start('migration {}'.format(i))
-            if not expandpopulation(rivers, self._tileadj, self.populated, self.range, self.coastprox, popcache):
+            if not expandpopulation(rivers, self._tileadj, self.populated, self.agricultural, self.range, self.coastprox, popcache):
                 break
         stept.start('identifying distinct populations')
-        racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
+        racinate(self.tiles.values(), self._tileadj, self.populated, self.agricultural, self.range)
 
         stept.done()
 
@@ -129,7 +148,7 @@ class PrehistorySimulation(object):
         self.loaddata(Data.load(filename))
 
     def savedata(self):
-        return Data.savedata(random.getstate(), 0, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, True, True)
+        return Data.savedata(random.getstate(), 0, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True)
 
     def save(self, filename):
         Data.save(filename, self.savedata())

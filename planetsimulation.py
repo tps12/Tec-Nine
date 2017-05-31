@@ -186,7 +186,7 @@ class PlanetSimulation(object):
         self.loaddata(Data.load(filename))
 
     def savedata(self):
-        return Data.savedata(random.getstate(), 0, self._dp, self._build, self._splitnum, self.tiles, self._shapes, 0, {}, self._atmosphere, self._life)
+        return Data.savedata(random.getstate(), 0, self._dp, self._build, self._splitnum, self.tiles, self._shapes, 0, {}, set(), self._atmosphere, self._life)
 
     def save(self, filename):
         Data.save(filename, self.savedata())

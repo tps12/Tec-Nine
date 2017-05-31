@@ -4,6 +4,18 @@ from planetdata import Data
 from planetsimulation import PlanetSimulation
 from prehistorysimulation import PrehistorySimulation
 
+def paleopop(k):
+  if k[0] == u'A':
+    return 35
+  return 5
+
+def agrapop(k):
+  if k[0] in u'AC':
+    return 150
+  if k[0] == u'D':
+    return 100
+  return 50
+
 class WorldSimulation(object):
   tecdt = 5
   scales = [tecdt * 1000000, PrehistorySimulation.glaciationstep * 250]
@@ -32,8 +44,8 @@ class WorldSimulation(object):
   @property
   def populated(self):
     if 'populated' in self.sim.__dict__:
-        return {t: 35 if t.climate.koeppen[0] == u'A' else 5
-                for t in self.sim.populated}
+        return {t: (agrapop if r in self.sim.agricultural else paleopop)(t.climate.koeppen)
+                for t, r in self.sim.populated.iteritems()}
     return {}
 
   @property

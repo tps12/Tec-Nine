@@ -22,7 +22,7 @@ colorvalue = lambda t, _: color.value(t)
 
 def population(tile, populated):
   if tile.elevation > 0 and tile in populated:
-      return (192,192,192 - populated[tile] * 4)
+      return (192,192,192 - populated[tile] * 1.25)
   return color.value(tile)
 
 class WorldDisplay(QWidget):

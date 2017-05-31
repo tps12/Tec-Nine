@@ -29,31 +29,39 @@ def eden(tiles, adj):
     return {random.choice(candidates): race.Heritage()} if candidates else set()
 
 def nearcoast(t, adj, d):
-    return t.elevation > 0 and any([n.elevation <= 0 for n in passability.within(t, adj, d)])
+    return t.elevation > 0 and any([n.elevation <= 0 for n in passability.within(t, adj, d, False)])
 
 def habitable(t):
     return t.elevation > 0 and (t.climate.koeppen == u'Aw' or t.climate.koeppen[0] in u'CD')  # Savannah or temperate/cold
 
-def expandpopulation(rivers, adj, populated, travelrange, coastalproximity, cmemo):
-    def candidate(t):
+def farmable(t):
+    # Habitable + tropical monsoon and steppe
+    return t.elevation > 0 and (t.climate.koeppen in (u'Am', u'Aw', u'BW') or t.climate.koeppen[0] in u'CD')
+
+def expandpopulation(rivers, adj, populated, agricultural, travelrange, coastalproximity, cmemo):
+    def candidate(t, farms):
         if t in cmemo:
             return cmemo[t]
-        val = ((nearcoast(n, adj, coastalproximity) and habitable(n)) or  # Coastal habitat
-               any([n in r for r in rivers]))  # Elsewhere near river
+        if farms:
+            val = farmable(t)
+        else:
+            val = ((nearcoast(t, adj, coastalproximity) and habitable(t)) or  # Coastal habitat
+                   any([t in r for r in rivers]))  # Elsewhere near river
         cmemo[t] = val
         return val
     frontier = {}
-    for t in populated:
+    for t, r in populated.iteritems():
+        farms = r in agricultural
         distance = 0
         adjs = adj[t]
         while distance < travelrange:
             added = False
             for n in adjs:
-                if (n not in populated and candidate(n)):
+                if (n not in populated and candidate(n, farms)):
                     frontier[n] = populated[t]
                     added = True
             if added: break
-            adjs = sorted(list(passability.expand(adjs, adj)))
+            adjs = sorted(list(passability.expand(adjs, adj, farms)))
             distance += 1
     if not frontier:
         return False

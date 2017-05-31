@@ -9,16 +9,18 @@ class Data(object):
 
     @classmethod
     def loaddata(cls, data):
-        if 'version' not in data or data['version'] < 8:
+        if 'version' not in data or data['version'] < 9:
                 raise ValueError('File version is too old')
 
-        races = cls._population(data['races'], data['tiles'].iteritems())
+        races, agricultural = cls._population(data['races'], data['agriculturalraces'], data['tiles'].iteritems())
 
         data['tiles'] = {v: cls._tile(t) for v,t in data['tiles'].iteritems()}
 
         data['shapes'] = [Group([data['tiles'][tv] for tv in tvs], v) for (tvs, v) in data['shapes']]
 
         data['population'] = {data['tiles'][v]: r for v, r in races.iteritems()}
+
+        data['agricultural'] = agricultural
 
         return data
 
@@ -28,10 +30,10 @@ class Data(object):
             return cls.loaddata(load(f))
 
     @classmethod
-    def savedata(cls, random, stage, dp, build, splitnum, tiles, shapes, glaciationtime, population, hasatm, haslife):
+    def savedata(cls, random, stage, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, hasatm, haslife):
         tileindex = cls._index(tiles)
-        rs, rindex = cls._raceindex(population)
-        return {'version': 8,
+        rs, rindex, ags = cls._raceagindices(population, agricultural)
+        return {'version': 9,
                 'random': random,
                 'stage': stage,
                 'dp': dp,
@@ -50,6 +52,7 @@ class Data(object):
                            for v,t in tiles.iteritems()},
                 'shapes': [([tileindex[t.vector] for t in s.tiles], s.v) for s in shapes],
                 'races': rindex,
+                'agriculturalraces': ags,
                 'glaciationtime': glaciationtime,
                 'hasatm': hasatm,
                 'haslife': haslife}
@@ -84,7 +87,7 @@ class Data(object):
         return tileindex
 
     @classmethod
-    def _raceindex(cls, population):
+    def _raceagindices(cls, population, agricultural):
         def addh(h):
             hs = {h}
             if h.ancestry:
@@ -96,10 +99,11 @@ class Data(object):
             hset |= addh(h)
         hs = list(hset)
         index = [({hs.index(a) for a in h.ancestry} if h.ancestry else set()) for h in hs]
-        return hs, index
+        ags = [h in agricultural for h in hs]
+        return hs, index, ags
 
     @classmethod
-    def _population(cls, races, tiles):
+    def _population(cls, races, isagricultural, tiles):
         hs = []
         def reify(i, ais):
             while i > len(hs)-1:
@@ -108,8 +112,12 @@ class Data(object):
                 hs[i] = Heritage({reify(ai, races[ai]) for ai in ais}) if ais else Heritage()
             return hs[i]
         population = {}
+        agricultural = set()
         for v, t in tiles:
             i = t['race']
             if i is not None:
-                population[v] = reify(i, races[i])
-        return population
+                r = reify(i, races[i])
+                if isagricultural[i]:
+                    agricultural.add(r)
+                population[v] = r
+        return population, agricultural

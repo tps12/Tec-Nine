@@ -15,10 +15,12 @@ def genshades(n):
   gen = genshade()
   return [next(gen) for _ in range(n)]
 
-def population(tile, populated, races, shades):
+def population(tile, populated, agricultural, races, shades):
   if tile.elevation <= 0:
     return (0,0,255)
   if tile in populated:
+    if populated[tile] in agricultural:
+      return (255,0,0)
     for i in range(len(races)):
       if populated[tile] == races[i]:
         return shades[i]
@@ -47,6 +49,6 @@ class PrehistoryDisplay(QWidget):
             self._screen = SphereView(self._sim.grid, self)
         races = list(set(self._sim.populated.values()))
         shades = genshades(len(races))
-        self._screen.usecolors({ v: population(t, self._sim.populated, races, shades) for (v, t) in self._sim.tiles.iteritems() })
+        self._screen.usecolors({ v: population(t, self._sim.populated, self._sim.agricultural, races, shades) for (v, t) in self._sim.tiles.iteritems() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)
