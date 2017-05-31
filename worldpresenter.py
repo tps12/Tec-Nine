@@ -103,5 +103,6 @@ class WorldPresenter(object):
 
     def tick(self):
         self._view.years.setText(self._model.years)
+        self._view.population.setText(self._model.population)
         self._display.invalidate()
         self._view.content.update()

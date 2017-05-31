@@ -31,7 +31,14 @@ class WorldSimulation(object):
 
   @property
   def populated(self):
-    return self.sim.populated if 'populated' in self.sim.__dict__ else {}
+    if 'populated' in self.sim.__dict__:
+        return {t: 35 if t.climate.koeppen[0] == u'A' else 5
+                for t in self.sim.populated}
+    return {}
+
+  @property
+  def population(self):
+    return u'{:,}'.format(sum(self.populated.values()) * 1000)
 
   @property
   def years(self):

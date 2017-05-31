@@ -22,7 +22,7 @@ colorvalue = lambda t, _: color.value(t)
 
 def population(tile, populated):
   if tile.elevation > 0 and tile in populated:
-      return (192,192,0)
+      return (192,192,192 - populated[tile] * 4)
   return color.value(tile)
 
 class WorldDisplay(QWidget):
@@ -56,12 +56,13 @@ class WorldDisplay(QWidget):
         self._aspect = value
         self.invalidate()
 
-    def tilecolor(self, tile):
-        return self._colorfunctions[self._aspect](tile, self._sim.populated)
+    def tilecolor(self, tile, populated):
+        return self._colorfunctions[self._aspect](tile, populated)
 
     def invalidate(self):
         if self._screen is None:
             self._screen = SphereView(self._sim.grid, self)
-        self._screen.usecolors({ v: self.tilecolor(t) for (v, t) in self._sim.tiles.iteritems() })
+        populated = self._sim.populated
+        self._screen.usecolors({ v: self.tilecolor(t, populated) for (v, t) in self._sim.tiles.iteritems() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)
