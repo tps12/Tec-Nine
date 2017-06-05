@@ -108,9 +108,10 @@ class PrehistorySimulation(object):
         rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
 
         stept.start('sparking agriculture')
+        gfactor = math.pow(glaciation, 2)  # Agriculture more likely in interglacial period
         for r in rivers:
             for t in r:
-                if t in self.populated and t not in self.agricultural and random.random() < agprob(t.climate.koeppen):
+                if t in self.populated and t not in self.agricultural and random.random() < gfactor * agprob(t.climate.koeppen):
                     self.agricultural.add(self.populated[t])
 
         popcache = {}
