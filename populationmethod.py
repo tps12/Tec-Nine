@@ -26,7 +26,7 @@ def eden(tiles, adj):
     candidates = [t for t in tiles.itervalues()
                   if t.climate and t.climate.koeppen == u'Aw' and
                   any([n in o for n in adj[t]])]
-    return {random.choice(candidates): race.Heritage()} if candidates else set()
+    return {random.choice(candidates): race.Heritage()} if candidates else {}
 
 def nearcoast(t, adj, d):
     return t.elevation > 0 and any([n.elevation <= 0 for n in passability.within(t, adj, d, False)])
