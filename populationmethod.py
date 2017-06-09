@@ -36,7 +36,7 @@ def habitable(t):
 
 def farmable(t):
     # Habitable + tropical monsoon and steppe
-    return t.elevation > 0 and (t.climate.koeppen in (u'Am', u'Aw', u'BW') or t.climate.koeppen[0] in u'CD')
+    return t.elevation > 0 and (t.climate.koeppen in (u'Am', u'Aw', u'BS') or t.climate.koeppen[0] in u'CD')
 
 def expandpopulation(rivers, adj, populated, agricultural, travelrange, coastalproximity, cmemo):
     def candidate(t, farms):
