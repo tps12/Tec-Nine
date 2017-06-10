@@ -1,3 +1,5 @@
+import math
+
 from PySide.QtGui import QApplication, QGridLayout, QFileDialog
 
 from planetdata import Data
@@ -6,15 +8,44 @@ from worldsimulation import WorldSimulation
 from simthread import SimThread
 
 class WorldPresenter(object):
+    radii_and_grid_sizes = [
+        (2100, 4),
+        (3700, 5),
+        (6400, 6),
+        (11000, 7),
+        (19000, 8)]
+    day_hours = [8, 12, 24, 48]
+
     def __init__(self, view, uistack, listitemclass):
         self._view = view
+        self._view.create.clicked.connect(self.create)
         self._view.start.clicked.connect(self.start)
         self._view.pause.clicked.connect(self.pause)
         self._view.done.clicked.connect(self.done)
         self._view.load.clicked.connect(self.load)
         self._view.save.clicked.connect(self.save)
 
-        self._model = WorldSimulation()
+        self._listitemclass = listitemclass
+
+        self._uistack = uistack
+
+        self._model = None
+        self._view.start.setVisible(True)
+        self._view.start.setEnabled(False)
+        self._view.pause.setVisible(False)
+        self._view.done.setEnabled(True)
+
+    def create(self):
+        if self._model is not None:
+            self._worker.stop()
+            self._worker.wait()
+            layout = self._view.content.layout()
+            if layout.count():
+                layout.removeItem(layout.itemAt(0))
+
+        r, g = self.radii_and_grid_sizes[self._view.radius.currentIndex()]
+        land_r = math.sqrt(0.04 * self._view.land.value())
+        self._model = WorldSimulation(r, g, self.day_hours[self._view.spin.currentIndex()], self._view.tilt.value(), land_r)
         self._worker = SimThread(self._model)
         self._worker.tick.connect(self.tick)
         self._worker.simstarted.connect(self.started)
@@ -26,17 +57,16 @@ class WorldPresenter(object):
         self._view.content.setLayout(QGridLayout())
         self._view.content.layout().addWidget(self._display)
 
-        self._listitemclass = listitemclass
-
         self._view.rotate.setValue(self._display.rotate)
         self._view.rotate.sliderMoved.connect(self.rotate)
 
         self._view.aspect.setCurrentIndex(self._display.aspect)
         self._view.aspect.currentIndexChanged[int].connect(self.aspect)
 
+        self._view.start.setVisible(True)
+        self._view.start.setEnabled(True)
         self._view.pause.setVisible(False)
-
-        self._uistack = uistack
+        self._view.done.setEnabled(True)
 
     def selecttile(self, pos):
         self._view.details.clear()
@@ -49,15 +79,18 @@ class WorldPresenter(object):
                 self._view.details.addItem(name)
 
     def rotate(self, value):
+        if self._model is None: return
         self._display.rotate = value
         self._view.content.update()
 
     def aspect(self, value):
+        if self._model is None: return
         self._display.aspect = value
         self._display.invalidate()
         self._view.content.update()
 
     def load(self):
+        if self._model is None: return
         filename = QFileDialog.getOpenFileName(self._view,
                                                'Load simulation state',
                                                '',
@@ -68,6 +101,7 @@ class WorldPresenter(object):
             self.tick()
 
     def save(self):
+        if self._model is None: return
         filename = QFileDialog.getSaveFileName(self._view,
                                                'Save simulation state',
                                                '',
@@ -76,8 +110,9 @@ class WorldPresenter(object):
             self._model.save(filename)
 
     def done(self):
-        self._worker.stop()
-        self._worker.wait()
+        if self._model is not None:
+            self._worker.stop()
+            self._worker.wait()
         self._uistack.pop()
 
     def started(self):
@@ -93,11 +128,13 @@ class WorldPresenter(object):
         self._view.done.setEnabled(True)
 
     def start(self):
+        if self._model is None: return
         self._view.start.setEnabled(False)
         self._view.done.setEnabled(False)
         self._worker.simulate(True)
 
     def pause(self):
+        if self._model is None: return
         self._view.pause.setEnabled(False)
         self._worker.simulate(False)
 

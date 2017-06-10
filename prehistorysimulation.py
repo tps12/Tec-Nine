@@ -28,22 +28,21 @@ class PrehistorySimulation(object):
     coastprox = 2
     range = 6
     seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5]
-    cells = 3
-    spin = 1.0
-    tilt = 23
     mean_temprange = (-25.0, 50.0)
     glaciationstep = 16
     anthroglacial = 6
 
-    def __init__(self):
+    def __init__(self, gridsize, spin, cells, tilt):
         self._timing = Timing()
 
         initt = self._timing.routine('simulation setup')
 
+        self.spin, self.cells, self.tilt = spin, cells, tilt
+
         initt.start('building grid')
 
         grid = Grid()
-        while grid.size < 6:
+        while grid.size < gridsize:
             grid = Grid(grid)
             grid.populate()
         self._grid = grid

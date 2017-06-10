@@ -14,7 +14,7 @@ class TectonicsPresenter(object):
         self._view.load.clicked.connect(self.load)
         self._view.save.clicked.connect(self.save)
 
-        self._model = PlanetSimulation(6400, 5)
+        self._model = PlanetSimulation(6400, 6, 1.0, 3, 23, 1.145, 5)
         self._worker = SimThread(self._model)
         self._worker.tick.connect(self.tick)
         self._worker.simstarted.connect(self.started)

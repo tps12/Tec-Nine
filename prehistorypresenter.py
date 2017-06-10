@@ -14,7 +14,7 @@ class PrehistoryPresenter(object):
         self._view.save.clicked.connect(self.save)
         self._view.done.clicked.connect(self.done)
 
-        self._model = PrehistorySimulation()
+        self._model = PrehistorySimulation(6, 1.0, 3, 23)
         self._worker = SimThread(self._model)
         self._worker.tick.connect(self.tick)
         self._worker.simstarted.connect(self.started)

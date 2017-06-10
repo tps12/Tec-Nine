@@ -35,20 +35,16 @@ class NextTileValue(object):
         tile.build(self._build, PlanetSimulation.seafloor())
 
 class PlanetSimulation(object):
-    cells = 3
-    spin = 1.0
-    tilt = 23
-
     temprange = (-25.0, 50.0)
 
-    def __init__(self, r, dt):
-        """Create a simulation for a planet of radius r km and timesteps of dt
-        million years.
-        """
+    def __init__(self, r, gridsize, spin, cells, tilt, landr, dt):
+        """Create a simulation for a planet with the given characteristics. """
 
         self._timing = Timing()
 
         initt = self._timing.routine('simulation setup')
+
+        self.spin, self.cells, self.tilt = spin, cells, tilt
 
         # max speed is 100km per million years
         self._dp = 100.0/r * dt
@@ -61,7 +57,7 @@ class PlanetSimulation(object):
         initt.start('building grid')
 
         grid = Grid()
-        while grid.size < 6:
+        while grid.size < gridsize:
             grid = Grid(grid)
             grid.populate()
         self._grid = grid
@@ -95,9 +91,8 @@ class PlanetSimulation(object):
         # orienting point
         o = (1, 0, 0)
 
-        r = 1.145
-        shape = [(r*random.uniform(0.9,1.1)*cos(th),
-                  r*random.uniform(0.9,1.1)*sin(th))
+        shape = [(landr*random.uniform(0.9,1.1)*cos(th),
+                  landr*random.uniform(0.9,1.1)*sin(th))
                  for th in [i*pi/8 for i in range(16)]]
 
         shape = Shape(shape, p, o, v).projection()
@@ -106,7 +101,7 @@ class PlanetSimulation(object):
 
         # initial landmass starts at elevation based on distance from center
         c = self._indexedtiles[self._index.nearest(p)[0]]
-        r2 = r*r
+        r2 = landr*landr
 
         # on land, one random tile is the center of a felsic chunk
         f = random.choice(self._shapes[0].tiles)
