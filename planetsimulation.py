@@ -4,6 +4,8 @@ from math import asin, acos, atan2, pi, exp, sqrt, sin, cos
 import random
 from time import time
 
+from numpy.linalg import norm
+
 from grid import Grid
 from hexadjacency import *
 from climatemethod import climate
@@ -83,13 +85,16 @@ class PlanetSimulation(object):
         self._splitnum = 25e6/tilearea
 
         # initial location
-        p = (0, 1, 0)
+        p = [random.uniform(-1, 1) for i in range(3)]
+        p /= norm(p)
 
         # 0 velocity vector
         v = (0, 0, 0)
 
         # orienting point
-        o = (1, 0, 0)
+        o = [0, 0, 0]
+        mini = min(range(len(p)), key=lambda i: abs(p[i]))
+        o[mini] = 1 if p[mini] < 0 else -1
 
         shape = [(landr*random.uniform(0.9,1.1)*cos(th),
                   landr*random.uniform(0.9,1.1)*sin(th))
