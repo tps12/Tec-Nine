@@ -41,11 +41,7 @@ class PrehistorySimulation(object):
 
         initt.start('building grid')
 
-        grid = Grid()
-        while grid.size < gridsize:
-            grid = Grid(grid)
-            grid.populate()
-        self._grid = grid
+        self._initgrid(gridsize)
 
         self.tiles = {}
         for v in self._grid.faces:
@@ -68,6 +64,13 @@ class PrehistorySimulation(object):
         self.agricultural = set()
 
         initt.done()
+
+    def _initgrid(self, gridsize):
+        grid = Grid()
+        while grid.size < gridsize:
+            grid = Grid(grid)
+            grid.populate()
+        self._grid = grid
 
     def initindexes(self):
         self._tileadj = dict()
@@ -137,6 +140,7 @@ class PrehistorySimulation(object):
 
     def loaddata(self, data):
         random.setstate(data['random'])
+        self._initgrid(data['gridsize'])
         self.tiles = data['tiles']
         self.shapes = data['shapes']
         self.populated = data['population']
@@ -148,7 +152,7 @@ class PrehistorySimulation(object):
         self.loaddata(Data.load(filename))
 
     def savedata(self):
-        return Data.savedata(random.getstate(), 0, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True)
+        return Data.savedata(random.getstate(), self._grid.size, 0, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True)
 
     def save(self, filename):
         Data.save(filename, self.savedata())

@@ -35,7 +35,7 @@ class WorldPresenter(object):
         self._view.pause.setVisible(False)
         self._view.done.setEnabled(True)
 
-    def create(self):
+    def create(self, gridsize=None):
         if self._model is not None:
             self._worker.stop()
             self._worker.wait()
@@ -45,7 +45,7 @@ class WorldPresenter(object):
 
         r, g = self.radii_and_grid_sizes[self._view.radius.currentIndex()]
         land_r = math.sqrt(0.04 * self._view.land.value())
-        self._model = WorldSimulation(r, g, self.day_hours[self._view.spin.currentIndex()], self._view.tilt.value(), land_r)
+        self._model = WorldSimulation(r, gridsize or g, self.day_hours[self._view.spin.currentIndex()], self._view.tilt.value(), land_r)
         self._worker = SimThread(self._model)
         self._worker.tick.connect(self.tick)
         self._worker.simstarted.connect(self.started)
@@ -90,13 +90,14 @@ class WorldPresenter(object):
         self._view.content.update()
 
     def load(self):
-        if self._model is None: return
         filename = QFileDialog.getOpenFileName(self._view,
                                                'Load simulation state',
                                                '',
                                                '*{0}'.format(Data.EXTENSION))[0]
         if len(filename) > 0:
-            self._model.load(filename)
+            data = Data.load(filename)
+            self.create(data['gridsize'])
+            self._model.loaddata(data)
             self._view.content.update()
             self.tick()
 

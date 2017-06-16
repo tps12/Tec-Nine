@@ -9,7 +9,7 @@ class Data(object):
 
     @classmethod
     def loaddata(cls, data):
-        if 'version' not in data or data['version'] < 9:
+        if 'version' not in data or data['version'] < 10:
                 raise ValueError('File version is too old')
 
         races, agricultural = cls._population(data['races'], data['agriculturalraces'], data['tiles'].iteritems())
@@ -30,11 +30,12 @@ class Data(object):
             return cls.loaddata(load(f))
 
     @classmethod
-    def savedata(cls, random, stage, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, hasatm, haslife):
+    def savedata(cls, random, gridsize, stage, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, hasatm, haslife):
         tileindex = cls._index(tiles)
         rs, rindex, ags = cls._raceagindices(population, agricultural)
-        return {'version': 9,
+        return {'version': 10,
                 'random': random,
+                'gridsize': gridsize,
                 'stage': stage,
                 'dp': dp,
                 'build': build,

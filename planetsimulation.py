@@ -58,11 +58,7 @@ class PlanetSimulation(object):
 
         initt.start('building grid')
 
-        grid = Grid()
-        while grid.size < gridsize:
-            grid = Grid(grid)
-            grid.populate()
-        self._grid = grid
+        self._initgrid(gridsize)
 
         self.tiles = {}
         for v in self._grid.faces:
@@ -135,6 +131,13 @@ class PlanetSimulation(object):
 
         self.dirty = True
 
+    def _initgrid(self, gridsize):
+        grid = Grid()
+        while grid.size < gridsize:
+            grid = Grid(grid)
+            grid.populate()
+        self._grid = grid
+
     @property
     def grid(self):
         return self._grid
@@ -171,6 +174,7 @@ class PlanetSimulation(object):
 
     def loaddata(self, data):
         random.setstate(data['random'])
+        self._initgrid(data['gridsize'])
         self._dp = data['dp']
         self._build = data['build']
         self._splitnum = data['splitnum']
@@ -186,7 +190,7 @@ class PlanetSimulation(object):
         self.loaddata(Data.load(filename))
 
     def savedata(self):
-        return Data.savedata(random.getstate(), 0, self._dp, self._build, self._splitnum, self.tiles, self._shapes, 0, {}, set(), self._atmosphere, self._life)
+        return Data.savedata(random.getstate(), self._grid.size, 0, self._dp, self._build, self._splitnum, self.tiles, self._shapes, 0, {}, set(), self._atmosphere, self._life)
 
     def save(self, filename):
         Data.save(filename, self.savedata())

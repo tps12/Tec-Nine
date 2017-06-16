@@ -58,11 +58,13 @@ class WorldSimulation(object):
   def years(self):
     return u'{:,}'.format(sum([self._ticks[i] * self.scales[i] for i in range(len(self._ticks))]))
 
-  def load(self, filename):
-    data = Data.load(filename)
+  def loaddata(self, data):
     self._stage = data['stage']
     self._ticks = [0] * (self._stage+1)
     self.sim.loaddata(data)
+
+  def load(self, filename):
+    self.loaddata(Data.load(filename))
 
   def save(self, filename):
     data = self.sim.savedata()
