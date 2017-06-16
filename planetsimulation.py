@@ -175,6 +175,7 @@ class PlanetSimulation(object):
     def loaddata(self, data):
         random.setstate(data['random'])
         self._initgrid(data['gridsize'])
+        self.spin, self.cells, self.tilt = [data[k] for k in ['spin', 'cells', 'tilt']]
         self._dp = data['dp']
         self._build = data['build']
         self._splitnum = data['splitnum']
@@ -190,7 +191,7 @@ class PlanetSimulation(object):
         self.loaddata(Data.load(filename))
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self._dp, self._build, self._splitnum, self.tiles, self._shapes, 0, {}, set(), self._atmosphere, self._life)
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, self._dp, self._build, self._splitnum, self.tiles, self._shapes, 0, {}, set(), self._atmosphere, self._life)
 
     def save(self, filename):
         Data.save(filename, self.savedata())
