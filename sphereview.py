@@ -1,6 +1,6 @@
 import math
 import numpy
-from OpenGL import GL
+from OpenGL import GL, GLU
 from PySide import QtCore, QtOpenGL
 
 def squared_length(v):
@@ -14,6 +14,8 @@ def normal(v):
     return tuple([vi * d for vi in v])
 
 class SphereView(QtOpenGL.QGLWidget):
+    clicked = QtCore.Signal(float, float, float)
+
     def __init__(self, grid, parent):
         QtOpenGL.QGLWidget.__init__(self, parent)
 
@@ -22,6 +24,16 @@ class SphereView(QtOpenGL.QGLWidget):
         self.xRot = 0
         self.yRot = 0
         self.zRot = 0
+
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            viewport = GL.glGetIntegerv(GL.GL_VIEWPORT)
+            view = GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)
+            projection = GL.glGetDoublev(GL.GL_PROJECTION_MATRIX)
+            x, y = event.x(), viewport[3] - event.y() - 1
+            depthscale = GL.glGetDoublev(GL.GL_DEPTH_SCALE)
+            z = GL.glReadPixels(x, y, 1, 1, GL.GL_DEPTH_COMPONENT, GL.GL_FLOAT)
+            self.clicked.emit(*GLU.gluUnProject(x, y, z, view.astype('d'), projection.astype('d'), viewport))
 
     def minimumSizeHint(self):
         return QtCore.QSize(50, 50)
@@ -39,6 +51,7 @@ class SphereView(QtOpenGL.QGLWidget):
             self.updateGL()
 
     def initializeGL(self):
+        GL.glEnable(GL.GL_DEPTH_TEST)
         GL.glEnable(GL.GL_CULL_FACE)
         GL.glEnable(GL.GL_LIGHTING)
         GL.glEnable(GL.GL_LIGHT0)

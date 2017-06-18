@@ -52,7 +52,7 @@ class WorldPresenter(object):
         self._worker.simstopped.connect(self.stopped)
         self._worker.start()
 
-        self._display = WorldDisplay(self._model)
+        self._display = WorldDisplay(self._model, self.selecttile)
 
         self._view.content.setLayout(QGridLayout())
         self._view.content.layout().addWidget(self._display)
@@ -68,15 +68,9 @@ class WorldPresenter(object):
         self._view.pause.setVisible(False)
         self._view.done.setEnabled(True)
 
-    def selecttile(self, pos):
-        self._view.details.clear()
-        tile = self._model.sim.tiles[pos[1]][pos[0]] if pos is not None else None
-        if tile is not None:
-            for layer in reversed(tile.layers):
-                name = self._listitemclass(layer.rock['name'])
-                name.setToolTip(repr({ 'thickness': layer.thickness,
-                                       'rock': layer.rock }))
-                self._view.details.addItem(name)
+    def selecttile(self, tile):
+        self._display.invalidate()
+        self._view.content.update()
 
     def rotate(self, value):
         if self._model is None: return

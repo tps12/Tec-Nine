@@ -28,6 +28,9 @@ class WorldSimulation(object):
     self._ticks = [0]
     self._stage = 0
 
+  def nearest(self, loc):
+    return self._tectonics.nearest(loc)
+
   @property
   def sim(self):
     if self._stage == 0:

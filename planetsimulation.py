@@ -164,6 +164,9 @@ class PlanetSimulation(object):
         self._index = PointTree(dict([[self._indexedtiles[i].vector, i]
                                       for i in range(len(self._indexedtiles))]))
 
+    def nearest(self, loc):
+        return self._indexedtiles[self._index.nearest(loc)[0]]
+
     @property
     def continents(self):
         return len(self._shapes)
