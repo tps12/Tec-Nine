@@ -6,6 +6,7 @@ from climatemethod import climate
 from grid import Grid
 from hexadjacency import Adjacency
 from planetdata import Data
+from pointtree import PointTree
 from populationmethod import eden, expandpopulation, habitable
 from racinatemethod import racinate
 from riversmethod import run
@@ -73,9 +74,19 @@ class PrehistorySimulation(object):
         self._grid = grid
 
     def initindexes(self):
+        self._indexedtiles = []
+        for t in self.tiles.itervalues():
+            self._indexedtiles.append(t)
+
         self._tileadj = dict()
         for v in self._grid.faces:
             self._tileadj[self.tiles[v]] = set([self.tiles[nv] for nv in self.adj[v]])
+
+        self._index = PointTree(dict([[self._indexedtiles[i].vector, i]
+                                      for i in range(len(self._indexedtiles))]))
+
+    def nearest(self, loc):
+        return self._indexedtiles[self._index.nearest(loc)[0]]
 
     def update(self):
         stept = self._timing.routine('simulation step')

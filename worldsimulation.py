@@ -29,7 +29,7 @@ class WorldSimulation(object):
     self._stage = 0
 
   def nearest(self, loc):
-    return self._tectonics.nearest(loc)
+    return self.sim.nearest(loc)
 
   @property
   def sim(self):
