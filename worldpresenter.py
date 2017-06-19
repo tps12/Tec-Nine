@@ -7,6 +7,21 @@ from worlddisplay import WorldDisplay
 from worldsimulation import WorldSimulation
 from simthread import SimThread
 
+climatenames = {
+    u'BW': 'desert',
+    u'BS': 'steppe',
+    u'Af': 'rainforest',
+    u'Am': 'monsoon',
+    u'Aw': 'savanna',
+    u'Cf': 'temperate',
+    u'Cs': 'temperate, dry summer',
+    u'Cw': 'temperate, dry winter',
+    u'Df': 'cold',
+    u'Ds': 'cold, dry summer',
+    u'Dw': 'cold, dry winter',
+    u'ET': 'tundra',
+    u'EF': 'ice cap' }
+
 class WorldPresenter(object):
     radii_and_grid_sizes = [
         (2100, 4),
@@ -80,6 +95,11 @@ class WorldPresenter(object):
                                           'rock': layer.rock }))
                 rock.addChild(name)
             self._view.details.addTopLevelItem(rock)
+            if tile.elevation > 0 and tile.climate:
+                climate = self._listitemclass([climatenames[tile.climate.koeppen]])
+                climate.setToolTip(0, repr({ 'temperature': tile.climate.temperature,
+                                             'precipitation': tile.climate.precipitation }))
+                self._view.details.addTopLevelItem(climate)
 
     def rotate(self, value):
         if self._model is None: return
