@@ -42,9 +42,8 @@ class TectonicsPresenter(object):
 
         self._uistack = uistack
 
-    def selecttile(self, pos):
+    def selecttile(self, tile):
         self._view.details.clear()
-        tile = self._model.tiles[pos[1]][pos[0]] if pos is not None else None
         if tile is not None:
             for layer in reversed(tile.layers):
                 name = self._listitemclass(layer.rock['name'])

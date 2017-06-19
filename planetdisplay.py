@@ -149,9 +149,14 @@ class PlanetDisplay(QWidget):
     def tilecolor(self, tile):
         return self._colorfunctions[self._aspect](tile)
    
+    def select(self, x, y, z):
+        self.selected = self._sim.nearest((z,-x,y)) if abs(z) < 2 else None
+        self._select(self.selected)
+
     def invalidate(self):
         if self._screen is None:
             self._screen = SphereView(self._sim.grid, self)
+            self._screen.clicked.connect(self.select)
         self._screen.usecolors({ v: self.tilecolor(t) for (v, t) in self._sim.tiles.iteritems() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)
