@@ -2,6 +2,7 @@ import math
 
 from PySide.QtGui import QApplication, QGridLayout, QFileDialog
 
+from formatpopulation import popstr
 from planetdata import Data
 from worlddisplay import WorldDisplay
 from worldsimulation import WorldSimulation
@@ -100,6 +101,10 @@ class WorldPresenter(object):
                 climate.setToolTip(0, repr({ 'temperature': tile.climate.temperature,
                                              'precipitation': tile.climate.precipitation }))
                 self._view.details.addTopLevelItem(climate)
+            populated = self._model.populated
+            if tile in populated:
+                population = self._listitemclass([popstr(populated[tile])])
+                self._view.details.addTopLevelItem(population)
 
     def rotate(self, value):
         if self._model is None: return

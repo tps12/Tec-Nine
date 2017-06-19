@@ -1,5 +1,6 @@
 import random
 
+from formatpopulation import popstr
 from planetdata import Data
 from planetsimulation import PlanetSimulation
 from prehistorysimulation import PrehistorySimulation
@@ -55,7 +56,7 @@ class WorldSimulation(object):
 
   @property
   def population(self):
-    return u'{:,}'.format(sum(self.populated.values()) * 1000)
+    return popstr(sum(self.populated.values()))
 
   @property
   def years(self):
