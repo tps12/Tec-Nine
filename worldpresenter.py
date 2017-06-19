@@ -71,6 +71,15 @@ class WorldPresenter(object):
     def selecttile(self, tile):
         self._display.invalidate()
         self._view.content.update()
+        self._view.details.clear()
+        if tile is not None:
+            rock = self._listitemclass(['Layers'])
+            for layer in reversed(tile.layers):
+                name = self._listitemclass([layer.rock['name']])
+                name.setToolTip(0, repr({ 'thickness': layer.thickness,
+                                          'rock': layer.rock }))
+                rock.addChild(name)
+            self._view.details.addTopLevelItem(rock)
 
     def rotate(self, value):
         if self._model is None: return
