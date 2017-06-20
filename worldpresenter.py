@@ -103,7 +103,14 @@ class WorldPresenter(object):
                 self._view.details.addTopLevelItem(climate)
             populated = self._model.populated
             if tile in populated:
-                population = self._listitemclass([popstr(populated[tile])])
+                heritage, count = populated[tile]
+                population = self._listitemclass([popstr(count)])
+                def ancestors(h, p):
+                    item = self._listitemclass([str(h.serial)])
+                    for a in h.ancestry or []:
+                        ancestors(a, item)
+                    p.addChild(item)
+                ancestors(heritage, population)
                 self._view.details.addTopLevelItem(population)
 
     def rotate(self, value):

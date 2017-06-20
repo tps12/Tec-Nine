@@ -50,13 +50,13 @@ class WorldSimulation(object):
   @property
   def populated(self):
     if 'populated' in self.sim.__dict__:
-        return {t: (agrapop if r in self.sim.agricultural else paleopop)(t.climate.koeppen)
+        return {t: (r, (agrapop if r in self.sim.agricultural else paleopop)(t.climate.koeppen))
                 for t, r in self.sim.populated.iteritems()}
     return {}
 
   @property
   def population(self):
-    return popstr(sum(self.populated.values()))
+    return popstr(sum([p for (_, p) in self.populated.values()]))
 
   @property
   def years(self):
