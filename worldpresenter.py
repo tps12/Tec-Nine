@@ -1,5 +1,7 @@
 import math
+import random
 
+from PySide.QtCore import Qt
 from PySide.QtGui import QApplication, QGridLayout, QFileDialog
 
 from formatpopulation import popstr
@@ -23,6 +25,9 @@ climatenames = {
     u'ET': 'tundra',
     u'EF': 'ice cap' }
 
+def randomspinvalue(b):
+    return random.choice(range(b.minimum(), b.maximum() + b.singleStep(), b.singleStep()))
+
 class WorldPresenter(object):
     radii_and_grid_sizes = [
         (2100, 4),
@@ -34,6 +39,7 @@ class WorldPresenter(object):
 
     def __init__(self, view, uistack, listitemclass):
         self._view = view
+        self._view.randomize.stateChanged.connect(self.randomized)
         self._view.create.clicked.connect(self.create)
         self._view.start.clicked.connect(self.start)
         self._view.pause.clicked.connect(self.pause)
@@ -46,10 +52,16 @@ class WorldPresenter(object):
         self._uistack = uistack
 
         self._model = None
+        self._view.randomize.setCheckState(Qt.Checked)
         self._view.start.setVisible(True)
         self._view.start.setEnabled(False)
         self._view.pause.setVisible(False)
         self._view.done.setEnabled(True)
+
+    def randomized(self, value):
+        randomize = value == Qt.Checked
+        for param in [self._view.spin, self._view.tilt, self._view.land]:
+            param.setEnabled(not randomize)
 
     def create(self, gridsize=None):
         if self._model is not None:
@@ -58,6 +70,11 @@ class WorldPresenter(object):
             layout = self._view.content.layout()
             if layout.count():
                 layout.removeItem(layout.itemAt(0))
+
+        if self._view.randomize.checkState() == Qt.Checked:
+            self._view.spin.setCurrentIndex(random.randint(0, self._view.spin.count()-1))
+            self._view.tilt.setValue(randomspinvalue(self._view.tilt))
+            self._view.land.setValue(randomspinvalue(self._view.land))
 
         r, g = self.radii_and_grid_sizes[self._view.radius.currentIndex()]
         land_r = math.sqrt(0.04 * self._view.land.value())

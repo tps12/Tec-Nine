@@ -172,106 +172,179 @@
        </item>
       </layout>
      </item>
-      <item>
-      <layout class="QHBoxLayout">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="10">
+       <property name="spacing">
+        <number>-1</number>
+       </property>
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QLabel">
-         <property name="text">
-          <string>Hours in day: </string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="spin">
+        <widget class="QGroupBox" name="groupBox">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="currentIndex">
-          <number>2</number>
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>156</height>
+          </size>
          </property>
-         <item>
-          <property name="text">
-           <string>8</string>
+         <property name="title">
+          <string>Parameters</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <widget class="QWidget" name="">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>20</y>
+            <width>161</width>
+            <height>121</height>
+           </rect>
           </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>12</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>24</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>48</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </item>
-      <item>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="QLabel">
-         <property name="text">
-          <string>Axial tilt: </string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="tilt">
-         <property name="suffix">
-          <string>°</string>
-         </property>
-         <property name="minimum">
-          <number>0</number>
-         </property>
-         <property name="maximum">
-          <number>45</number>
-         </property>
-         <property name="singleStep">
-          <number>1</number>
-         </property>
-         <property name="value">
-          <number>23</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="QLabel">
-         <property name="text">
-          <string>Land: </string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="land">
-         <property name="suffix">
-          <string>%</string>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>50</number>
-         </property>
-         <property name="singleStep">
-          <number>1</number>
-         </property>
-         <property name="value">
-          <number>29</number>
-         </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Hours in day: </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="spin">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="currentIndex">
+                <number>2</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string>8</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>12</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>24</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>48</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Axial tilt: </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="tilt">
+               <property name="suffix">
+                <string>°</string>
+               </property>
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>45</number>
+               </property>
+               <property name="singleStep">
+                <number>1</number>
+               </property>
+               <property name="value">
+                <number>23</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Land: </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="land">
+               <property name="suffix">
+                <string>%</string>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>50</number>
+               </property>
+               <property name="singleStep">
+                <number>1</number>
+               </property>
+               <property name="value">
+                <number>29</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="randomize">
+             <property name="text">
+              <string>Randomize</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <zorder></zorder>
+         <zorder></zorder>
+         <zorder></zorder>
+         <zorder></zorder>
         </widget>
        </item>
       </layout>
