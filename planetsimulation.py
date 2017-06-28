@@ -39,7 +39,7 @@ class NextTileValue(object):
 class PlanetSimulation(object):
     temprange = (-25.0, 50.0)
 
-    def __init__(self, r, gridsize, spin, cells, tilt, landr, dt):
+    def __init__(self, r, gridsize, spin, cells, tilt, landr, dt, atmdt, lifedt):
         """Create a simulation for a planet with the given characteristics. """
 
         self._timing = Timing()
@@ -124,7 +124,8 @@ class PlanetSimulation(object):
 
         initt.done()
 
-        self._atmosphere = self._life = False
+        self._atmosphereticks = atmdt / dt
+        self._lifeticks = lifedt / dt
 
         self._climatemappings = {}
         self._climateprof = None
@@ -143,8 +144,12 @@ class PlanetSimulation(object):
         return self._grid
 
     @property
+    def hasatmosphere(self):
+        return self._atmosphereticks == 0
+
+    @property
     def haslife(self):
-        return self._life
+        return self._lifeticks == 0
 
     @staticmethod
     def seafloor():
@@ -184,8 +189,8 @@ class PlanetSimulation(object):
         self._splitnum = data['splitnum']
         self.tiles = data['tiles']
         self._shapes = data['shapes']
-        self._atmosphere = data['hasatm']
-        self._life = data['haslife']
+        self._atmosphereticks = data['atmt']
+        self._lifeticks = data['lifet']
 
         self.initindexes()
         self.dirty = True
@@ -194,7 +199,7 @@ class PlanetSimulation(object):
         self.loaddata(Data.load(filename))
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, self._dp, self._build, self._splitnum, self.tiles, self._shapes, 0, {}, set(), self._atmosphere, self._life)
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, self._dp, self._build, self._splitnum, self.tiles, self._shapes, 0, {}, set(), self._atmosphereticks, self._lifeticks)
 
     def save(self, filename):
         Data.save(filename, self.savedata())
@@ -263,11 +268,11 @@ class PlanetSimulation(object):
         # record each continent's total pre-erosion above-sea size
         heights = [sum([t.elevation for t in s.tiles]) for s in self._shapes]
 
-        if self._atmosphere:
+        if self.hasatmosphere:
             stept.start('"simulating" climate')
 
             seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
-            c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, 0.5, self._life, self._climatemappings, self._climateprof)
+            c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, 0.5, self.haslife, self._climatemappings, self._climateprof)
 
             if self._climateprof:
                 self._climateprof.dump_stats('climate.profile')
@@ -286,10 +291,10 @@ class PlanetSimulation(object):
                 # if the tile is in at least one shape, apply the erosion materials
                 if len(overlapping[t]) > 0:
                     if len(erosion[t].materials) > 0:
-                        t.deposit(sedimentary.deposit(erosion[t].materials, self._life, False, t.climate))
+                        t.deposit(sedimentary.deposit(erosion[t].materials, self.haslife, False, t.climate))
                 # otherwise, require a certain threshold
                 elif sum([m.amount for m in erosion[t].materials]) > 1.5:
-                    t.deposit(sedimentary.deposit(erosion[t].materials, self._life, True, t.climate))
+                    t.deposit(sedimentary.deposit(erosion[t].materials, self.haslife, True, t.climate))
                     sourceshapes = set()
                     for e in erosion[t].sources:
                         for shape in overlapping[e]:
@@ -298,10 +303,10 @@ class PlanetSimulation(object):
                         if not t in self._shapes[s].tiles:
                             self._shapes[s].tiles.append(t)
                     overlapping[t] = list(sourceshapes)
-            if not self._life:
-                self._life = random.random() < 0.05
-        elif random.random() < 0.05:
-            self._atmosphere = True
+            if self._lifeticks:
+                self._lifeticks -= 1
+        else:
+            self._atmosphereticks -= 1
 
         stept.start('applying isostatic effects')
 

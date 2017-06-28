@@ -21,10 +21,10 @@ class WorldSimulation(object):
   tecdt = 5
   scales = [tecdt * 1000000, PrehistorySimulation.glaciationstep * 250]
 
-  def __init__(self, radius, gridsize, dayhours, tilt, pangeasize):
+  def __init__(self, radius, gridsize, dayhours, tilt, pangeasize, atmdt, lifedt):
     spin = 24.0/dayhours
     cells = 7 if spin >= 3 else 5 if spin >= 2 else 3 if spin == 1 else 1
-    self._tectonics = PlanetSimulation(radius, gridsize, spin, cells, tilt, pangeasize, self.tecdt)
+    self._tectonics = PlanetSimulation(radius, gridsize, spin, cells, tilt, pangeasize, self.tecdt, atmdt, lifedt)
     self._prehistory = PrehistorySimulation(gridsize, spin, cells, tilt)
     self._ticks = [0]
     self._stage = 0

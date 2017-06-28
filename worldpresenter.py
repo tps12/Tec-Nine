@@ -28,6 +28,16 @@ climatenames = {
 def randomspinvalue(b):
     return random.choice(range(b.minimum(), b.maximum() + b.singleStep(), b.singleStep()))
 
+def randomticks():
+    n = 0
+    while True:
+        if random.random() < 0.05:
+            return n
+        n += 1
+
+def randomtime():
+    return WorldSimulation.tecdt * (1 + randomticks())
+
 class WorldPresenter(object):
     radii_and_grid_sizes = [
         (2100, 4),
@@ -60,7 +70,7 @@ class WorldPresenter(object):
 
     def randomized(self, value):
         randomize = value == Qt.Checked
-        for param in [self._view.spin, self._view.tilt, self._view.land]:
+        for param in [self._view.spin, self._view.tilt, self._view.land, self._view.atmt, self._view.lifet]:
             param.setEnabled(not randomize)
 
     def create(self, gridsize=None):
@@ -75,10 +85,12 @@ class WorldPresenter(object):
             self._view.spin.setCurrentIndex(random.randint(0, self._view.spin.count()-1))
             self._view.tilt.setValue(randomspinvalue(self._view.tilt))
             self._view.land.setValue(randomspinvalue(self._view.land))
+            self._view.atmt.setValue(randomtime())
+            self._view.lifet.setValue(randomtime())
 
         r, g = self.radii_and_grid_sizes[self._view.radius.currentIndex()]
         land_r = math.sqrt(0.04 * self._view.land.value())
-        self._model = WorldSimulation(r, gridsize or g, self.day_hours[self._view.spin.currentIndex()], self._view.tilt.value(), land_r)
+        self._model = WorldSimulation(r, gridsize or g, self.day_hours[self._view.spin.currentIndex()], self._view.tilt.value(), land_r, self._view.atmt.value(), self._view.lifet.value())
         self._worker = SimThread(self._model)
         self._worker.tick.connect(self.tick)
         self._worker.simstarted.connect(self.started)
