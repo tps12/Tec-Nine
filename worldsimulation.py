@@ -1,5 +1,3 @@
-import random
-
 from formatpopulation import popstr
 from planetdata import Data
 from planetsimulation import PlanetSimulation
@@ -21,13 +19,14 @@ class WorldSimulation(object):
   tecdt = 5
   scales = [tecdt * 1000000, PrehistorySimulation.glaciationstep * 250]
 
-  def __init__(self, radius, gridsize, dayhours, tilt, pangeasize, atmdt, lifedt):
+  def __init__(self, radius, gridsize, dayhours, tilt, pangeasize, atmdt, lifedt, peopledt):
     spin = 24.0/dayhours
     cells = 7 if spin >= 3 else 5 if spin >= 2 else 3 if spin == 1 else 1
     self._tectonics = PlanetSimulation(radius, gridsize, spin, cells, tilt, pangeasize, self.tecdt, atmdt, lifedt)
     self._prehistory = PrehistorySimulation(gridsize, spin, cells, tilt)
     self._ticks = [0]
     self._stage = 0
+    self._peopleticks = peopledt / self.tecdt
 
   def nearest(self, loc):
     return self.sim.nearest(loc)
@@ -65,6 +64,7 @@ class WorldSimulation(object):
   def loaddata(self, data):
     self._stage = data['stage']
     self._ticks = [0] * (self._stage+1)
+    self._peopleticks = data['peoplet']
     self.sim.loaddata(data)
 
   def load(self, filename):
@@ -73,13 +73,17 @@ class WorldSimulation(object):
   def save(self, filename):
     data = self.sim.savedata()
     data['stage'] = self._stage
+    data['peoplet'] = self._peopleticks
     Data.save(filename, data)
 
   def update(self):
     self.sim.update()
     self._ticks[self._stage] += 1
-    if self._stage == 0 and self.sim.haslife and random.random() < 0.05:
-      data = self.sim.savedata()
-      self._stage += 1
-      self._ticks += [0]
-      self.sim.loaddata(Data.loaddata(data))
+    if self._stage == 0 and self.sim.haslife:
+      if self._peopleticks == 0:
+        data = self.sim.savedata()
+        self._stage += 1
+        self._ticks += [0]
+        self.sim.loaddata(Data.loaddata(data))
+      else:
+        self._peopleticks -= 1
