@@ -25,8 +25,21 @@ climatenames = {
     u'ET': 'tundra',
     u'EF': 'ice cap' }
 
-def randomspinvalue(b):
-    return random.choice(range(b.minimum(), b.maximum() + b.singleStep(), b.singleStep()))
+# Return a random value from the given spin box, favoring m (twice as likely to
+# return m as either the min or max, with probability sloping on either side).
+def randomspinvalue(b, m):
+    r = range(b.minimum(), b.maximum() + b.singleStep(), b.singleStep())
+    pw = 0
+    ws = []
+    for v in r:
+        dw = float(v - r[0])/(m - r[0]) if v < m else float(r[-1] - v)/(r[-1] - m)
+        w = pw + (1 + dw)
+        ws.append(w)
+        pw = w
+    f = random.uniform(0, pw)
+    for i in range(len(r)):
+        if f < ws[i]:
+            return r[i]
 
 def randomticks():
     n = 0
@@ -82,9 +95,10 @@ class WorldPresenter(object):
                 layout.removeItem(layout.itemAt(0))
 
         if self._view.randomize.checkState() == Qt.Checked:
-            self._view.spin.setCurrentIndex(random.randint(0, self._view.spin.count()-1))
-            self._view.tilt.setValue(randomspinvalue(self._view.tilt))
-            self._view.land.setValue(randomspinvalue(self._view.land))
+            # Randomize values, but favor Earth-like ones.
+            self._view.spin.setCurrentIndex(random.choice([0,1,1,2,2,2,3,3]))
+            self._view.tilt.setValue(randomspinvalue(self._view.tilt, 23))
+            self._view.land.setValue(randomspinvalue(self._view.land, 29))
             self._view.atmt.setValue(randomtime())
             self._view.lifet.setValue(randomtime())
 
