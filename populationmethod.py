@@ -21,12 +21,12 @@ def mainocean(seatiles, adj):
     bodies[s].add(t)
   return sorted(bodies.values(), key=len)[-1]
 
-def eden(tiles, adj):
+def eden(tiles, adj, name):
     o = mainocean(sea(tiles), adj)
     candidates = [t for t in tiles.itervalues()
                   if t.climate and t.climate.koeppen == u'Aw' and
                   any([n in o for n in adj[t]])]
-    return {random.choice(candidates): race.Heritage()} if candidates else {}
+    return {random.choice(candidates): race.Heritage(name)} if candidates else {}
 
 def nearcoast(t, adj, d):
     return t.elevation > 0 and any([n.elevation <= 0 for n in passability.within(t, adj, d, False)])

@@ -67,7 +67,7 @@ class RacinationSimulation(object):
 
         self.continents = [Continent(p, r) for p, r in [(p1, 0.75), (p2, 0.5)]]
 
-        h = race.Heritage()
+        h = race.Heritage('people')
         for t in self.tiles.itervalues():
             if any([c.outer.contains(t.vector) for c in self.continents]):
                 t.bottom = 0
@@ -92,7 +92,7 @@ class RacinationSimulation(object):
                     t.climate = ClimateInfo(None, None, k, None)
                     if t in self.populated:
                         del self.populated[t]
-        racinate(self.tiles.values(), self._tileadj, self.populated, self.range)
+        racinate(self.tiles.values(), self._tileadj, self.populated, lambda: 'people', set(), self.range)
 
     @property
     def grid(self):

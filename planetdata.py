@@ -9,10 +9,10 @@ class Data(object):
 
     @classmethod
     def loaddata(cls, data):
-        if 'version' not in data or data['version'] < 13:
+        if 'version' not in data or data['version'] < 14:
                 raise ValueError('File version is too old')
 
-        races, agricultural = cls._population(data['races'], data['agriculturalraces'], data['tiles'].iteritems())
+        races, agricultural = cls._population(data['races'], data['racenames'], data['agriculturalraces'], data['tiles'].iteritems())
 
         data['tiles'] = {v: cls._tile(t) for v,t in data['tiles'].iteritems()}
 
@@ -32,8 +32,8 @@ class Data(object):
     @classmethod
     def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet):
         tileindex = cls._index(tiles)
-        rs, rindex, ags = cls._raceagindices(population, agricultural)
-        return {'version': 13,
+        rs, rnames, rindex, ags = cls._raceagindices(population, agricultural)
+        return {'version': 14,
                 'random': random,
                 'gridsize': gridsize,
                 'stage': stage,
@@ -56,6 +56,7 @@ class Data(object):
                            for v,t in tiles.iteritems()},
                 'shapes': [([tileindex[t.vector] for t in s.tiles], s.v) for s in shapes],
                 'races': rindex,
+                'racenames': rnames,
                 'agriculturalraces': ags,
                 'glaciationtime': glaciationtime,
                 'hasatm': atmt == 0,
@@ -104,18 +105,19 @@ class Data(object):
         for h in population.itervalues():
             hset |= addh(h)
         hs = list(hset)
+        names = [h.name for h in hs]
         index = [({hs.index(a) for a in h.ancestry} if h.ancestry else set()) for h in hs]
         ags = [h in agricultural for h in hs]
-        return hs, index, ags
+        return hs, names, index, ags
 
     @classmethod
-    def _population(cls, races, isagricultural, tiles):
+    def _population(cls, races, names, isagricultural, tiles):
         hs = []
         def reify(i, ais):
             while i > len(hs)-1:
                 hs.append(None)
             if hs[i] is None:
-                hs[i] = Heritage({reify(ai, races[ai]) for ai in ais}) if ais else Heritage()
+                hs[i] = Heritage(names[i], {reify(ai, races[ai]) for ai in ais} if ais else None)
             return hs[i]
         population = {}
         agricultural = set()

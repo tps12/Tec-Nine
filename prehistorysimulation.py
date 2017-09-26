@@ -5,6 +5,9 @@ import time
 from climatemethod import climate
 from grid import Grid
 from hexadjacency import Adjacency
+from language import output
+from language.lexicon import lexicon
+from language.phonemes import phonemes
 from planetdata import Data
 from pointtree import PointTree
 from populationmethod import eden, expandpopulation, habitable
@@ -88,6 +91,11 @@ class PrehistorySimulation(object):
     def nearest(self, loc):
         return self._indexedtiles[self._index.nearest(loc)[0]]
 
+    def newrace(self):
+        vs, cs = phonemes()
+        name = output.write(random.choice(list(lexicon(vs, cs, 0.5, 0.5, 1000))))
+        return name[0].upper() + name[1:]
+
     def update(self):
         stept = self._timing.routine('simulation step')
 
@@ -115,7 +123,7 @@ class PrehistorySimulation(object):
 
         if not self.populated:
             stept.start('genesis')
-            self.populated = eden(self.tiles, self._tileadj)
+            self.populated = eden(self.tiles, self._tileadj, self.newrace())
 
         stept.start('running rivers')
         rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
@@ -133,7 +141,7 @@ class PrehistorySimulation(object):
             if not expandpopulation(rivers, self._tileadj, self.populated, self.agricultural, self.range, self.coastprox, popcache):
                 break
         stept.start('identifying distinct populations')
-        racinate(self.tiles.values(), self._tileadj, self.populated, self.agricultural, self.range)
+        racinate(self.tiles.values(), self._tileadj, self.populated, self.newrace, self.agricultural, self.range)
 
         stept.done()
 

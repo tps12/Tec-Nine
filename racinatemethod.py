@@ -2,7 +2,7 @@ import disjoint
 import passability
 import race
 
-def racinate(tiles, adj, populated, agricultural, travelrange):
+def racinate(tiles, adj, populated, newname, agricultural, travelrange):
   pops = {t: disjoint.set() for t in populated}
   for t, r in populated.iteritems():
     for n in passability.within(t, adj, travelrange, r in agricultural, passability.passable):
@@ -18,7 +18,7 @@ def racinate(tiles, adj, populated, agricultural, travelrange):
   for ts in races.itervalues():
     hs = {populated[t] for t in ts}
     if len(hs) > 1:
-      h = race.Heritage(hs)
+      h = race.Heritage(newname(), hs)
       if any([r in agricultural for r in hs]):
         agricultural.add(h)
       for t in ts:
@@ -34,7 +34,7 @@ def racinate(tiles, adj, populated, agricultural, travelrange):
   for h, rs in heritageraces.iteritems():
     if len(rs) > 1:
       for r in rs:
-        nh = race.Heritage({h})
+        nh = race.Heritage(newname(), {h})
         if h in agricultural:
           agricultural.add(nh)
         for t in races[r]:

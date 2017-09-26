@@ -45,7 +45,7 @@ class PopulationSimulation(object):
     def update(self):
         if not self.populated:
             self.rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
-            self.populated = eden(self.tiles, self._tileadj)
+            self.populated = eden(self.tiles, self._tileadj, 'Eden')
         if not expandpopulation(self.rivers, self._tileadj, self.populated, set(), self.range, self.coastprox, self.popcache):
             return True
         time.sleep(0.1)

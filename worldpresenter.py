@@ -150,7 +150,7 @@ class WorldPresenter(object):
                 heritage, count = populated[tile]
                 population = self._listitemclass([popstr(count)])
                 def ancestors(h, p):
-                    item = self._listitemclass([str(h.serial)])
+                    item = self._listitemclass([h.name])
                     for a in h.ancestry or []:
                         ancestors(a, item)
                     p.addChild(item)
