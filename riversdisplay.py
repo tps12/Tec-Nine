@@ -28,7 +28,7 @@ class RiversDisplay(QWidget):
 
     def invalidate(self):
         if self._screen is None:
-            self._screen = SphereView(self._sim.grid, self)
+            self._screen = SphereView(self._sim.grid.faces, self)
         rts = set()
         for t in self._sim.tiles.itervalues():
             for r in self._sim.rivers:

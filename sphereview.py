@@ -16,10 +16,10 @@ def normal(v):
 class SphereView(QtOpenGL.QGLWidget):
     clicked = QtCore.Signal(float, float, float)
 
-    def __init__(self, grid, parent):
+    def __init__(self, faces, parent):
         QtOpenGL.QGLWidget.__init__(self, parent)
 
-        self.grid = grid
+        self.faces = faces
         self.objects = None
         self.xRot = 0
         self.yRot = 0
@@ -65,7 +65,7 @@ class SphereView(QtOpenGL.QGLWidget):
 
         vertices = []
         normals = []
-        for t, vs in self.grid.faces.iteritems():
+        for t, vs in self.faces.iteritems():
             n = normal(t)
             for i in range(len(vs)):
                 vertices += t
@@ -102,7 +102,7 @@ class SphereView(QtOpenGL.QGLWidget):
 
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
         i = 0;
-        for t, vs in self.grid.faces.iteritems():
+        for t, vs in self.faces.iteritems():
             color = [v/255.0 for v in self.colors[t]]
             for _ in range(len(vs)):
               for _ in range(3):
@@ -117,7 +117,7 @@ class SphereView(QtOpenGL.QGLWidget):
         GL.glRotated(self.xRot / 16.0, 1.0, 0.0, 0.0)
         GL.glRotated(self.yRot / 16.0, 0.0, 1.0, 0.0)
         GL.glRotated(self.zRot / 16.0, 0.0, 0.0, 1.0)
-        GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * (6 * len(self.grid.faces) - 12))
+        GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * (6 * len(self.faces) - 12))
 
     def resizeGL(self, width, height):
         side = min(width, height)

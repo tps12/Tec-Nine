@@ -44,7 +44,7 @@ class RacinationDisplay(QWidget):
 
     def invalidate(self):
         if self._screen is None:
-            self._screen = SphereView(self._sim.grid, self)
+            self._screen = SphereView(self._sim.grid.faces, self)
         races = list(set(self._sim.populated.values()))
         shades = genshades(len(races))
         self._screen.usecolors({ v: population(t, self._sim.populated, races, shades) for (v, t) in self._sim.tiles.iteritems() })
