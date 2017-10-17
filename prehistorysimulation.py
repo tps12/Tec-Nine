@@ -50,8 +50,8 @@ class PrehistorySimulation(object):
         self.tiles = {}
         for v in self._grid.faces:
             x, y, z = v
-            lat = 180/pi * atan2(y, sqrt(x*x + z*z))
-            lon = 180/pi * atan2(-x, z)
+            lat = 180/pi * atan2(z, sqrt(x*x + y*y))
+            lon = 180/pi * atan2(y, x)
             self.tiles[v] = Tile(lat, lon)
 
         for t in self.tiles.itervalues():

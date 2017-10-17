@@ -75,7 +75,7 @@ class Grid(object):
             for i in range(len(dodecfaces)):
                 self._makeface(
                     dodecfaces[i],
-                    [dodecfaces[n] for n in dodecneighbors[i]])
+                    [dodecfaces[n] for n in reversed(dodecneighbors[i])])
 
     def _addface(self, face):
         for vertex in self.faces[face]:
@@ -137,7 +137,7 @@ class Grid(object):
                     vertices.append(
                         normal([sum([face[i] for face in faces]) for i in range(3)]))
             # make sure new vertices wind correctly
-            if dot(vertex, cross(*vertices[0:2])) < 0:
+            if dot(vertex, cross(*vertices[0:2])) > 0:
                 vertices = list(reversed(vertices))
             self.faces[vertex] = vertices
             self._addface(vertex)

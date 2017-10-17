@@ -13,6 +13,9 @@ def normal(v):
     d = 1.0 / length(v)
     return tuple([vi * d for vi in v])
 
+def rotate_axes(x, y, z):
+    return (-y, z, x)
+
 class SphereView(QtOpenGL.QGLWidget):
     clicked = QtCore.Signal(float, float, float)
 
@@ -66,6 +69,8 @@ class SphereView(QtOpenGL.QGLWidget):
         vertices = []
         normals = []
         for t, vs in self.faces.iteritems():
+            t = rotate_axes(*t)
+            vs = [rotate_axes(*v) for v in vs]
             n = normal(t)
             for i in range(len(vs)):
                 vertices += t
