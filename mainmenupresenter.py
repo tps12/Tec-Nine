@@ -6,6 +6,7 @@ from prehistory import Prehistory
 from racination import Racination
 from rivers import Rivers
 from tectonics import Tectonics
+from terrain import Terrain
 from split import Split
 from world import World
 from move import Move
@@ -15,6 +16,7 @@ class MainMenuPresenter(object):
         self._view = view
         self._view.start.clicked.connect(self.start)
         self._view.tectonics.clicked.connect(self.tectonics)
+        self._view.terrain.clicked.connect(self.terrain)
         self._view.climate.clicked.connect(self.climate)
         self._view.rivers.clicked.connect(self.rivers)
         self._view.erosion.clicked.connect(self.erosion)
@@ -35,6 +37,9 @@ class MainMenuPresenter(object):
 
     def tectonics(self):
         self._uistack.push(Tectonics(self._uistack))
+
+    def terrain(self):
+        self._uistack.push(Terrain(self._uistack))
 
     def climate(self):
         self._uistack.push(Climate(self._uistack))

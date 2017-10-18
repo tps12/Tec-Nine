@@ -1,3 +1,13 @@
+def elevation(tile):
+    h = tile.elevation
+
+    if h > 0:
+        value = int(128 + 12.5 * h)
+        color = (value, value, value)
+    else:
+        color = (0, 0, 0)
+    return color
+
 def value(tile):
     h, c = tile.elevation, tile.climate
 
