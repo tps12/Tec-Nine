@@ -2,6 +2,8 @@ import math
 import random
 import time
 
+from noise import snoise3
+
 from grid import Grid
 from hexadjacency import Adjacency
 from planetdata import Data
@@ -116,7 +118,7 @@ class TerrainSimulation(object):
 
     def faceelevation(self, f):
         ts = self.components(f, self._terrain, self.tiles)
-        return self.interpolate(lambda t: t.elevation, ts)
+        return self.interpolate(lambda t: t.elevation, ts) + self.interpolate(lambda t: t.mountainosity, ts) * snoise3(f[0], f[1], f[2], 7, 0.85)
 
     def loaddata(self, data):
         random.setstate(data['random'])
