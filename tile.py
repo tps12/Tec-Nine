@@ -47,7 +47,7 @@ class Tile(object):
 
     @property
     def substance(self):
-        return self.bottom, [{ 'rock': l.rock, 'thickness': l.thickness } for l in self.layers]
+        return self.bottom, self._mountainosity, [{ 'rock': l.rock, 'thickness': l.thickness } for l in self.layers]
 
     def distance(self, other):
         lat1, lon1 = [c * pi/180 for c in self.lat, self.lon]
@@ -96,8 +96,8 @@ class Tile(object):
 
     @staticmethod
     def mergelayers(sources):
-        # each source is a (bottom, substance-list) tuple; convert substance list to layers
-        sources = [(s[0], [Layer(l['rock'], l['thickness']) for l in s[1]]) for s in sources]
+        # each source is a (bottom, mountainosity, substance-list) tuple; convert substance list to layers
+        sources = [(s[0], s[1], [Layer(l['rock'], l['thickness']) for l in s[-1]]) for s in sources]
 
         # general approach is:
         #  - work from the highest elevation down
@@ -114,12 +114,12 @@ class Tile(object):
         for s in sources:
             db = s[0] - bottom
             pl = [Layer(None, db)] if db > 0 else []
-            ss.append(pl + s[1])
+            ss.append(pl + s[-1])
 
         # pad source tops with empty layers
-        elevation = max([s[0] + sum([l.thickness for l in s[1]]) for s in sources])
+        elevation = max([s[0] + sum([l.thickness for l in s[-1]]) for s in sources])
         for i in range(len(sources)):
-            de = elevation - (sources[i][0] + sum([l.thickness for l in sources[i][1]]))
+            de = elevation - (sources[i][0] + sum([l.thickness for l in sources[i][-1]]))
             if de > 0:
                 ss[i].append(Layer(None, de))
 
@@ -177,15 +177,18 @@ class Tile(object):
                 else:
                     i += 1
 
+        mountainosity = sum([s[1] for s in sources])/len(sources)
+
         # reverse
-        return bottom, list(reversed(output))
+        return bottom, mountainosity, list(reversed(output))
 
     def mergesources(self, groups):
         # average out each group
         gs = [self.mergelayers(ss) for ss in groups]
         # stack the groups up (in arbitrary order!)
         self.bottom = sum([g[0] for g in gs])
-        self.layers = [s for ss in [g[1] for g in gs] for s in ss]
+        self.layers = [s for ss in [g[-1] for g in gs] for s in ss]
+        self._mountainosity = sum([g[1] for g in gs])
         self.limit()
         self.compact()
 
@@ -195,6 +198,7 @@ class Tile(object):
         self.limit()
         self.compact()
         self._subduction = amount
+        self._mountainosity += amount
 
     def erode(self, erosion, dt):
         e = erosion[self]
@@ -235,12 +239,14 @@ class Tile(object):
         for d in e.destinations:
             erosion[d.destination].addmaterial(m * d.degree/totaldegree, m, materials)
         self._elevation -= m
+        self._mountainosity = max(0, self._mountainosity - m)
 
         self.compact()
 
     def deposit(self, substance):
         self.layers.append(Layer(substance['rock'], substance['thickness']))
         self.limit()
+        self._mountainosity += substance['thickness']
         self.compact()
 
     def isostasize(self, amount):
@@ -275,10 +281,15 @@ class Tile(object):
         self.bottom = -5
         self.layers = [Layer(rock, 5)]
         self._elevation = 0
+        self._mountainosity = 0
 
     @property
     def elevation(self):
         return self._elevation
+
+    @property
+    def mountainosity(self):
+        return min(20.0, self._mountainosity/20.0)
 
     @property
     def thickness(self):

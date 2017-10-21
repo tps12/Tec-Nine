@@ -102,10 +102,14 @@ def rockcolor(tile):
         color = (0, 0, 0)
     return color
 
+def mountaincolor(tile):
+    c = color.elevation(tile)
+    return int(c[0] + tile.mountainosity * (255-c[0])), c[1], c[2]
+
 class PlanetDisplay(QWidget):
     dt = 0.01
 
-    _colorfunctions = [climatecolor, color.value, color.elevation, rockcolor, subductioncolor, thicknesscolor]
+    _colorfunctions = [climatecolor, color.value, color.elevation, mountaincolor, rockcolor, subductioncolor, thicknesscolor]
     
     def __init__(self, sim, selecthandler):
         QWidget.__init__(self)

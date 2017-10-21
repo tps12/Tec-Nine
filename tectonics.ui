@@ -124,6 +124,11 @@
          </item>
          <item>
           <property name="text">
+           <string>Mountains</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>Rock</string>
           </property>
          </item>

@@ -321,12 +321,12 @@ class PlanetSimulation(object):
             if t.subduction > 0:
                 if random.random() < 0.1:
                     t.intrude(igneous.intrusive(max(0, min(1, random.gauss(0.85, 0.15)))))
-                    t.transform(metamorphic.contact(t.substance[1], t.intrusion))
+                    t.transform(metamorphic.contact(t.substance[-1], t.intrusion))
 
         stept.start('applying regional metamorphism')
 
         for t in self.tiles.itervalues():
-            t.transform(metamorphic.regional(t.substance[1], t.subduction > 0))
+            t.transform(metamorphic.regional(t.substance[-1], t.subduction > 0))
 
         for t in self.tiles.itervalues():
             t.cleartemp()
