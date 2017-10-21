@@ -107,8 +107,16 @@ class TerrainSimulation(object):
         # otherwise check in parent
         return [cls.components(f, grid.prev, tiles)]
 
-    def facecomponents(self, f):
-        return self.components(f, self._terrain, self.tiles)
+    @classmethod
+    def interpolate(cls, f, ts):
+        if not hasattr(ts, '__iter__'):
+            return float(f(ts))
+        vs = [cls.interpolate(f, t) for t in ts]
+        return sum(vs)/len(vs)
+
+    def faceelevation(self, f):
+        ts = self.components(f, self._terrain, self.tiles)
+        return self.interpolate(lambda t: t.elevation, ts)
 
     def loaddata(self, data):
         random.setstate(data['random'])
