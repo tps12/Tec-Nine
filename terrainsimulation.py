@@ -13,9 +13,9 @@ from tile import *
 from timing import Timing
 
 class TerrainSimulation(object):
-    def __init__(self, gridsize):
-        self._timing = Timing()
+    _timing = Timing()
 
+    def __init__(self, gridsize):
         initt = self._timing.routine('simulation setup')
 
         initt.start('building grid')
@@ -89,12 +89,14 @@ class TerrainSimulation(object):
     def seafloor():
         return igneous.extrusive(0.5)
 
-    @staticmethod
-    def terrain(grid, tiles):
+    @classmethod
+    def terrain(cls, grid, tiles):
+        subt = cls._timing.routine('subdividing tiles')
         terrain = Grid(Grid(grid))
         for v, t in tiles.iteritems():
             if t.elevation > 0:
                 terrain.populate(v)
+        subt.done()
         return terrain
 
     @classmethod
