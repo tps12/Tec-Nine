@@ -2,13 +2,12 @@ import math
 import random
 import time
 
-from noise import snoise3
-
 from grid import Grid
 from hexadjacency import Adjacency
 from planetdata import Data
 from pointtree import PointTree
 from rock import igneous
+from terrainmethod import terrain, elevation
 from tile import *
 from timing import Timing
 
@@ -34,7 +33,7 @@ class TerrainSimulation(object):
             t.climate = None
             t.candidate = False
 
-        self._terrain = self.terrain(self.grid, self.tiles)
+        self._terrain = terrain(self.grid, self.tiles)
 
         initt.start('building indexes')
         self.shapes = []
@@ -89,53 +88,29 @@ class TerrainSimulation(object):
     def seafloor():
         return igneous.extrusive(0.5)
 
-    @classmethod
-    def terrain(cls, grid, tiles):
-        subt = cls._timing.routine('subdividing tiles')
-        terrain = Grid(Grid(grid))
-        for v, t in tiles.iteritems():
-            if t.elevation > 0:
-                terrain.populate(v)
-        subt.done()
-        return terrain
-
-    @classmethod
-    def components(cls, f, grid, tiles):
-        if f in tiles:
-            # face has a tile, just return it
-            return [[tiles[f]]]
-        if f in grid.vertices:
-            # average adjacent faces
-            return [sum([cls.components(vf, grid, tiles)
-                         for vf in grid.vertices[f]], [])]
-        # otherwise check in parent
-        return [cls.components(f, grid.prev, tiles)]
-
-    @classmethod
-    def interpolate(cls, f, ts):
-        if not hasattr(ts, '__iter__'):
-            return float(f(ts))
-        vs = [cls.interpolate(f, t) for t in ts]
-        return sum(vs)/len(vs)
-
     def faceelevation(self, f):
-        ts = self.components(f, self._terrain, self.tiles)
-        return self.interpolate(lambda t: t.elevation, ts) + self.interpolate(lambda t: t.mountainosity, ts) * snoise3(f[0], f[1], f[2], 7, 0.85)
+        return elevation(f, self._terrain, self.tiles)
 
-    def loaddata(self, data):
+    def loaddata(self, data, loadt):
         random.setstate(data['random'])
+        loadt.start('initializing grid')
         self._initgrid(data['gridsize'])
         self.spin, self.cells, self.tilt = [data[k] for k in ['spin', 'cells', 'tilt']]
         self.tiles = data['tiles']
-        self._terrain = self.terrain(self.grid, self.tiles)
+        loadt.start('subdividing tiles')
+        self._terrain = terrain(self.grid, self.tiles)
         self.shapes = data['shapes']
         self.populated = data['population']
         self.agricultural = data['agricultural']
         self._glaciationt = data['glaciationtime']
+        loadt.start('initializing indexes')
         self.initindexes()
 
     def load(self, filename):
-        self.loaddata(Data.load(filename))
+        loadt = self._timing.routine('loading state')
+        loadt.start('reading file')
+        self.loaddata(Data.load(filename), loadt)
+        loadt.done()
 
     def savedata(self):
         return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True)
