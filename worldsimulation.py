@@ -1,19 +1,8 @@
 from formatpopulation import popstr
 from planetdata import Data
 from planetsimulation import PlanetSimulation
+import populationlevel
 from prehistorysimulation import PrehistorySimulation
-
-def paleopop(k):
-  if k[0] == u'A':
-    return 35
-  return 5
-
-def agrapop(k):
-  if k[0] in u'AC':
-    return 150
-  if k[0] == u'D':
-    return 100
-  return 50
 
 class WorldSimulation(object):
   tecdt = 5
@@ -49,7 +38,7 @@ class WorldSimulation(object):
   @property
   def populated(self):
     if 'populated' in self.sim.__dict__:
-        return {t: (r, (agrapop if r in self.sim.agricultural else paleopop)(t.climate.koeppen))
+        return {t: (r, populationlevel.count(t, r, self.sim.agricultural))
                 for t, r in self.sim.populated.iteritems()}
     return {}
 
