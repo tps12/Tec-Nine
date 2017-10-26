@@ -3,9 +3,15 @@ from noise import snoise3
 from grid import Grid
 
 def terrain(grid, tiles):
-    terrain = Grid(Grid(grid))
+    # first level, populate every land tile
+    terrain = Grid(grid)
     for v, t in tiles.iteritems():
         if t.elevation > 0:
+            terrain.populate(v)
+    # then subdivide that
+    for _ in range(1):
+        terrain = Grid(terrain)
+        for v in list(terrain.prev.faces.keys()):
             terrain.populate(v)
     return terrain
 
