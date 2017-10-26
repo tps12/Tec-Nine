@@ -42,6 +42,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="history">
+     <property name="text">
+      <string>History</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="climate">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">

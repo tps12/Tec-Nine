@@ -27,13 +27,6 @@ def colorscale(v):
          0)
     return r, g, b
 
-def warmscale(v):
-    m = 510
-    r = 255
-    g = v * m if v < 0.5 else 255
-    b = 0 if v < 0.5 else m * (v - 0.5)
-    return r, g, b
-
 def coolscale(v):
     m = 1020
     r = 255 - m * v if v < 0.25 else 0

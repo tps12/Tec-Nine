@@ -9,6 +9,13 @@ def elevationcolor(h):
 def elevation(tile):
     return elevationcolor(tile.elevation)
 
+def warm(v):
+    m = 510
+    r = 255
+    g = v * m if v < 0.5 else 255
+    b = 0 if v < 0.5 else m * (v - 0.5)
+    return r, g, b
+
 def value(tile):
     h, c = tile.elevation, tile.climate
 
