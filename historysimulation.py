@@ -44,6 +44,7 @@ class HistorySimulation(object):
             t.candidate = False
 
         self._terrain = terrain(self.grid, self.tiles)
+        self.terrainchanged = False
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
         self.populated = {}
         self.agricultural = set()
@@ -141,6 +142,7 @@ class HistorySimulation(object):
         self.agricultural = data['agricultural']
         loadt.start('subdividing tiles')
         self._terrain = terrain(self.grid, self.tiles)
+        self.terrainchanged = True
         loadt.start('determining elevation')
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
         loadt.start('determining population')

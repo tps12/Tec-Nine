@@ -22,9 +22,12 @@ class TerrainDisplay(QWidget):
         self._screen.rotate(self._rotate)
 
     def invalidate(self):
-        if self._screen is not None:
+        if self._sim.terrainchanged and self._screen is not None:
             self.layout().removeItem(self.layout().itemAt(0))
-        self._screen = SphereView(self._sim.faces, self)
+            self._screen = None
+            self._sim.terrainchanged = False
+        if self._screen is None:
+            self._screen = SphereView(self._sim.faces, self)
         colors = { v: color.elevation(t) for (v, t) in self._sim.tiles.iteritems() }
         for v in self._sim.faces:
             if v not in colors:

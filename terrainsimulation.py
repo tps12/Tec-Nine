@@ -34,6 +34,7 @@ class TerrainSimulation(object):
             t.candidate = False
 
         self._terrain = terrain(self.grid, self.tiles)
+        self.terrainchanged = False
 
         initt.start('building indexes')
         self.shapes = []
@@ -99,6 +100,7 @@ class TerrainSimulation(object):
         self.tiles = data['tiles']
         loadt.start('subdividing tiles')
         self._terrain = terrain(self.grid, self.tiles)
+        self.terrainchanged = True
         self.shapes = data['shapes']
         self.populated = data['population']
         self.agricultural = data['agricultural']

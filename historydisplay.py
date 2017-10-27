@@ -22,9 +22,12 @@ class HistoryDisplay(QWidget):
         self._screen.rotate(self._rotate)
 
     def invalidate(self):
-        if self._screen is not None:
+        if self._sim.terrainchanged and self._screen is not None:
             self.layout().removeItem(self.layout().itemAt(0))
-        self._screen = SphereView(self._sim.faces, self)
+            self._screen = None
+            self._sim.terrainchanged = False
+        if self._screen is None:
+            self._screen = SphereView(self._sim.faces, self)
         colors = { }
         for f in self._sim.faces:
             if (f in self._sim.tiles and self._sim.tiles[f].elevation == 0) or not self._sim.faceelevation(f):
