@@ -48,6 +48,7 @@ class HistorySimulation(object):
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
         self.populated = {}
         self.agricultural = set()
+        self._capacity = self.capacity(self.grid, self.tiles, self._terrain)
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
 
         initt.start('building indexes')
@@ -80,6 +81,24 @@ class HistorySimulation(object):
     def nearest(self, loc):
         return self._indexedtiles[self._index.nearest(loc)[0]]
 
+    def update(self):
+        stept = self._timing.routine('simulation step')
+
+        stept.start('growing populations')
+        k = 0.25  # pretty arbitrary, aiming for 1% yearly growth
+        grow = lambda p0, K: K/(1 + (K-p0)/p0 * math.exp(-k))
+        for f, ps in self._population.iteritems():
+            if not ps:
+                continue
+            K = self._capacity[f][1 if any([p.heritage in self.agricultural for p in ps]) else 0]
+            oldtotal = sum([p.thousands for p in ps])
+            newtotal = grow(oldtotal, K)
+            m = newtotal/oldtotal
+            for p in ps:
+                p.thousands *= m
+        time.sleep(1)
+        stept.done()
+
     @property
     def grid(self):
         return self._grid
@@ -106,6 +125,26 @@ class HistorySimulation(object):
 
     def facepopulation(self, f):
         return sum([p.thousands for p in self._population[f]]) if f in self._population else 0
+
+    @staticmethod
+    def capacity(grid, tiles, terrain):
+        capacity = {}
+        for f in terrain.faces:
+            if f in grid.vertices:
+                # face is a vertex of the coarse grid, gets average of three faces
+                capacity[f] = tuple([sum([fn(tiles[pf].climate.koeppen) for pf in grid.vertices[f]])/27.0
+                                     for fn in populationlevel.paleolithic, populationlevel.withagriculture])
+            else:
+                # fully contained by coarse face
+                if f in grid.faces:
+                    t = tiles[f]
+                else:
+                    # edge face, is a vertex of parent grid, between three faces, exactly one of which
+                    # is also in the coarse grid
+                    t = tiles[[pf for pf in terrain.prev.vertices[f] if pf in grid.faces][0]]
+                capacity[f] = tuple([fn(t.climate.koeppen)/9.0
+                                     for fn in populationlevel.paleolithic, populationlevel.withagriculture])
+        return capacity
 
     @staticmethod
     def population(grid, tiles, terrain, populated, agricultural):
@@ -145,6 +184,8 @@ class HistorySimulation(object):
         self.terrainchanged = True
         loadt.start('determining elevation')
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
+        loadt.start('determining carrying capacities')
+        self._capacity = self.capacity(self.grid, self.tiles, self._terrain)
         loadt.start('determining population')
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
         self._glaciationt = data['glaciationtime']
