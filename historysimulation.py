@@ -123,6 +123,10 @@ class HistorySimulation(object):
     def faceelevation(self, f):
         return self._elevation[f] if f in self._elevation else 0
 
+    def facecapacity(self, f):
+        return (self._capacity[f][1 if any([p.heritage in self.agricultural for p in self._population[f]]) else 0]
+                if f in self._capacity and f in self._population else 0)
+
     def facepopulation(self, f):
         return sum([p.thousands for p in self._population[f]]) if f in self._population else 0
 

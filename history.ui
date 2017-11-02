@@ -62,6 +62,26 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QComboBox" name="aspect">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
+         </property>
+         <item>
+          <property name="text">
+           <string>Population</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Capacity</string>
+          </property>
+         </item>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>

@@ -30,12 +30,21 @@ class HistoryPresenter(object):
         self._view.rotate.setValue(self._display.rotate)
         self._view.rotate.sliderMoved.connect(self.rotate)
 
+        self._view.aspect.setCurrentIndex(self._display.aspect)
+        self._view.aspect.currentIndexChanged[int].connect(self.aspect)
+
         self._view.pause.setVisible(False)
 
         self._uistack = uistack
 
     def rotate(self, value):
         self._display.rotate = value
+        self._view.content.update()
+
+    def aspect(self, value):
+        if self._model is None: return
+        self._display.aspect = value
+        self._display.invalidate()
         self._view.content.update()
 
     def load(self):
