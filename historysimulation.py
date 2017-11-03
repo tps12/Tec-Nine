@@ -44,6 +44,7 @@ class HistorySimulation(object):
             t.candidate = False
 
         self._terrain = terrain(self.grid, self.tiles)
+        self._terrainadj = Adjacency(self._terrain)
         self.terrainchanged = False
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
         self.populated = {}
@@ -85,18 +86,43 @@ class HistorySimulation(object):
         stept = self._timing.routine('simulation step')
 
         stept.start('growing populations')
-        k = 0.25  # pretty arbitrary, aiming for 1% yearly growth
-        grow = lambda p0, K: K/(1 + (K-p0)/p0 * math.exp(-k))
+        grow = lambda p0, K: K/(1 + (K-p0)/p0 * math.exp(-0.25)) # k=0.25 pretty arbitrary, aiming for 1% yearly growth
+        deltas = {}
         for f, ps in self._population.iteritems():
-            if not ps:
-                continue
-            K = self._capacity[f][1 if any([p.heritage in self.agricultural for p in ps]) else 0]
-            oldtotal = sum([p.thousands for p in ps])
-            newtotal = grow(oldtotal, K)
-            m = newtotal/oldtotal
             for p in ps:
-                p.thousands *= m
-        time.sleep(1)
+                neighborhood = [f] + [n for n in self._terrainadj[f] if n in self._elevation and self._elevation[n]]
+                capacities = [self._capacity[n][1 if p.heritage in self.agricultural else 0] for n in neighborhood]
+                pops = [sum([np.thousands for np in self._population[n]]) for n in neighborhood]
+                delta = grow(p.thousands, max(0, sum(capacities) - sum(pops)) + capacities[0]) - p.thousands
+                if delta < 0:
+                    continue
+                spaces = [(sum(pops) - pop)/float(sum(pops)) for pop in pops]
+                for i in range(len(spaces)):
+                    if spaces[i] > 0:
+                        share = delta * spaces[i]
+                        n = neighborhood[i]
+                        if n not in deltas:
+                            deltas[n] = []
+                        for dp in deltas[n]:
+                            if dp.heritage is p.heritage:
+                                dp.thousands += share
+                                break
+                        else:
+                            deltas[n].append(Population(p.heritage, share))
+
+        stept.start('assigning growth values')
+        for f, dps in deltas.iteritems():
+            if f not in self._population:
+                self._population[f] = []
+            ps = self._population[f]
+            for dp in dps:
+                for p in ps:
+                    if p.heritage is dp.heritage:
+                        p.thousands += dp.thousands
+                        break
+                else:
+                    ps.append(dp)
+
         stept.done()
 
     @property
@@ -185,6 +211,7 @@ class HistorySimulation(object):
         self.agricultural = data['agricultural']
         loadt.start('subdividing tiles')
         self._terrain = terrain(self.grid, self.tiles)
+        self._terrainadj = Adjacency(self._terrain)
         self.terrainchanged = True
         loadt.start('determining elevation')
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
