@@ -1,5 +1,7 @@
 from cPickle import dump, load
 
+from grid import Grid
+
 class Adjacency(object):
     CACHE = '.adj.hex.{0}.pickle'
 
@@ -11,6 +13,13 @@ class Adjacency(object):
                 self._adj = load(f)
         except Exception as er:
             print 'Cached adjacency list failed:', repr(er)
+
+            size = grid.size
+            grid = Grid()
+            while grid.size != size:
+                grid = Grid(grid)
+                grid.populate()
+
             self._adj = {}
 
             for face in grid.faces:
