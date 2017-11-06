@@ -7,6 +7,9 @@ from hexadjacency import Adjacency
 from planetdata import Data
 from pointtree import PointTree
 import populationlevel
+import populationmethod
+import riversmethod
+from prehistorysimulation import PrehistorySimulation
 from rock import igneous
 from terrainmethod import terrain, elevation
 from tile import *
@@ -22,6 +25,10 @@ class Population(object):
         self.thousands = thousands
 
 class HistorySimulation(object):
+    coastprox = PrehistorySimulation.coastprox
+    minriverelev = PrehistorySimulation.minriverelev
+    minriverprecip = PrehistorySimulation.minriverprecip
+
     _timing = Timing()
 
     def __init__(self, gridsize):
@@ -49,14 +56,15 @@ class HistorySimulation(object):
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
         self.populated = {}
         self.agricultural = set()
-        self._capacity = self.capacity(self.grid, self.tiles, self._terrain)
-        self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
 
         initt.start('building indexes')
         self.shapes = []
         self.adj = Adjacency(self._grid)
         self._glaciationt = 0
         self.initindexes()
+
+        self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj)
+        self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
 
         initt.done()
 
@@ -93,7 +101,8 @@ class HistorySimulation(object):
                 neighborhood = [f] + [n for n in self._terrainadj[f] if n in self._elevation and self._elevation[n]]
                 capacities = [self._capacity[n][1 if p.heritage in self.agricultural else 0] for n in neighborhood]
                 pops = [sum([np.thousands for np in self._population[n]]) for n in neighborhood]
-                delta = grow(p.thousands, max(0, sum(capacities) - sum(pops)) + capacities[0]) - p.thousands
+                K = max(0, sum(capacities) - sum(pops)) + capacities[0]
+                delta = grow(p.thousands, K) - p.thousands if K > 0 else 0
                 if delta < 0:
                     continue
                 spaces = [(sum(pops) - pop)/float(sum(pops)) for pop in pops]
@@ -122,6 +131,11 @@ class HistorySimulation(object):
                         break
                 else:
                     ps.append(dp)
+
+        stept.start('removing empty populations')
+        for ps in self._population.itervalues():
+            for i in [i for i in reversed(range(len(ps))) if not ps[i].thousands]:
+                del ps[i]
 
         stept.done()
 
@@ -156,14 +170,27 @@ class HistorySimulation(object):
     def facepopulation(self, f):
         return sum([p.thousands for p in self._population[f]]) if f in self._population else 0
 
-    @staticmethod
-    def capacity(grid, tiles, terrain):
+    @classmethod
+    def paleocapacity(cls, t, adj, rivers):
+        if populationmethod.squattable(t, adj, cls.coastprox, rivers):
+            return populationlevel.paleolithic(t.climate.koeppen)
+        return 0
+
+    @classmethod
+    def agracapacity(cls, t, _, _2):
+        if populationmethod.farmable(t):
+            return populationlevel.withagriculture(t.climate.koeppen)
+        return 0
+
+    @classmethod
+    def capacity(cls, grid, tiles, terrain, adj):
+        rivers = riversmethod.run(tiles.values(), adj, cls.minriverelev, cls.minriverprecip)
         capacity = {}
         for f in terrain.faces:
             if f in grid.vertices:
                 # face is a vertex of the coarse grid, gets average of three faces
-                capacity[f] = tuple([sum([fn(tiles[pf].climate.koeppen) for pf in grid.vertices[f]])/27.0
-                                     for fn in populationlevel.paleolithic, populationlevel.withagriculture])
+                capacity[f] = tuple([sum([fn(tiles[pf], adj, rivers) for pf in grid.vertices[f]])/27.0
+                                     for fn in cls.paleocapacity, cls.agracapacity])
             else:
                 # fully contained by coarse face
                 if f in grid.faces:
@@ -172,8 +199,8 @@ class HistorySimulation(object):
                     # edge face, is a vertex of parent grid, between three faces, exactly one of which
                     # is also in the coarse grid
                     t = tiles[[pf for pf in terrain.prev.vertices[f] if pf in grid.faces][0]]
-                capacity[f] = tuple([fn(t.climate.koeppen)/9.0
-                                     for fn in populationlevel.paleolithic, populationlevel.withagriculture])
+                capacity[f] = tuple([fn(t, adj, rivers)/9.0
+                                     for fn in cls.paleocapacity, cls.agracapacity])
         return capacity
 
     @staticmethod
@@ -215,13 +242,13 @@ class HistorySimulation(object):
         self.terrainchanged = True
         loadt.start('determining elevation')
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
+        loadt.start('initializing indexes')
+        self.initindexes()
         loadt.start('determining carrying capacities')
-        self._capacity = self.capacity(self.grid, self.tiles, self._terrain)
+        self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj)
         loadt.start('determining population')
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
         self._glaciationt = data['glaciationtime']
-        loadt.start('initializing indexes')
-        self.initindexes()
 
     def load(self, filename):
         loadt = self._timing.routine('loading state')

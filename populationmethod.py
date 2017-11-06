@@ -38,6 +38,10 @@ def farmable(t):
     # Habitable + tropical monsoon and steppe
     return t.elevation > 0 and (t.climate.koeppen in (u'Am', u'Aw', u'BS') or t.climate.koeppen[0] in u'CD')
 
+def squattable(t, adj, coastalproximity, rivers):
+    return ((nearcoast(t, adj, coastalproximity) and habitable(t)) or  # Coastal habitat
+            any([t in r for r in rivers]))  # Elsewhere near river
+
 def expandpopulation(rivers, adj, populated, agricultural, travelrange, coastalproximity, cmemo):
     def candidate(t, farms):
         if t in cmemo:
@@ -45,8 +49,7 @@ def expandpopulation(rivers, adj, populated, agricultural, travelrange, coastalp
         if farms:
             val = farmable(t)
         else:
-            val = ((nearcoast(t, adj, coastalproximity) and habitable(t)) or  # Coastal habitat
-                   any([t in r for r in rivers]))  # Elsewhere near river
+            val = squattable(t, adj, coastalproximity, rivers)
         cmemo[t] = val
         return val
     frontier = {}

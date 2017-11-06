@@ -33,6 +33,8 @@ class PrehistorySimulation(object):
     range = 6
     seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5]
     mean_temprange = (-25.0, 50.0)
+    minriverelev = 5
+    minriverprecip = 0.5
     glaciationstep = 16
     anthroglacial = 6
 
@@ -126,7 +128,7 @@ class PrehistorySimulation(object):
             self.populated = eden(self.tiles, self._tileadj, self.newrace())
 
         stept.start('running rivers')
-        rivers = run(self.tiles.values(), self._tileadj, 5, 0.5)
+        rivers = run(self.tiles.values(), self._tileadj, self.minriverelev, self.minriverprecip)
 
         stept.start('sparking agriculture')
         gfactor = math.pow(glaciation, 2)  # Agriculture more likely in interglacial period
