@@ -15,10 +15,6 @@ from terrainmethod import terrain, elevation
 from tile import *
 from timing import Timing
 
-# _terrain: +2 grid
-# _population: +2 face -> people (heritage and count)
-# TODO _elevation: +2 face -> elevation value (s/b mountainosity?)
-
 class Population(object):
     def __init__(self, heritage, thousands):
         self.heritage = heritage
