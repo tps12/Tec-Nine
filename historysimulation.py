@@ -186,10 +186,12 @@ class HistorySimulation(object):
     def capacity(cls, grid, tiles, terrain, adj):
         rivers = riversmethod.run(tiles.values(), adj, cls.minriverelev, cls.minriverprecip)
         capacity = {}
+        coast = set()
         for f in terrain.faces:
             if f in grid.vertices:
-                # face is a vertex of the coarse grid, gets average of three faces
-                capacity[f] = tuple([sum([fn(tiles[pf], adj, rivers) for pf in grid.vertices[f]])/27.0
+                # face is a vertex of the coarse grid, gets average of three elevated faces
+                pfs = [pf for pf in grid.vertices[f] if tiles[pf].elevation]
+                capacity[f] = tuple([sum([fn(tiles[pf], adj, rivers) for pf in pfs])/(9.0 * len(pfs))
                                      for fn in cls.paleocapacity, cls.agracapacity])
             else:
                 # fully contained by coarse face
@@ -199,8 +201,19 @@ class HistorySimulation(object):
                     # edge face, is a vertex of parent grid, between three faces, exactly one of which
                     # is also in the coarse grid
                     t = tiles[[pf for pf in terrain.prev.vertices[f] if pf in grid.faces][0]]
+                    if not t.elevation:
+                        # parent is underwater, leave it for later
+                        coast.add(f)
+                        continue
                 capacity[f] = tuple([fn(t, adj, rivers)/9.0
                                      for fn in cls.paleocapacity, cls.agracapacity])
+
+        # now fill in the coastal tiles we skipped with the average values of their neighbors
+        tadj = Adjacency(terrain)
+        for f in coast:
+            ns = [n for n in tadj[f] if n in capacity and capacity[n] != (0, 0)]
+            capacity[f] = tuple([sum([capacity[n][i] for n in ns])/float(len(ns)) for i in range(2)]) if len(ns) else (0, 0)
+
         return capacity
 
     @staticmethod
