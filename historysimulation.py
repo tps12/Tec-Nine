@@ -213,7 +213,14 @@ class HistorySimulation(object):
                 for t in [tiles[pf] for pf in grid.vertices[f]]:
                     if t in populated:
                         r = populated[t]
-                        population[f].append(Population(r, populationlevel.count(t, r, agricultural)/27.0))
+                        n = populationlevel.count(t, r, agricultural)/27.0
+                        ps = population[f]
+                        for p in ps:
+                            if p.heritage is r:
+                                p.thousands += n
+                                break
+                        else:
+                            ps.append(Population(r, n))
             else:
                 # fully contained by coarse face, gets a full share (1/9) of population
                 if f in grid.faces:
@@ -224,7 +231,14 @@ class HistorySimulation(object):
                     t = tiles[[pf for pf in terrain.prev.vertices[f] if pf in grid.faces][0]]
                 if t in populated:
                     r = populated[t]
-                    population[f].append(Population(r, populationlevel.count(t, r, agricultural)/9.0))
+                    n = populationlevel.count(t, r, agricultural)/9.0
+                    ps = population[f]
+                    for p in ps:
+                        if p.heritage is r:
+                            p.thousands += n
+                            break
+                    else:
+                        ps.append(Population(r, n))
         return population
 
     def loaddata(self, data, loadt):
