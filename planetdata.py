@@ -9,7 +9,7 @@ class Data(object):
 
     @classmethod
     def loaddata(cls, data):
-        if 'version' not in data or data['version'] < 15:
+        if 'version' not in data or data['version'] < 16:
                 raise ValueError('File version is too old')
 
         races, agricultural = cls._population(data['races'], data['racenames'], data['agriculturalraces'], data['tiles'].iteritems())
@@ -33,7 +33,7 @@ class Data(object):
     def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet):
         tileindex = cls._index(tiles)
         rs, rnames, rindex, ags = cls._raceagindices(population, agricultural)
-        return {'version': 15,
+        return {'version': 16,
                 'random': random,
                 'gridsize': gridsize,
                 'stage': stage,
@@ -52,6 +52,7 @@ class Data(object):
                                           'koeppen': t.climate.koeppen,
                                           'life': t.climate.life }
                                         if t.climate is not None else None,
+                             'seasons': t.seasons if t.seasons is not None else None,
                              'race': rs.index(population[t]) if t in population else None }
                            for v,t in tiles.iteritems()},
                 'shapes': [([tileindex[t.vector] for t in s.tiles], s.v) for s in shapes],
@@ -85,6 +86,7 @@ class Data(object):
                                     data['climate']['life'])
         else:
             t.climate = None
+        t.seasons = data['seasons'] if data['seasons'] is not None else None
         return t
 
     @classmethod

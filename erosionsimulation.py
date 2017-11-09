@@ -32,7 +32,7 @@ class ErosionSimulation(object):
 
         for t in self.tiles.itervalues():
             t.eroding = Erosion()
-            t.climate = None
+            t.climate = t.seasons = None
 
         self.adj = Adjacency(self._grid)
 
@@ -47,6 +47,7 @@ class ErosionSimulation(object):
 
         for v, tiles in self.tiles.iteritems():
             self.tiles[v].climate = c[v]['classification']
+            self.tiles[v].seasons = c[v]['seasons']
 
         erosion = erode(self.tiles, self.adj)
 

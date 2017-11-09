@@ -120,7 +120,7 @@ class PlanetSimulation(object):
                 t.emptyocean(self.seafloor())
 
         for t in self.tiles.itervalues():
-            t.climate = None
+            t.climate = t.seasons = None
 
         initt.done()
 
@@ -279,6 +279,7 @@ class PlanetSimulation(object):
 
             for v, tile in self.tiles.iteritems():
                 tile.climate = c[v]['classification']
+                tile.seasons = c[v]['seasons']
 
             stept.start('determining erosion')
 

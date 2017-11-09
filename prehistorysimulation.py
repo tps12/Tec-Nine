@@ -58,7 +58,7 @@ class PrehistorySimulation(object):
 
         for t in self.tiles.itervalues():
             t.emptyocean(self.seafloor())
-            t.climate = None
+            t.climate = t.seasons = None
             t.candidate = False
 
         initt.start('building indexes')
@@ -111,6 +111,7 @@ class PrehistorySimulation(object):
         c = climate(self.tiles, self.adj, self.seasons, self.cells, self.spin, self.tilt, temprange, glaciation, True, {})
         for v, tile in self.tiles.iteritems():
             tile.climate = c[v]['classification']
+            tile.seasons = c[v]['seasons']
             if not habitable(tile) and tile in self.populated:
                 del self.populated[tile]
 

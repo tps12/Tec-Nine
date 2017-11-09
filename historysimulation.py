@@ -43,7 +43,7 @@ class HistorySimulation(object):
 
         for t in self.tiles.itervalues():
             t.emptyocean(self.seafloor())
-            t.climate = None
+            t.climate = t.seasons = None
             t.candidate = False
 
         self._terrain = terrain(self.grid, self.tiles)
