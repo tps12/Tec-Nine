@@ -31,6 +31,18 @@ class Species(object):
         self.name = name
         self.habitats = biomesandmigrations
 
+    def maxrange(self):
+        r = set()
+        for h in self.habitats:
+            if hasattr(h, 'faces'):
+                r |= h.faces
+            elif hasattr(h, 'seasons'):
+                r |= h.region.faces
+            elif hasattr(h, 'first'):
+                r |= h.first.region.faces
+                r |= h.second.region.faces
+        return r
+
     def seasons(self, f):
         for h in self.habitats:
             if hasattr(h, 'faces'):

@@ -19,7 +19,7 @@ def colorscale(v):
     return r, g, b
 
 def lifepop(pops, indices, f, i, c):
-    pop = sum([(len(pops[t].faces[f].data[i]) if f in pops[t].faces else 0) for t in indices])
+    pop = sum([(len(pops[t][f][i]) if f in pops[t] else 0) for t in indices])
     return colorscale(pop/(len(indices) * 100.0)) if pop else c
 
 class LifeformsDisplay(QWidget):

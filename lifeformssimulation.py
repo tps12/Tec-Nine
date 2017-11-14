@@ -134,33 +134,19 @@ class LifeformsSimulation(object):
         self._species = None
         timing.done()
 
-    class Face(object):
-        def __init__(self):
-            self.data = [set() for _ in range(8)]
-
-        def addspecies(self, species, season):
-            self.data[season].add(species)
-
-    class Population(object):
-        def __init__(self, tiles):
-            self.faces = {f: LifeformsSimulation.Face() for f in tiles}
-
     def species(self):
         if not self._species:
             timing = self._timing.routine('indexing species')
             types = self.fauna, self.plants, self.trees
-            pops = [self.Population(self.tiles) for _ in types]
-            cp = len(self.tiles)/10
-            cpi = 0
-            for f in self.tiles:
-                for t in range(len(types)):
-                    for s in types[t]:
+            pops = [{} for _ in types]
+            for t in range(len(types)):
+                p = pops[t]
+                for s in types[t]:
+                    for f in s.maxrange():
                         for i in s.seasons(f):
-                            pops[t].faces[f].addspecies(s, i)
-                cpi += 1
-                if cpi > cp:
-                    timing.start('.')
-                    cpi = 0
+                            if f not in p:
+                                p[f] = [set() for _ in range(8)]
+                            p[f][i].add(s)
             self._species = pops
             timing.done()
         return self._species
