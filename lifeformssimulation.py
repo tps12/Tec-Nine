@@ -142,10 +142,10 @@ class LifeformsSimulation(object):
             for t in range(len(types)):
                 p = pops[t]
                 for s in types[t]:
-                    for f, ss in s.seasonalrange().iteritems():
+                    for f, ss in s.seasonalrange(len(self.seasons)).iteritems():
                         for i in ss:
                             if f not in p:
-                                p[f] = [set() for _ in range(8)]
+                                p[f] = [set() for _ in self.seasons]
                             p[f][i].add(s)
             self._species = pops
             timing.done()

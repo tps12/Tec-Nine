@@ -31,12 +31,12 @@ class Species(object):
         self.name = name
         self.habitats = biomesandmigrations
 
-    def seasonalrange(self):
+    def seasonalrange(self, numseasons):
         r = {}
         for h in self.habitats:
             if hasattr(h, 'faces'):
                 for f in h.faces:
-                    r[f] = range(8)
+                    r[f] = range(numseasons)
             elif hasattr(h, 'seasons'):
                 for f in h.region.faces:
                     r[f] = h.seasons
