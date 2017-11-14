@@ -31,34 +31,24 @@ class Species(object):
         self.name = name
         self.habitats = biomesandmigrations
 
-    def maxrange(self):
-        r = set()
+    def seasonalrange(self):
+        r = {}
         for h in self.habitats:
             if hasattr(h, 'faces'):
-                r |= h.faces
+                for f in h.faces:
+                    r[f] = range(8)
             elif hasattr(h, 'seasons'):
-                r |= h.region.faces
+                for f in h.region.faces:
+                    r[f] = h.seasons
             elif hasattr(h, 'first'):
-                r |= h.first.region.faces
-                r |= h.second.region.faces
+                for f in h.first.region.faces:
+                    r[f] = h.first.seasons
+                for f in h.second.region.faces:
+                    if f in r:
+                        r[f] = sorted(list(set(list(r[f]) + list(h.second.seasons))))
+                    else:
+                        r[f] = h.second.seasons
         return r
-
-    def seasons(self, f):
-        for h in self.habitats:
-            if hasattr(h, 'faces'):
-                if f in h.faces:
-                    return range(8)
-            elif hasattr(h, 'seasons'):
-                if f in h.region.faces:
-                    return h.seasons
-            elif hasattr(h, 'first'):
-                if f in h.first.region.faces:
-                    if f in h.second.region.faces:
-                        return sorted(list(set(h.first.seasons + h.second.seasons)))
-                    return h.first.seasons
-                if f in h.second.region.faces:
-                    return h.second.seasons
-        return []
 
 def findregions(tiles, adj, params):
     rs = {}

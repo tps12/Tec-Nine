@@ -142,8 +142,8 @@ class LifeformsSimulation(object):
             for t in range(len(types)):
                 p = pops[t]
                 for s in types[t]:
-                    for f in s.maxrange():
-                        for i in s.seasons(f):
+                    for f, ss in s.seasonalrange().iteritems():
+                        for i in ss:
                             if f not in p:
                                 p[f] = [set() for _ in range(8)]
                             p[f][i].add(s)
