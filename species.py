@@ -11,14 +11,27 @@ class ClimateParams(object):
                                                             ('precipitation', self.preciprange),
                                                             ('insolation', self.lightrange)])
 
+def mergeseasons(r, f, ss):
+    if f in r:
+        r[f] = sorted(list(set(r[f] + ss)))
+    else:
+        r[f] = ss
+
 class Region(object):
     def __init__(self, fs):
         self.faces = fs
+
+    def populateseasonalrange(self, r, default):
+        for f in self.faces:
+            mergeseasons(r, f, default)
 
 class Seasonal(object):
     def __init__(self, r, ss):
         self.region = r
         self.seasons = ss
+
+    def populateseasonalrange(self, r, _):
+        self.region.populateseasonalrange(r, list(self.seasons))
 
 # Composed of two Seasonal regions
 class MigrationPattern(object):
@@ -26,28 +39,20 @@ class MigrationPattern(object):
         self.first = r1
         self.second = r2
 
+    def populateseasonalrange(self, r, _):
+        self.first.populateseasonalrange(r, _)
+        self.second.populateseasonalrange(r, _)
+
 class Species(object):
     def __init__(self, name, biomesandmigrations):
         self.name = name
         self.habitats = biomesandmigrations
 
     def seasonalrange(self, numseasons):
+        default = range(numseasons)
         r = {}
         for h in self.habitats:
-            if hasattr(h, 'faces'):
-                for f in h.faces:
-                    r[f] = range(numseasons)
-            elif hasattr(h, 'seasons'):
-                for f in h.region.faces:
-                    r[f] = h.seasons
-            elif hasattr(h, 'first'):
-                for f in h.first.region.faces:
-                    r[f] = h.first.seasons
-                for f in h.second.region.faces:
-                    if f in r:
-                        r[f] = sorted(list(set(list(r[f]) + list(h.second.seasons))))
-                    else:
-                        r[f] = h.second.seasons
+            h.populateseasonalrange(r, default)
         return r
 
 def findregions(tiles, adj, params):
