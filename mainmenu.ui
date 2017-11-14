@@ -83,6 +83,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="lifeforms">
+     <property name="text">
+      <string>Flora and Fauna</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="racination">
      <property name="text">
       <string>Racination</string>

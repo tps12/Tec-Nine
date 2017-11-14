@@ -2,7 +2,7 @@ import math
 import random
 import time
 
-from climatemethod import climate
+from climatemethod import climate, temprange
 from grid import Grid
 from hexadjacency import Adjacency
 from language import output
@@ -106,9 +106,7 @@ class PrehistorySimulation(object):
 
         stept.start('iterating climate')
         glaciation = 0.5 - math.cos(self._glaciationt*math.pi/self.glaciationstep)/2
-        dtemp = 5 * (glaciation / 0.5)
-        temprange = (self.mean_temprange[0] + dtemp, self.mean_temprange[1] + dtemp)
-        c = climate(self.tiles, self.adj, self.seasons, self.cells, self.spin, self.tilt, temprange, glaciation, True, {})
+        c = climate(self.tiles, self.adj, self.seasons, self.cells, self.spin, self.tilt, temprange(self.mean_temprange, glaciation), glaciation, True, {})
         for v, tile in self.tiles.iteritems():
             tile.climate = c[v]['classification']
             tile.seasons = c[v]['seasons']

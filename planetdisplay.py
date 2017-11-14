@@ -12,21 +12,6 @@ def redbluescale(v):
     b = 255 * v
     return r, 0, b
 
-def colorscale(v):
-    m = 1275
-    r = (255 - m * v if v < 0.2 else
-         0 if v < 0.6 else
-         m * (v - 0.6) if v < 0.8 else
-         255)
-    g = (0 if v < 0.2 else
-         m * (v - 0.2) if v < 0.4 else
-         255 if v < 0.8 else
-         255 - m * (v - 0.8))
-    b = (255 if v < 0.4 else
-         255 - m * (v - 0.4) if v < 0.6 else
-         0)
-    return r, g, b
-
 def coolscale(v):
     m = 1020
     r = 255 - m * v if v < 0.25 else 0

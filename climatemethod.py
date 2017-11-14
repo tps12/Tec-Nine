@@ -294,6 +294,10 @@ class Climate(object):
         if d or t or c or s or p:
             self._profile.runcall(self.resetclimate, d, t, c, s, p)
 
+def temprange(mean_temprange, glaciation):
+    dtemp = 5 * (glaciation / 0.5)
+    return mean_temprange[0] + dtemp, mean_temprange[1] + dtemp
+
 def climate(tiles, adjacency, seasons, cells, spin, tilt, temprange, glaciation, life, tilemappings, profile = None):
     c = Climate(tiles, adjacency, cells, glaciation, spin, tilt, profile)
 

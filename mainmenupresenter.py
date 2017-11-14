@@ -1,6 +1,7 @@
 from climate import Climate
 from erosion import Erosion
 from history import History
+from lifeforms import Lifeforms
 from options import Options
 from population import Population
 from prehistory import Prehistory
@@ -23,6 +24,7 @@ class MainMenuPresenter(object):
         self._view.rivers.clicked.connect(self.rivers)
         self._view.erosion.clicked.connect(self.erosion)
         self._view.population.clicked.connect(self.population)
+        self._view.lifeforms.clicked.connect(self.lifeforms)
         self._view.racination.clicked.connect(self.racination)
         self._view.prehistory.clicked.connect(self.prehistory)
         self._view.split.clicked.connect(self.split)
@@ -57,6 +59,9 @@ class MainMenuPresenter(object):
 
     def population(self):
         self._uistack.push(Population(self._uistack))
+
+    def lifeforms(self):
+        self._uistack.push(Lifeforms(self._uistack))
 
     def racination(self):
         self._uistack.push(Racination(self._uistack))
