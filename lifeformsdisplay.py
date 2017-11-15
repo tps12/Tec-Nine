@@ -26,13 +26,13 @@ def lifepop(pops, indices, f, i, c):
     return colorscale(pop/(len(indices) * 100.0)) if pop else c
 
 class LifeformsDisplay(QWidget):
-    _indices = [
+    attributeindices = [
         (0,1,2), # life
         (0,), # animals
         (1,), #plants
         (2,)] #trees
 
-    def __init__(self, sim):
+    def __init__(self, sim, selecthandler):
         QWidget.__init__(self)
         self._sim = sim
         self._screen = None
@@ -40,6 +40,8 @@ class LifeformsDisplay(QWidget):
         self.shownattribute = 0
         self.season = 0
         self.glaciation = 0.5
+        self._select = selecthandler
+        self.selected = None
         self.setLayout(QGridLayout())
         self.invalidate()
 
@@ -52,12 +54,17 @@ class LifeformsDisplay(QWidget):
         self._rotate = value
         self._screen.rotate(self._rotate)
 
+    def select(self, x, y, z):
+        self.selected = self._sim.nearest((z,-x,y)) if abs(z) < 2 else None
+        self._select(self.selected)
+
     def invalidate(self):
         if self._screen is None:
             self._screen = SphereView(self._sim.grid.faces, self)
+            self._screen.clicked.connect(self.select)
         pops = self._sim.species()
-        indices = self._indices[self.shownattribute]
+        indices = self.attributeindices[self.shownattribute]
         fn = lambda v, c: lifepop(pops, indices, v, self.season, c)
-        self._screen.usecolors({ v: fn(v, snoworrock(t)) for v, t in self._sim.tiles.iteritems() })
+        self._screen.usecolors({ v: (255,0,0) if t is self.selected else fn(v, snoworrock(t)) for v, t in self._sim.tiles.iteritems() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)
