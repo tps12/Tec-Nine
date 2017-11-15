@@ -1,0 +1,231 @@
+abaca
+alfalfa
+almond
+anise
+apple
+apricot
+arracha
+arrowroot
+artichoke
+asparagus
+avocado
+bajra
+bambara groundnut
+banana
+barley
+beans
+bell pepper
+bergamot
+betel nut
+bitter orange
+black pepper
+black wattle
+blackberries
+blueberry
+brazil nut
+breadfruit
+broad bean
+broccoli
+broom millet
+broom sorghum
+brussels sprouts
+buckwheat
+cacao
+cantaloupe
+caraway seeds
+cardamom
+cardoon
+carob
+carrot
+cashew nuts
+cassava
+castor bean
+cauliflower
+celeriac
+celery
+chayote
+cherry
+chestnut
+chickpea
+chicory
+chili
+cinnamon
+citron
+citronella
+clementine
+clove
+clover
+coconut
+cocoyam
+coffee
+cola nut
+colza
+cotton
+cowpea
+cranberry
+cress
+cucumber
+currants
+custard apple
+dasheen
+dates
+drumstick tree
+durra
+durum wheat
+earth pea
+edo
+eggplant
+endive
+fennel
+fenugreek
+fig
+fique
+flax
+formio
+garlic
+geranium
+ginger
+gooseberry
+gourd
+grape
+grapefruit
+grass esparto
+guava
+guinea corn
+hazelnut
+hemp
+henequen
+henna
+hop
+horse bean
+horseradish
+indigo
+jasmine
+jerusalem artichoke
+jowar
+jute
+kale
+kapok
+kenaf
+kohlrabi
+lavender
+leek
+lemon
+lemon grass
+lentil
+lespedeza
+lettuce
+lime
+liquorice
+litchi
+loquat
+lupine
+macadamia
+mace
+maguey
+maize
+mandarin
+mangel
+mango
+medlar
+melon
+millet
+mint
+mulberry
+mushrooms
+mustard
+nectarine
+niger seed
+nutmeg
+oats
+okra
+olive
+onion
+opium
+orange
+palm
+papaya
+parsnip
+pea
+peach
+peanut
+pear
+pecan
+pepper
+persimmon
+pigeon pea
+pineapple
+pistachio
+plantain
+plum
+pomegranate
+pomelo
+poppy
+potato
+prune
+pumpkin
+pyrethum
+quebracho
+quince
+quinine
+quinoa
+radish
+ramie
+raspberry
+red beet
+red cabbage
+redtop
+rhea
+rhubarb
+rice
+rose
+rubber
+rutabaga
+rye
+safflower
+sago
+sainfoin
+salsify
+sapodilla
+satsuma
+savoy cabbage
+scorzonera
+sesame
+shea
+sisal
+sorghum
+soybean
+spelt wheat
+spinach
+squash
+strawberry
+sugar beet
+sugarcane
+sunhemp
+swede
+sweet corn
+sweet lime
+sweet pepper
+sweet potato
+sweet sorghum
+tangerine
+tannia
+taro
+tea
+tef
+timothy
+tobacco
+tomato
+trefoil
+triticale
+tung
+turnip
+urena
+vanilla
+vetch
+walnut
+watermelon
+wheat
+white cabbage
+yam
+yerba mate

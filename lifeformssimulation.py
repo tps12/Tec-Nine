@@ -1,3 +1,4 @@
+import codecs
 from math import pi
 import random
 
@@ -102,7 +103,7 @@ class LifeformsSimulation(object):
         self.classify()
 
         for (name, pop, ranges, strats) in [
-                ('fauna', self.fauna,
+                ('animals', self.fauna,
                  (((.4,.1), (.6,.1)), ((.25,.1), (.95,.1)), ((.1,.1), (.95,.1))),
                  [species.findregions, species.findhibernationregions, species.findmigratorypatterns]),
                 ('plants', self.plants,
@@ -113,8 +114,9 @@ class LifeformsSimulation(object):
                  [species.findseasonalregions])]:
             timing.start('settling {}'.format(name))
             del pop[:]
-            for _ in range(100):
-                self.populatefromparams(pop, '{} {}'.format(name, _), self.randomparams(*ranges), self.tiles, self.adj, strats)
+            with codecs.open('{}.txt'.format(name), 'r', 'utf-8') as f:
+                for line in f.readlines():
+                    self.populatefromparams(pop, line.strip(), self.randomparams(*ranges), self.tiles, self.adj, strats)
             print '{} species of {}'.format(len(pop), name)
 
         self._species = None
