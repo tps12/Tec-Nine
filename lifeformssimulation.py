@@ -81,58 +81,41 @@ class LifeformsSimulation(object):
             tile.climate = c[v]['classification']
             tile.seasons = c[v]['seasons']
 
+    @staticmethod
+    def populatefromparams(pop, name, params, tiles, adj, strats):
+        for s in strats:
+            habitats = s(tiles, adj, params)
+            if habitats:
+                pop.append(species.Species(name, habitats))
+                break
+
+    @staticmethod
+    def randomparams(temprange, preciprange, lightrange):
+        return species.ClimateParams(
+            tuple(sorted([random.gauss(*temprange[0]), random.gauss(*temprange[1])])),
+            tuple(sorted([random.gauss(*preciprange[0]), random.gauss(*preciprange[1])])),
+            tuple(sorted([random.gauss(*lightrange[0]), random.gauss(*lightrange[1])])))
+
     def settle(self):
         timing = self._timing.routine('settling species')
         timing.start('classifying climate')
         self.classify()
 
-        timing.start('settling fauna')
-        del self.fauna[:]
-        migratory = hibernating = 0
-        for _ in range(100):
-            params = species.ClimateParams(
-                tuple(sorted([random.gauss(.4,.1), random.gauss(.6,.1)])),
-                tuple(sorted([random.gauss(.25,.1), random.gauss(.95,.1)])),
-                tuple(sorted([random.gauss(.1,.1), random.gauss(.95,.1)])))
-            habitats = species.findregions(self.tiles, self.adj, params)
-            if habitats:
-                self.fauna.append(species.Species('faunum {}'.format(_), habitats))
-                continue
-            habitats = species.findhibernationregions(self.tiles, self.adj, params)
-            if habitats:
-                self.fauna.append(species.Species('faunum {}'.format(_), habitats))
-                hibernating += 1
-                continue
-            habitats = species.findmigratorypatterns(self.tiles, self.adj, params)
-            if habitats:
-                self.fauna.append(species.Species('faunum {}'.format(_), habitats))
-                migratory += 1
-                continue
-        print '{} animal species, {} migrating, {} hibernating'.format(len(self.fauna), migratory, hibernating)
-
-        timing.start('settling plants')
-        del self.plants[:]
-        for _ in range(100):
-            params = species.ClimateParams(
-                tuple(sorted([random.gauss(.2,.1), random.gauss(.95,.1)])),
-                tuple(sorted([random.gauss(.4,.2), random.gauss(.95,.1)])),
-                tuple(sorted([random.gauss(.4,.2), random.gauss(.95,.1)])))
-            habitats = species.findseasonalregions(self.tiles, self.adj, params)
-            if habitats:
-                self.plants.append(species.Species('plant {}'.format(_), habitats))
-        print '{} plant species'.format(len(self.plants))
-
-        timing.start('settling trees')
-        del self.trees[:]
-        for _ in range(100):
-            params = species.ClimateParams(
-                tuple(sorted([random.gauss(.2,.1), random.gauss(.95,.1)])),
-                tuple(sorted([random.gauss(.5,.1), random.gauss(.95,.1)])),
-                tuple(sorted([random.gauss(.5,.1), random.gauss(.95,.1)])))
-            habitats = species.findseasonalregions(self.tiles, self.adj, params)
-            if habitats:
-                self.trees.append(species.Species('tree {}'.format(_), habitats))
-        print '{} tree species'.format(len(self.trees))
+        for (name, pop, ranges, strats) in [
+                ('fauna', self.fauna,
+                 (((.4,.1), (.6,.1)), ((.25,.1), (.95,.1)), ((.1,.1), (.95,.1))),
+                 [species.findregions, species.findhibernationregions, species.findmigratorypatterns]),
+                ('plants', self.plants,
+                 (((.2,.1), (.95,.1)), ((.4,.2), (.95,.1)), ((.4,.2), (.95,.1))),
+                 [species.findseasonalregions]),
+                ('trees', self.trees,
+                 (((.2,.1), (.95,.1)), ((.5,.1), (.95,.1)), ((.5,.1), (.95,.1))),
+                 [species.findseasonalregions])]:
+            timing.start('settling {}'.format(name))
+            del pop[:]
+            for _ in range(100):
+                self.populatefromparams(pop, '{} {}'.format(name, _), self.randomparams(*ranges), self.tiles, self.adj, strats)
+            print '{} species of {}'.format(len(pop), name)
 
         self._species = None
         timing.done()
