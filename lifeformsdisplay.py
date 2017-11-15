@@ -18,6 +18,9 @@ def colorscale(v):
          0)
     return r, g, b
 
+def snoworrock(t):
+    return color.snow(t) or color.rock(t) or (0,0,0)
+
 def lifepop(pops, indices, f, i, c):
     pop = sum([(len(pops[t][f][i]) if f in pops[t] else 0) for t in indices])
     return colorscale(pop/(len(indices) * 100.0)) if pop else c
@@ -55,6 +58,6 @@ class LifeformsDisplay(QWidget):
         pops = self._sim.species()
         indices = self._indices[self.shownattribute]
         fn = lambda v, c: lifepop(pops, indices, v, self.season, c)
-        self._screen.usecolors({ v: fn(v, color.value(t)) for v, t in self._sim.tiles.iteritems() })
+        self._screen.usecolors({ v: fn(v, snoworrock(t)) for v, t in self._sim.tiles.iteritems() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)
