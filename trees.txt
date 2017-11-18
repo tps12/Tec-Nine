@@ -3,12 +3,12 @@ abraham's balm
 acacia
 acerola
 african mahogany
+african pear
+african plum
 african podocarps
 african rosewood
 african sausage
 african tulip
-african pear
-african plum
 akume
 albizia silk
 alder
@@ -19,6 +19,7 @@ algarrobo
 algarrobos
 almond
 alupag
+amarillo aguacatillo
 amazon rosewood
 amborella
 american planetree
@@ -48,6 +49,7 @@ aʻiaʻi
 baccharis
 bael
 bajelly
+bakauan lalaki
 bald cypress
 balm of heaven
 balsa
@@ -58,8 +60,8 @@ baobab
 basswood
 bastard tamarind
 bay
-bay leaf
 bay laurel
+bay leaf
 bay-rum
 bayahonda
 bayberry
@@ -82,6 +84,8 @@ blackbead
 bloodwood
 blue jacaranda
 blue mahoe
+boab
+boaboa
 bodock
 bois d'arc
 bolivian rosewood
@@ -242,8 +246,8 @@ dove
 dragon
 drooling-nut
 durian fruit
-dwarf holly
 dwarf fan palm
+dwarf holly
 dùzhòng
 ebony
 elder berry
@@ -283,10 +287,10 @@ flamboyant
 flame
 flame of the forest
 flamegold
+florida aspen
 florida buttonwood
 florida clusia
 florida tetrazygia
-florida aspen
 florida torreya
 florida-boxwood
 flowering pear
@@ -298,6 +302,8 @@ foxtail palm
 frangipani
 franklin
 franklinia
+frijolillo
+frijolito
 fringetree
 gamboge
 garcinias
@@ -305,15 +311,17 @@ garjan
 geigertree
 georgia plume
 ghost gum
+ghost-tree
 giant aloe
 giant redwood
 giant sensitive
 giant sequoia
 gingko biloba
-golden chain
-golden raintree
+goat-tree
 golden apple
+golden chain
 golden rain
+golden raintree
 golden shower
 gommier
 gopher wood
@@ -321,8 +329,8 @@ gordonia
 goyavier de montevideo
 grapefruit
 gray popcorn
-green ebony
 green buttonwood
+green ebony
 greenheart
 gregory wood
 grey bark
@@ -347,8 +355,8 @@ gumtree
 gutta-percha
 hackberry
 handkerchief
-hawaiian cotton
 hawaiian brushholly
+hawaiian cotton
 hawthorn
 hazel
 hazelnut
@@ -373,12 +381,12 @@ huisache
 icaco
 ice cream bean
 incense cedars
-indian bean
-indian beech
-indian lilac
 indian almond
 indian bay leaf
+indian bean
+indian beech
 indian cedar
+indian lilac
 indian spurge
 indian walnut
 ironwood
@@ -388,13 +396,13 @@ jacaranda
 jacarandá-do-cerrado
 jackfruit
 jamaican caper
-jamaican dogwood
 jamaican cherry
+jamaican dogwood
+japanese bitter orange
 japanese cedar
+japanese lilac
 japanese plum
 japanese umbrella-pine
-japanese bitter orange
-japanese lilac
 jatoba
 jatobá
 java apple
@@ -418,6 +426,7 @@ kentia palm
 kevazingo
 king palm
 kokerboom
+kokio
 kokio : in hawaiian
 kolea
 kosipo
@@ -442,6 +451,7 @@ latex rubber
 laurel
 leadtree
 leatherwood
+leche de olivo
 leechee
 leechi
 lemon
@@ -493,11 +503,12 @@ maple
 marlberry
 mastic
 matai
+maua
 maya nut
 mayan pear
 mayten
-mediterranean fan palm
 mediterranean dwarf palm
+mediterranean fan palm
 melawis
 menguilié
 merbatu
@@ -514,10 +525,11 @@ molave
 mombin
 monja
 monk's pepper
-monkey puzzle
-monkey tail
+monkey bread
 monkey fruit
 monkey pot
+monkey puzzle
+monkey tail
 montezuma
 moringa
 moulmein rosewood
@@ -562,7 +574,9 @@ octopus
 oil
 oleander
 oleaster
+olicuáhuitl
 olive
+olivo macho
 olla de mono
 orange
 orangebark
@@ -582,9 +596,10 @@ palm
 palm yucca
 palma culona
 palmetto
-palo verde
 palo de gusano
+palo de hule
 palo santo
+palo verde
 paloverde
 pamplemousse
 panama berry
@@ -691,9 +706,9 @@ rimu
 river gum
 roble
 rose
+rose apple
 rose clusia
 rose mallow
-rose apple
 rosemallow
 rosewood
 roughbush
@@ -728,10 +743,10 @@ saw palmetto
 sawtooth logwood
 saxifras
 scotch attorney
+sea almond
 sea beam
 sea coconut
 sea myrtle
-sea almond
 serpent
 serviceberry
 seychelles nut
@@ -798,9 +813,9 @@ sumac
 summer plume
 swamp box
 swamp cypresses
+swamp cyrilla
 swamp mahogany
 swamp wattle
-swamp cyrilla
 swampbay
 swan river peppermint
 sweet acacia
@@ -845,6 +860,7 @@ trema
 triangle palm
 true cypress
 true laurel
+true mangroves
 trumpet
 tulip
 tulip poplar
@@ -859,6 +875,7 @@ twinberry
 tzumu
 umbrella
 upas
+upside-down
 utile
 varnish
 viburnum and blackhaw
@@ -867,8 +884,8 @@ waka
 walnut
 wannakai
 warren river cedar
-water gum
 water apple
+water gum
 water white alder
 water-elm
 waterwitels
@@ -877,25 +894,25 @@ wax
 wax-myrtle
 wellingtonia
 wenge
-west indian lilac
 west indian cedar
+west indian lilac
 western australian peppermint
 wheel wingnut
 wheki-ponga
 white cedar
 white champaca
+white cinnamon
+white mangrove
 white myrtle
 white olive
 white pine
 white sandalwood
 white siris
 white stinkwood
-white cinnamon
-white mangrove
 whitebeam
 whitewood
-wild tamarind
 wild crepemyrtle
+wild tamarind
 wiliwili
 willow - all names
 willow myrtle
@@ -924,20 +941,3 @@ yucca palm
 zaragoza mangrove
 zelkova
 zigba
-amarillo aguacatillo
-bakauan lalaki
-boab
-boaboa
-frijolillo
-frijolito
-ghost-tree
-goat-tree
-kokio
-leche de olivo
-maua
-monkey bread
-olicuáhuitl
-olivo macho
-palo de hule
-true mangroves
-upside-down
