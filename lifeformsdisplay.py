@@ -25,6 +25,12 @@ def lifepop(pops, indices, f, i, c):
     pop = sum([(len(pops[t][f][i]) if f in pops[t] else 0) for t in indices])
     return colorscale(pop/(len(indices) * 100.0)) if pop else c
 
+def speciespresence(species, pops, f, i, c):
+    for t in pops:
+        if f in t and any([p == species for p in t[f][i]]):
+            return (0, 255, 0)
+    return c
+
 class LifeformsDisplay(QWidget):
     attributeindices = [
         (0,1,2), # life
@@ -42,6 +48,7 @@ class LifeformsDisplay(QWidget):
         self.glaciation = 0.5
         self._select = selecthandler
         self.selected = None
+        self.selectedspecies = None
         self.setLayout(QGridLayout())
         self.invalidate()
 
@@ -63,8 +70,11 @@ class LifeformsDisplay(QWidget):
             self._screen = SphereView(self._sim.grid.faces, self)
             self._screen.clicked.connect(self.select)
         pops = self._sim.species()
-        indices = self.attributeindices[self.shownattribute]
-        fn = lambda v, c: lifepop(pops, indices, v, self.season, c)
+        if self.selectedspecies:
+            fn = lambda v, c: speciespresence(self.selectedspecies, pops, v, self.season, c)
+        else:
+            indices = self.attributeindices[self.shownattribute]
+            fn = lambda v, c: lifepop(pops, indices, v, self.season, c)
         self._screen.usecolors({ v: (255,0,0) if t is self.selected else fn(v, snoworrock(t)) for v, t in self._sim.tiles.iteritems() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)
