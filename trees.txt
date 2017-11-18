@@ -17,7 +17,6 @@ alexandra palm
 alexandrian laurel
 algarrobo
 algarrobos
-all species
 almond
 alupag
 amazon rosewood
@@ -38,7 +37,7 @@ areca nut palm
 argan
 ash
 asian pea
-aspen species
+aspen
 atemoya
 australian fern
 autograph
@@ -71,7 +70,7 @@ bee bee
 beech
 bengal quince
 bindinga
-birch - all species
+birch
 bird lime
 bismarck palm
 black mangrove
@@ -92,7 +91,6 @@ boojum
 bottle
 bottle palm
 bottlebrush
-bottletree
 box
 box shrubs
 boxwood
@@ -209,7 +207,7 @@ coralberry
 cork
 corozo
 cotton-seed
-cottonwood species
+cottonwood
 cow itch
 coyo
 coyote
@@ -217,7 +215,6 @@ crabwood
 crape myrtle
 cream nut
 crepe myrtle
-cucumber
 curly palm
 custard apple
 cycad
@@ -273,10 +270,10 @@ feijoa
 fern
 fetid cedar
 fiddle-tree
-fig all species
+fig
 filbert
 finger cherry
-fir all species
+fir
 firebell
 firestick plants
 fish-bait
@@ -352,7 +349,7 @@ hackberry
 handkerchief
 hawaiian cotton
 hawaiian brushholly
-hawthorn - all species
+hawthorn
 hazel
 hazelnut
 he huckleberry
@@ -492,7 +489,7 @@ mangrove
 manjack
 manzanilla de la muerte
 manzanillo
-maple - all species
+maple
 marlberry
 mastic
 matai
@@ -659,7 +656,7 @@ pommelo
 pond cypress
 pongam oiltree
 ponytail palm
-poplar - all species
+poplar
 portia
 possumhaw
 prickly castor-oil
@@ -736,7 +733,7 @@ sea coconut
 sea myrtle
 sea almond
 serpent
-serviceberry species
+serviceberry
 seychelles nut
 shaddick
 shaddock
@@ -749,7 +746,6 @@ siberian peashrub
 sierra redwood
 silk cotton
 silk oak
-silk cotton
 silky oak
 silky-camellia
 silver fern
@@ -857,7 +853,7 @@ tulipwood
 tun
 tung
 tung-oil
-tupelo all species
+tupelo
 turpentine
 twinberry
 tzumu
@@ -932,7 +928,6 @@ amarillo aguacatillo
 bakauan lalaki
 boab
 boaboa
-bottle
 frijolillo
 frijolito
 ghost-tree
