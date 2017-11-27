@@ -25,7 +25,7 @@ def get(tiles, adj, hmin, pmin):
           for i in range(len(ts)):
             p += ts[i].climate.precipitation if ts[i].climate else 0
             if ts[i].climate and ts[i].climate.koeppen[0] != u'E' and p >= pmin:
-              yield {t for t in ts[i:]}
+              yield ts[i:]
               break
 
 def run(tiles, adj, hmin, pmin):
