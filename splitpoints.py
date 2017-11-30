@@ -9,7 +9,8 @@ from latrange import *
 from sphericalpolygon import *
 
 from grid import Grid
-from shape import *
+from movemethod import rotate
+from sphericalpolygon import SphericalPolygon
 from splitmethod import split
 from tile import *
 
@@ -48,10 +49,8 @@ class SplitPoints(object):
         o[mini] = 1 if p[mini] < 0 else -1
 
         r = 1.145
-        shape = Shape([(r*random.uniform(0.9,1.1)*cos(th),
-                       r*random.uniform(0.9,1.1)*sin(th))
-                       for th in [i*pi/8 for i in range(16)]],
-                       p, o, v).projection()
+        shape = SphericalPolygon([rotate(rotate(p, o, r*random.uniform(0.9,1.1)), p, th)
+                                  for th in [i*pi/8 for i in range(16)]], p)
 
         for t in self.tiles.itervalues():
             t.bottom = 0

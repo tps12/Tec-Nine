@@ -1,16 +1,17 @@
 import random
 import time
 
-from numpy import cross
+from numpy import array, cross
 from numpy.linalg import norm
 
 from climatemethod import ClimateInfo
 from grid import Grid
 from hexadjacency import Adjacency
+from movemethod import rotate
 import race
 from racinatemethod import racinate
 from rock import igneous
-from shape import Shape
+from sphericalpolygon import SphericalPolygon
 from tile import *
 
 class Continent(object):
@@ -20,14 +21,10 @@ class Continent(object):
         self.orientingpt = [0, 0, 0]
         mini = min(range(3), key=lambda i: abs(self.center[i]))
         self.orientingpt[mini] = 1 if self.center[mini] < 0 else -1
-        self.outer = Shape([(self.avgradius*random.uniform(0.9,1.1)*cos(th),
-                             self.avgradius*random.uniform(0.9,1.1)*sin(th))
-                            for th in [i*pi/8 for i in range(16)]],
-                           self.center, self.orientingpt, (0,0,0)).projection()
-        self.inner = Shape([(0.65*self.avgradius*random.uniform(0.9,1.1)*cos(th),
-                             0.65*self.avgradius*random.uniform(0.9,1.1)*sin(th))
-                            for th in [i*pi/8 for i in range(16)]],
-                           self.center, self.orientingpt, (0,0,0)).projection()
+        self.outer = SphericalPolygon([rotate(rotate(self.center, self.orientingpt, self.avgradius*random.uniform(0.9,1.1)), self.center, th)
+                                       for th in [i*pi/8 for i in range(16)]], self.center)
+        self.inner = SphericalPolygon([rotate(rotate(self.center, self.orientingpt, 0.65*self.avgradius*random.uniform(0.9,1.1)), self.center, th)
+                                       for th in [i*pi/8 for i in range(16)]], self.center)
 
 class RacinationSimulation(object):
     def __init__(self):
@@ -63,7 +60,7 @@ class RacinationSimulation(object):
         # initial location
         p1 = [random.uniform(-1, 1) for i in range(3)]
         p1 /= norm(p1)
-        p2 = [-p1i for p1i in p1]
+        p2 = array([-p1i for p1i in p1])
 
         self.continents = [Continent(p, r) for p, r in [(p1, 0.75), (p2, 0.5)]]
 
@@ -84,9 +81,8 @@ class RacinationSimulation(object):
     def isolate(self):
         for c in self.continents:
             th0 = random.uniform(0, pi)
-            swath = Shape([(1.2*c.avgradius*cos(th), 1.2*c.avgradius*sin(th))
-                           for th in [th0, th0 + pi/12, th0 + pi, th0 + pi + pi/12]],
-                          c.center, c.orientingpt, (0,0,0)).projection()
+            swath = SphericalPolygon([rotate(rotate(c.center, c.orientingpt, 1.2*c.avgradius), c.center, th)
+                                      for th in [th0, th0 + pi/12, th0 + pi, th0 + pi + pi/12]], c.center)
             k = random.choice([u'BW', u'ET'])
             for t in self.tiles.itervalues():
                 if swath.contains(t.vector) and c.outer.contains(t.vector):

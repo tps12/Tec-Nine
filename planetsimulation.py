@@ -10,11 +10,11 @@ from grid import Grid
 from hexadjacency import *
 from climatemethod import climate
 from erodemethod import erode
-from movemethod import move
+from movemethod import move, rotate
 from planetdata import Data
 from pointtree import PointTree
 from rock import igneous, sedimentary, metamorphic
-from shape import *
+from sphericalpolygon import SphericalPolygon
 from splitmethod import split
 from tile import *
 from timing import Timing
@@ -92,11 +92,10 @@ class PlanetSimulation(object):
         mini = min(range(len(p)), key=lambda i: abs(p[i]))
         o[mini] = 1 if p[mini] < 0 else -1
 
-        shape = [(landr*random.uniform(0.9,1.1)*cos(th),
-                  landr*random.uniform(0.9,1.1)*sin(th))
+        shape = [rotate(rotate(p, o, landr*random.uniform(0.9,1.1)), p, th)
                  for th in [i*pi/8 for i in range(16)]]
 
-        shape = Shape(shape, p, o, v).projection()
+        shape = SphericalPolygon(shape, p)
 
         self._shapes = [Group([t for t in self.tiles.itervalues() if shape.contains(t.vector)], v)]
 
