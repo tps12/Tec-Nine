@@ -9,6 +9,7 @@ class TerrainDisplay(QWidget):
         self._sim = sim
         self._screen = None
         self._rotate = 0
+        self._rivers = True
         self.setLayout(QGridLayout())
         self.invalidate()
 
@@ -21,6 +22,19 @@ class TerrainDisplay(QWidget):
         self._rotate = value
         self._screen.rotate(self._rotate)
 
+    @property
+    def rivers(self):
+        return self._rivers
+
+    @rivers.setter
+    def rivers(self, value):
+        if self._rivers != value:
+            self._rivers = value
+            self.invalidate()
+
+    def isriver(self, v):
+        return self._rivers and any([v in r for r in self._sim.riverroutes])
+
     def invalidate(self):
         if self._sim.terrainchanged and self._screen is not None:
             self.layout().removeItem(self.layout().itemAt(0))
@@ -28,10 +42,7 @@ class TerrainDisplay(QWidget):
             self._sim.terrainchanged = False
         if self._screen is None:
             self._screen = SphereView(self._sim.faces, self)
-        colors = { v: color.elevation(t) for (v, t) in self._sim.tiles.iteritems() }
-        for v in self._sim.faces:
-            if v not in colors:
-                colors[v] = color.elevationcolor(self._sim.faceelevation(v))
+        colors = { v: (0,0,255) if self.isriver(v) else color.elevationcolor(self._sim.faceelevation(v)) for v in self._sim.faces }
         self._screen.usecolors(colors)
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)

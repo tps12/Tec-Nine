@@ -4,6 +4,7 @@ from random import random, choice
 from numpy import array, cross, dot
 from numpy.linalg import norm
 
+from dist2 import dist2
 from sphericalpolygon import SphericalPolygon
 
 def rotate(p, axis, theta):
@@ -35,10 +36,6 @@ def center(tiles):
     """Get the tile closest to the average location of the given tiles."""
     a = average([t.vector for t in tiles])
     return closest(tiles, a)
-
-def dist2(p1, p2):
-    """Get the distance squared between two points."""
-    return sum([(p1[i]-p2[i])**2 for i in range(len(p1))])
 
 def mostest(tiles, p, fn):
     """Return the most whatevery tile relative to a point,

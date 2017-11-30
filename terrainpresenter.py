@@ -1,3 +1,4 @@
+from PySide.QtCore import Qt
 from PySide.QtGui import QGridLayout, QFileDialog
 
 from terraindisplay import TerrainDisplay
@@ -21,10 +22,18 @@ class TerrainPresenter(object):
         self._view.rotate.setValue(self._display.rotate)
         self._view.rotate.sliderMoved.connect(self.rotate)
 
+        self._view.rivers.setCheckState(Qt.Checked if self._display.rivers else Qt.Unchecked)
+        self._view.rivers.stateChanged.connect(self.rivers)
+
         self._uistack = uistack
 
     def rotate(self, value):
         self._display.rotate = value
+        self._view.content.update()
+
+    def rivers(self, state):
+        self._display.rivers = state == Qt.Checked
+        self._display.invalidate()
         self._view.content.update()
 
     def load(self):
