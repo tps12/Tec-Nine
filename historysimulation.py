@@ -11,7 +11,7 @@ import populationmethod
 import riversmethod
 from prehistorysimulation import PrehistorySimulation
 from rock import igneous
-from terrainmethod import terrain, elevation
+from terrainmethod import terrain, elevation, routerivers
 from tile import *
 from timing import Timing
 
@@ -59,7 +59,7 @@ class HistorySimulation(object):
         self._glaciationt = 0
         self.initindexes()
 
-        self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj)
+        self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, [])
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
 
         initt.done()
@@ -179,8 +179,7 @@ class HistorySimulation(object):
         return 0
 
     @classmethod
-    def capacity(cls, grid, tiles, terrain, adj):
-        rivers = riversmethod.run(tiles.values(), adj, cls.minriverelev, cls.minriverprecip)
+    def capacity(cls, grid, tiles, terrain, adj, rivers):
         capacity = {}
         coast = set()
         for f in terrain.faces:
@@ -256,6 +255,7 @@ class HistorySimulation(object):
         self._initgrid(data['gridsize'])
         self.spin, self.cells, self.tilt = [data[k] for k in ['spin', 'cells', 'tilt']]
         self.tiles = data['tiles']
+        self._tileloc = {t: f for f,t in self.tiles.iteritems()}
         self.shapes = data['shapes']
         self.populated = data['population']
         self.agricultural = data['agricultural']
@@ -267,8 +267,13 @@ class HistorySimulation(object):
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
         loadt.start('initializing indexes')
         self.initindexes()
+        loadt.start('running rivers')
+        self.rivers = riversmethod.run(self.tiles.values(), self._tileadj, self.minriverelev, self.minriverprecip)
+        self.riverroutes = list(routerivers(
+            self._terrain, self._terrainadj, {f: self.faceelevation(f) for f in self._terrain.faces},
+            [[self._tileloc[t] for t in r] for r in self.rivers]))
         loadt.start('determining carrying capacities')
-        self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj)
+        self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
         loadt.start('determining population')
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
         self._glaciationt = data['glaciationtime']

@@ -1,3 +1,4 @@
+from PySide.QtCore import Qt
 from PySide.QtGui import QGridLayout, QFileDialog
 
 from historydisplay import HistoryDisplay
@@ -33,6 +34,9 @@ class HistoryPresenter(object):
         self._view.aspect.setCurrentIndex(self._display.aspect)
         self._view.aspect.currentIndexChanged[int].connect(self.aspect)
 
+        self._view.rivers.setCheckState(Qt.Checked if self._display.rivers else Qt.Unchecked)
+        self._view.rivers.stateChanged.connect(self.rivers)
+
         self._view.pause.setVisible(False)
 
         self._uistack = uistack
@@ -44,6 +48,11 @@ class HistoryPresenter(object):
     def aspect(self, value):
         if self._model is None: return
         self._display.aspect = value
+        self._display.invalidate()
+        self._view.content.update()
+
+    def rivers(self, state):
+        self._display.rivers = state == Qt.Checked
         self._display.invalidate()
         self._view.content.update()
 
