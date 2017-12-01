@@ -289,7 +289,7 @@ class Tile(object):
 
     @property
     def mountainosity(self):
-        return min(20.0, self._mountainosity/20.0)
+        return min(20.0, self._mountainosity)/20.0
 
     @property
     def thickness(self):
