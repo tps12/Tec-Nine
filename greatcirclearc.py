@@ -17,13 +17,13 @@ class GreatCircleArc(object):
     @staticmethod
     def _coords(v):
         return tuple([c * 180/pi for c in
-            atan2(v[2], sqrt(v[0]*v[0] + v[1]*v[1])), atan2(v[1], v[0])])
+                      (atan2(v[2], sqrt(v[0]*v[0] + v[1]*v[1])), atan2(v[1], v[0]))])
 
     def range(self):
         return self._latrange, self._lonrange
 
     def _initrange(self):
-        s, e = [self._coords(v) for v in self._start, self._end]
+        s, e = [self._coords(v) for v in (self._start, self._end)]
         lonrange = LonRange(s[1], e[1])
         latrange = LatRange(s[0], e[0])
 

@@ -14,12 +14,12 @@ class Earth(object):
                            dtype=self.datatypes[header['NUMBERTYPE']],
                            mode='r',
                            shape=tuple([int(header[key])
-                                            for key in 'NROWS','NCOLS']))
+                                            for key in ('NROWS','NCOLS')]))
         self.bad = int(header['NODATA_VALUE'])
 
     @classmethod
     def available(cls):
-        return all([isfile(cls.base + ext) for ext in '.hdr', '.bin'])
+        return all([isfile(cls.base + ext) for ext in ('.hdr', '.bin')])
 
     def actions(self):
         return []

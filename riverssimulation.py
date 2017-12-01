@@ -23,7 +23,7 @@ class RiversSimulation(object):
             lon = 180/pi * atan2(y, x)
             self.tiles[v] = Tile(lat, lon)
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.emptyocean(self.seafloor())
             t.climate = t.seasons = None
             t.candidate = False

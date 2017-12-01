@@ -1,3 +1,4 @@
+from functools import reduce
 import math
 
 def squared_length(v):
@@ -167,7 +168,7 @@ class Grid(object):
     # neighboring hexes are used for grid sizes > 0
     def scale(self):
         found = False
-        for f, vs in self.faces.iteritems():
+        for f, vs in self.faces.items():
             if len(vs) == 6:
                 for n in [self.neighbor(f, e) for e in self.edges(f)]:
                     if n in self.faces and len(self.faces[n]) == 6:
@@ -176,6 +177,6 @@ class Grid(object):
                 if found:
                     break
         else:
-            f = self.faces.keys()[0]
+            f = list(self.faces.keys())[0]
             n = self.neighbor(f, self.edges(f)[0])
         return abs(math.acos(dot(f, n)))

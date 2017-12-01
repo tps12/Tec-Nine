@@ -21,11 +21,11 @@ class Erosion(object):
 def erode(tiles, adjacency):
     erosion = {}
 
-    for t in tiles.itervalues():
+    for t in tiles.values():
         erosion[t] = Erosion()
 
     # erode to lower adjacent tiles
-    for (v, tile) in tiles.iteritems():
+    for (v, tile) in tiles.items():
         if tile.elevation > 0:
             c = tile.climate
             d = (tile.elevation/10.0) * c.precipitation * (1 - c.temperature)

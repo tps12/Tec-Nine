@@ -70,7 +70,7 @@ class WorldDisplay(QWidget):
         if self._screen is None:
             self._screen = SphereView(self._sim.grid.faces, self)
             self._screen.clicked.connect(self.select)
-        populated = {t: p for (t, (_, p)) in self._sim.populated.iteritems()}
-        self._screen.usecolors({ v: self.tilecolor(t, populated) for (v, t) in self._sim.tiles.iteritems() })
+        populated = {t: p for (t, (_, p)) in self._sim.populated.items()}
+        self._screen.usecolors({ v: self.tilecolor(t, populated) for (v, t) in self._sim.tiles.items() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)

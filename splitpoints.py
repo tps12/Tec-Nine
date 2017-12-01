@@ -52,7 +52,7 @@ class SplitPoints(object):
         shape = SphericalPolygon([rotate(rotate(p, o, r*random.uniform(0.9,1.1)), p, th)
                                   for th in [i*pi/8 for i in range(16)]], p)
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.bottom = 0
             t.layers = [Layer('T', 1)] if shape.contains(t.vector) else []
             t.limit()
@@ -60,7 +60,7 @@ class SplitPoints(object):
         self.split()
 
     def split(self):
-        a, b = [tiles for (tiles, v) in split([t for t in self.tiles.itervalues() if t.elevation == 1])]
+        a, b = [tiles for (tiles, v) in split([t for t in self.tiles.values() if t.elevation == 1])]
         for t in a:
             t.layers = [Layer('R', 1)]
         for t in b:
@@ -68,7 +68,7 @@ class SplitPoints(object):
 
     def iterate(self, red):
         match = 'R' if red else 'B'
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.layers = [Layer('T', 1)] if len(t.layers) > 0 and t.layers[0].rock == match else []
             t.limit()
         self.split()

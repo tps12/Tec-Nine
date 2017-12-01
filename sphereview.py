@@ -68,7 +68,7 @@ class SphereView(QtOpenGL.QGLWidget):
 
         vertices = []
         normals = []
-        for t, vs in self.faces.iteritems():
+        for t, vs in self.faces.items():
             t = rotate_axes(*t)
             vs = [rotate_axes(*v) for v in vs]
             n = normal(t)
@@ -107,7 +107,7 @@ class SphereView(QtOpenGL.QGLWidget):
 
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
         i = 0;
-        for t, vs in self.faces.iteritems():
+        for t, vs in self.faces.items():
             color = [v/255.0 for v in self.colors[t]]
             for _ in range(len(vs)):
               for _ in range(3):
@@ -126,7 +126,7 @@ class SphereView(QtOpenGL.QGLWidget):
 
     def resizeGL(self, width, height):
         side = min(width, height)
-        GL.glViewport((width - side) / 2, (height - side) / 2, side, side)
+        GL.glViewport(int((width - side) / 2), int((height - side) / 2), side, side)
 
         GL.glMatrixMode(GL.GL_PROJECTION)
         GL.glLoadIdentity()

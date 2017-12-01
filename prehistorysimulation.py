@@ -56,7 +56,7 @@ class PrehistorySimulation(object):
             lon = 180/pi * atan2(y, x)
             self.tiles[v] = Tile(lat, lon)
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.emptyocean(self.seafloor())
             t.climate = t.seasons = None
             t.candidate = False
@@ -80,7 +80,7 @@ class PrehistorySimulation(object):
 
     def initindexes(self):
         self._indexedtiles = []
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             self._indexedtiles.append(t)
 
         self._tileadj = dict()
@@ -107,7 +107,7 @@ class PrehistorySimulation(object):
         stept.start('iterating climate')
         glaciation = 0.5 - math.cos(self._glaciationt*math.pi/self.glaciationstep)/2
         c = climate(self.tiles, self.adj, self.seasons, self.cells, self.spin, self.tilt, temprange(self.mean_temprange, glaciation), glaciation, True, {})
-        for v, tile in self.tiles.iteritems():
+        for v, tile in self.tiles.items():
             tile.climate = c[v]['classification']
             tile.seasons = c[v]['seasons']
             if not habitable(tile) and tile in self.populated:
@@ -152,7 +152,7 @@ class PrehistorySimulation(object):
 
     @property
     def peoples(self):
-        return len({p for p in self.populated.itervalues()})
+        return len({p for p in self.populated.values()})
 
     @staticmethod
     def seafloor():

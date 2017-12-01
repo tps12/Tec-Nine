@@ -1,4 +1,4 @@
-from cPickle import dump, load
+from pickle import dump, load
 from math import pi, sqrt
 
 class Adjacency(object):
@@ -11,7 +11,7 @@ class Adjacency(object):
             with open(cache, 'r') as f:
                 self._adj = load(f)
         except Exception as er:
-            print 'Cached adjacency list failed:', repr(er)
+            print('Cached adjacency list failed:', repr(er))
             self._adj = {}
 
             def addadj(t1, t2):

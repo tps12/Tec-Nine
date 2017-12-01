@@ -13,9 +13,9 @@ def union(x, y):
   yr = y.root()
   if xr == yr:
     return
-  if xr < yr:
+  if xr.rank < yr.rank:
     xr.parent = yr
   else:
     yr.parent = xr
-    if xr > yr:
+    if xr.rank == yr.rank:
       xr.rank += 1

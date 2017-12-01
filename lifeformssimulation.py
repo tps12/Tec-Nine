@@ -32,7 +32,7 @@ class LifeformsSimulation(object):
             lon = 180/pi * atan2(y, x)
             self.tiles[v] = Tile(lat, lon)
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.emptyocean(self.seafloor())
             t.climate = t.seasons = None
 
@@ -59,7 +59,7 @@ class LifeformsSimulation(object):
 
     def initindexes(self):
         self._indexedtiles = []
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             self._indexedtiles.append(t)
 
         self._tileadj = dict()
@@ -78,7 +78,7 @@ class LifeformsSimulation(object):
 
     def classify(self):
         c = climate(self.tiles, self.adj, self.seasons, self.cells, self.spin, self.tilt, temprange(self.mean_temprange, self.glaciation), self.glaciation, True, {})
-        for v, tile in self.tiles.iteritems():
+        for v, tile in self.tiles.items():
             tile.climate = c[v]['classification']
             tile.seasons = c[v]['seasons']
 
@@ -117,7 +117,7 @@ class LifeformsSimulation(object):
             with codecs.open('{}.txt'.format(name), 'r', 'utf-8') as f:
                 for line in f.readlines():
                     self.populatefromparams(pop, line.strip(), self.randomparams(*ranges), self.tiles, self.adj, strats)
-            print '{} species of {}'.format(len(pop), name)
+            print('{} species of {}'.format(len(pop), name))
 
         self._species = None
         timing.done()
@@ -130,7 +130,7 @@ class LifeformsSimulation(object):
             for t in range(len(types)):
                 p = pops[t]
                 for s in types[t]:
-                    for f, ss in s.seasonalrange(len(self.seasons)).iteritems():
+                    for f, ss in s.seasonalrange(len(self.seasons)).items():
                         for i in ss:
                             if f not in p:
                                 p[f] = [set() for _ in self.seasons]

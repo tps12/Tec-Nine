@@ -4,7 +4,7 @@ import race
 
 def racinate(tiles, adj, populated, newname, agricultural, travelrange):
   pops = {t: disjoint.set() for t in populated}
-  for t, r in populated.iteritems():
+  for t, r in populated.items():
     for n in passability.within(t, adj, travelrange, r in agricultural, passability.passable):
       if n in populated:
         disjoint.union(pops[t], pops[n])
@@ -15,7 +15,7 @@ def racinate(tiles, adj, populated, newname, agricultural, travelrange):
       races[r] = set()
     races[r].add(t)
   # if any geographically isolated race has >1 heritages, combine them into a new one
-  for ts in races.itervalues():
+  for ts in races.values():
     hs = {populated[t] for t in ts}
     if len(hs) > 1:
       h = race.Heritage(newname(), hs)
@@ -25,13 +25,13 @@ def racinate(tiles, adj, populated, newname, agricultural, travelrange):
         populated[t] = h
   # if any heritage appears in >1 geographically isolated race, branch it into new ones
   heritageraces = {}
-  for r, ts in races.iteritems():
+  for r, ts in races.items():
     for h in {populated[t] for t in ts}:
       if h not in heritageraces:
         heritageraces[h] = {r}
       else:
         heritageraces[h].add(r)
-  for h, rs in heritageraces.iteritems():
+  for h, rs in heritageraces.items():
     if len(rs) > 1:
       for r in rs:
         nh = race.Heritage(newname(), {h})

@@ -3,7 +3,7 @@ class PointTree(object):
         if len(vs) == 1:
             try:
                 self._values = dict(vs[0])
-                vs = vs[0].keys()
+                vs = list(vs[0].keys())
             except TypeError:
                 raise ValueError('Must specify at least two points')
         else:

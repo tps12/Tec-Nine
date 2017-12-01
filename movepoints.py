@@ -62,13 +62,13 @@ class MovePoints(object):
         shape = SphericalPolygon([rotate(rotate(p, o, r*random.uniform(0.9,1.1)), p, th)
                                   for th in [i*pi/8 for i in range(16)]], p)
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.bottom = 0
             t.layers = [Layer('T', 1)] if shape.contains(t.vector) else []
             t.limit()
 
         self._indexedtiles = []
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             self._indexedtiles.append(t)
 
         self._index = PointTree(dict([[self._indexedtiles[i].vector, i]
@@ -80,7 +80,7 @@ class MovePoints(object):
     def step(self):
         start = time()
 
-        group = [t for t in self.tiles.itervalues() if t.elevation == 1]
+        group = [t for t in self.tiles.values() if t.elevation == 1]
         for t in self._indexedtiles:
             t.layers = []
         for t in group:
@@ -91,7 +91,7 @@ class MovePoints(object):
                         self._velocity,
                         self._adj,
                         self._index)
-        for t, ts in group.iteritems():
+        for t, ts in group.items():
             t.layers = [Layer('T', 1)]
 
         self._velocity = v
@@ -99,7 +99,7 @@ class MovePoints(object):
         self.time = time() - start
 
     def direction(self, value):
-        a = average([t.vector for t in self.tiles.itervalues() if t.elevation == 1])
+        a = average([t.vector for t in self.tiles.values() if t.elevation == 1])
         a /= norm(a)
         self._velocity = rotate(self._velocity, a, value - self._direction)
         self._direction = value
@@ -110,4 +110,4 @@ class MovePoints(object):
 
     @property
     def count(self):
-        return sum([t.elevation for t in self.tiles.itervalues()])
+        return sum([t.elevation for t in self.tiles.values()])

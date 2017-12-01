@@ -31,10 +31,10 @@ class RiversDisplay(QWidget):
         if self._screen is None:
             self._screen = SphereView(self._sim.grid.faces, self)
         rts = {}
-        for t in self._sim.tiles.itervalues():
+        for t in self._sim.tiles.values():
             for r in self._sim.rivers:
                 if t in r:
                     rts[t] = (1 + r.index(t))/float(len(r))
-        self._screen.usecolors({ v: highlightriver(t, rts) for (v, t) in self._sim.tiles.iteritems() })
+        self._screen.usecolors({ v: highlightriver(t, rts) for (v, t) in self._sim.tiles.items() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)

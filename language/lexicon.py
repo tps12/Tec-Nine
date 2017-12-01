@@ -1,6 +1,6 @@
 from random import choice, random
 
-from words import Syllable, Word
+from .words import Syllable, Word
 
 def lexicon(vs, cs, onsetp=0.9, codap=0.5, n=10000):
   lex = set()

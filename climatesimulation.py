@@ -41,7 +41,7 @@ class ClimateSimulation(object):
         seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5] if seasons is None else seasons
         self.seasoncount = len(seasons)
         c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, self.glaciation, True, {})
-        for v, tile in self.tiles.iteritems():
+        for v, tile in self.tiles.items():
             tile.climate = {
                 'koeppen': c[v]['classification'].koeppen,
                 'insolation': [s['insolation'] for s in c[v]['seasons']],
@@ -77,7 +77,7 @@ class ClimateSimulation(object):
 
     def earth(self):
         earth = Earth()
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             elevation = earth.sample(t.lat, t.lon) / 900.0
             if elevation < 0:
                 elevation = 0

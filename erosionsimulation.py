@@ -30,7 +30,7 @@ class ErosionSimulation(object):
             lon = 180/pi * atan2(y, x)
             self.tiles[v] = Tile(lat, lon)
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.eroding = Erosion()
             t.climate = t.seasons = None
 
@@ -45,13 +45,13 @@ class ErosionSimulation(object):
 
         c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, True, {})
 
-        for v, tiles in self.tiles.iteritems():
+        for v, tiles in self.tiles.items():
             self.tiles[v].climate = c[v]['classification']
             self.tiles[v].seasons = c[v]['seasons']
 
         erosion = erode(self.tiles, self.adj)
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.erode(erosion, 1.0)
             t.eroding = erosion[t]
 
@@ -61,7 +61,7 @@ class ErosionSimulation(object):
 
     def earth(self):
         earth = Earth()
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             elevation = earth.sample(t.lat, t.lon) / 900.0
             if elevation < 0:
                 elevation = 0

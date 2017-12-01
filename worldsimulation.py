@@ -39,7 +39,7 @@ class WorldSimulation(object):
   def populated(self):
     if 'populated' in self.sim.__dict__:
         return {t: (r, populationlevel.count(t, r, self.sim.agricultural))
-                for t, r in self.sim.populated.iteritems()}
+                for t, r in self.sim.populated.items()}
     return {}
 
   @property

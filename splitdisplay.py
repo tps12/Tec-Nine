@@ -51,6 +51,6 @@ class SplitDisplay(QWidget):
     def invalidate(self):
         if self._screen is None:
             self._screen = SphereView(self._sim.grid.faces, self)
-        self._screen.usecolors({ v: self.tilecolor(t) for (v, t) in self._sim.tiles.iteritems() })
+        self._screen.usecolors({ v: self.tilecolor(t) for (v, t) in self._sim.tiles.items() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)

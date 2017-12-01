@@ -32,9 +32,9 @@ class TerrainSimulation(object):
             lat = 180/pi * atan2(z, sqrt(x*x + y*y))
             lon = 180/pi * atan2(y, x)
             self.tiles[v] = Tile(lat, lon)
-        self._tileloc = {t: f for f,t in self.tiles.iteritems()}
+        self._tileloc = {t: f for f,t in self.tiles.items()}
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.emptyocean(self.seafloor())
             t.climate = t.seasons = None
             t.candidate = False
@@ -63,7 +63,7 @@ class TerrainSimulation(object):
 
     def initindexes(self):
         self._indexedtiles = []
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             self._indexedtiles.append(t)
 
         self._tileadj = dict()
@@ -85,7 +85,7 @@ class TerrainSimulation(object):
         faces = {}
         grid = self._terrain
         while True:
-            for f, vs in grid.faces.iteritems():
+            for f, vs in grid.faces.items():
                 if f not in faces:
                     faces[f] = vs
             if grid == self._grid:
@@ -109,7 +109,7 @@ class TerrainSimulation(object):
         self._initgrid(data['gridsize'])
         self.spin, self.cells, self.tilt = [data[k] for k in ['spin', 'cells', 'tilt']]
         self.tiles = data['tiles']
-        self._tileloc = {t: f for f,t in self.tiles.iteritems()}
+        self._tileloc = {t: f for f,t in self.tiles.items()}
         loadt.start('subdividing tiles')
         self._terrain = terrain(self.grid, self.tiles)
         self._terrainadj = Adjacency(self._terrain)

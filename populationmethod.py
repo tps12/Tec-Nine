@@ -5,7 +5,7 @@ import passability
 import race
 
 def sea(tiles):
-  return [t for t in tiles.itervalues() if t.elevation <= 0]
+  return [t for t in tiles.values() if t.elevation <= 0]
 
 def mainocean(seatiles, adj):
   seas = {t: disjoint.set() for t in seatiles}
@@ -23,7 +23,7 @@ def mainocean(seatiles, adj):
 
 def eden(tiles, adj, name):
     o = mainocean(sea(tiles), adj)
-    candidates = [t for t in tiles.itervalues()
+    candidates = [t for t in tiles.values()
                   if t.climate and t.climate.koeppen == u'Aw' and
                   any([n in o for n in adj[t]])]
     return {random.choice(candidates): race.Heritage(name)} if candidates else {}
@@ -53,7 +53,7 @@ def expandpopulation(rivers, adj, populated, agricultural, travelrange, coastalp
         cmemo[t] = val
         return val
     frontier = {}
-    for t, r in populated.iteritems():
+    for t, r in populated.items():
         farms = r in agricultural
         distance = 0
         adjs = adj[t]
@@ -64,7 +64,7 @@ def expandpopulation(rivers, adj, populated, agricultural, travelrange, coastalp
                     frontier[n] = populated[t]
                     added = True
             if added: break
-            adjs = sorted(list(passability.expand(adjs, adj, farms)))
+            adjs = list(passability.expand(adjs, adj, farms))
             distance += 1
     if not frontier:
         return False

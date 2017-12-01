@@ -4,6 +4,7 @@ from math import asin, acos, atan2, pi, exp, sqrt, sin, cos
 import random
 from time import time
 
+from numpy import array
 from numpy.linalg import norm
 
 from grid import Grid
@@ -97,7 +98,7 @@ class PlanetSimulation(object):
 
         shape = SphericalPolygon(shape, p)
 
-        self._shapes = [Group([t for t in self.tiles.itervalues() if shape.contains(t.vector)], v)]
+        self._shapes = [Group([t for t in self.tiles.values() if shape.contains(t.vector)], v)]
 
         # initial landmass starts at elevation based on distance from center
         c = self._indexedtiles[self._index.nearest(p)[0]]
@@ -118,7 +119,7 @@ class PlanetSimulation(object):
             else:
                 t.emptyocean(self.seafloor())
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.climate = t.seasons = None
 
         initt.done()
@@ -156,7 +157,7 @@ class PlanetSimulation(object):
 
     def initindexes(self):
         self._indexedtiles = []
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             self._indexedtiles.append(t)
 
         self.adj = Adjacency(self._grid)
@@ -224,7 +225,7 @@ class PlanetSimulation(object):
                             self._shapes[i].v,
                             self._tileadj,
                             self._index)
-            self._shapes[i] = Group(group.keys(), v)
+            self._shapes[i] = Group(list(group.keys()), v)
             for dest, sources in group.items():
                 if dest in new:
                     new[dest].append(TileMovement(sources, speed))
@@ -270,13 +271,13 @@ class PlanetSimulation(object):
         if self.hasatmosphere:
             stept.start('"simulating" climate')
 
-            seasons = [0.1*v for v in range(-10,10,5) + range(10,-10,-5)]
+            seasons = [0.1*v for v in list(range(-10,10,5)) + list(range(10,-10,-5))]
             c = climate(self.tiles, self.adj, seasons, self.cells, self.spin, self.tilt, self.temprange, 0.5, self.haslife, self._climatemappings, self._climateprof)
 
             if self._climateprof:
                 self._climateprof.dump_stats('climate.profile')
 
-            for v, tile in self.tiles.iteritems():
+            for v, tile in self.tiles.items():
                 tile.climate = c[v]['classification']
                 tile.seasons = c[v]['seasons']
 
@@ -284,10 +285,10 @@ class PlanetSimulation(object):
 
             erosion = erode(self.tiles, self.adj)
 
-            for t in self.tiles.itervalues():
+            for t in self.tiles.values():
                 t.erode(erosion, self._erode)
 
-            for t in self.tiles.itervalues():
+            for t in self.tiles.values():
                 # if the tile is in at least one shape, apply the erosion materials
                 if len(overlapping[t]) > 0:
                     if len(erosion[t].materials) > 0:
@@ -317,7 +318,7 @@ class PlanetSimulation(object):
 
         stept.start('performing random intrusions')
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             if t.subduction > 0:
                 if random.random() < 0.1:
                     t.intrude(igneous.intrusive(max(0, min(1, random.gauss(0.85, 0.15)))))
@@ -325,10 +326,10 @@ class PlanetSimulation(object):
 
         stept.start('applying regional metamorphism')
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.transform(metamorphic.regional(t.substance[-1], t.subduction > 0))
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.cleartemp()
 
         stept.start('merging overlapping shapes')

@@ -41,7 +41,7 @@ class HistorySimulation(object):
             lon = 180/pi * atan2(y, x)
             self.tiles[v] = Tile(lat, lon)
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.emptyocean(self.seafloor())
             t.climate = t.seasons = None
             t.candidate = False
@@ -73,7 +73,7 @@ class HistorySimulation(object):
 
     def initindexes(self):
         self._indexedtiles = []
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             self._indexedtiles.append(t)
 
         self._tileadj = dict()
@@ -92,7 +92,7 @@ class HistorySimulation(object):
         stept.start('growing populations')
         grow = lambda p0, K: K/(1 + (K-p0)/p0 * math.exp(-0.25)) # k=0.25 pretty arbitrary, aiming for 1% yearly growth
         deltas = {}
-        for f, ps in self._population.iteritems():
+        for f, ps in self._population.items():
             for p in ps:
                 neighborhood = [f] + [n for n in self._terrainadj[f] if n in self._elevation and self._elevation[n]]
                 capacities = [self._capacity[n][1 if p.heritage in self.agricultural else 0] for n in neighborhood]
@@ -116,7 +116,7 @@ class HistorySimulation(object):
                             deltas[n].append(Population(p.heritage, share))
 
         stept.start('assigning growth values')
-        for f, dps in deltas.iteritems():
+        for f, dps in deltas.items():
             if f not in self._population:
                 self._population[f] = []
             ps = self._population[f]
@@ -129,7 +129,7 @@ class HistorySimulation(object):
                     ps.append(dp)
 
         stept.start('removing empty populations')
-        for ps in self._population.itervalues():
+        for ps in self._population.values():
             for i in [i for i in reversed(range(len(ps))) if not ps[i].thousands]:
                 del ps[i]
 
@@ -144,7 +144,7 @@ class HistorySimulation(object):
         faces = {}
         grid = self._terrain
         while True:
-            for f, vs in grid.faces.iteritems():
+            for f, vs in grid.faces.items():
                 if f not in faces:
                     faces[f] = vs
             if grid == self._grid:
@@ -187,7 +187,7 @@ class HistorySimulation(object):
                 # face is a vertex of the coarse grid, gets average of three elevated faces
                 pfs = [pf for pf in grid.vertices[f] if tiles[pf].elevation]
                 capacity[f] = tuple([sum([fn(tiles[pf], adj, rivers) for pf in pfs])/(9.0 * len(pfs))
-                                     for fn in cls.paleocapacity, cls.agracapacity])
+                                     for fn in (cls.paleocapacity, cls.agracapacity)])
             else:
                 # fully contained by coarse face
                 if f in grid.faces:
@@ -201,7 +201,7 @@ class HistorySimulation(object):
                         coast.add(f)
                         continue
                 capacity[f] = tuple([fn(t, adj, rivers)/9.0
-                                     for fn in cls.paleocapacity, cls.agracapacity])
+                                     for fn in (cls.paleocapacity, cls.agracapacity)])
 
         # now fill in the coastal tiles we skipped with the average values of their neighbors
         tadj = Adjacency(terrain)
@@ -255,7 +255,7 @@ class HistorySimulation(object):
         self._initgrid(data['gridsize'])
         self.spin, self.cells, self.tilt = [data[k] for k in ['spin', 'cells', 'tilt']]
         self.tiles = data['tiles']
-        self._tileloc = {t: f for f,t in self.tiles.iteritems()}
+        self._tileloc = {t: f for f,t in self.tiles.items()}
         self.shapes = data['shapes']
         self.populated = data['population']
         self.agricultural = data['agricultural']

@@ -111,7 +111,7 @@ class Climate(object):
 
         direction_fn = memoize(self.winddirection)
         insolation_fn = memoize(self.insolation)
-        for v, tile in self.tiles.iteritems():
+        for v, tile in self.tiles.items():
             if direction:
                 self.direction[v] = direction_fn(tile.lat, c, self.spin)
 
@@ -138,7 +138,7 @@ class Climate(object):
 
         if direction:
             self.sadj = {}
-            for v, ns in self.adj._adj.iteritems():
+            for v, ns in self.adj._adj.items():
                 c = tile.lat, tile.lon
                 d = self.direction[v]
                 self.sadj[v] = sorted(self.adj[v],
@@ -159,7 +159,7 @@ class Climate(object):
         if not self.seabreeze:
             frontier = []
             d = 0
-            for v, tile in self.tiles.iteritems():
+            for v, tile in self.tiles.items():
                 if tile.elevation <= 0:
                     self.seabreeze[v] = d
                     frontier.append(v)
@@ -217,7 +217,7 @@ class Climate(object):
         seen = set()
 
         # map destinations for every tile
-        for v, tile in self.tiles.iteritems():
+        for v, tile in self.tiles.items():
             nws = [(a, cos((bearing(
                 (tile.lat, tile.lon),
                 (self.tiles[a].lat, self.tiles[a].lon))
@@ -230,7 +230,7 @@ class Climate(object):
                 seen.add(n)
 
         # map from sources for any tile that hasn't been targeted
-        for v, tile in self.tiles.iteritems():
+        for v, tile in self.tiles.items():
             if v not in seen:
                 nws = [(a, -cos((bearing(
                     (tile.lat, tile.lon),
@@ -244,12 +244,12 @@ class Climate(object):
 
         # normalize weights
         self._mapping = {}
-        for (d, sws) in mapping.iteritems():
+        for (d, sws) in mapping.items():
             t = sum([w for (s, w) in sws])
             self._mapping[d] = [(s, w/t) for (s,w) in sws]
 
         self._destmap = {}
-        for (s, dws) in dests.iteritems():
+        for (s, dws) in dests.items():
             t = sum([w for (d, w) in dws])
             self._destmap[s] = [(d, w/t) for (d,w) in dws]
 
@@ -280,7 +280,7 @@ class Climate(object):
 
     def _getaverage(self):
         c = {}
-        for v, tile in self.tiles.iteritems():
+        for v, tile in self.tiles.items():
             c[v] = (self.tiles[v].elevation,
                     self.temperature[v],
                     self.precipitation[v],
@@ -290,7 +290,7 @@ class Climate(object):
     
     def update(self):
         d, t, c, s, p = [not dic for dic in
-                      self.direction, self.temperature, self.convective, self.seabased, self.pressure]
+                         (self.direction, self.temperature, self.convective, self.seabased, self.pressure)]
         if d or t or c or s or p:
             self._profile.runcall(self.resetclimate, d, t, c, s, p)
 

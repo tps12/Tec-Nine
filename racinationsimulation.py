@@ -41,7 +41,7 @@ class RacinationSimulation(object):
             lon = 180/pi * atan2(y, x)
             self.tiles[v] = Tile(lat, lon)
 
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             t.emptyocean(self.seafloor())
         self.populated = {}
         self.range = 6
@@ -65,7 +65,7 @@ class RacinationSimulation(object):
         self.continents = [Continent(p, r) for p, r in [(p1, 0.75), (p2, 0.5)]]
 
         h = race.Heritage('people')
-        for t in self.tiles.itervalues():
+        for t in self.tiles.values():
             if any([c.outer.contains(t.vector) for c in self.continents]):
                 t.bottom = 0
                 t.layers = [Layer('T', 1)]
@@ -84,7 +84,7 @@ class RacinationSimulation(object):
             swath = SphericalPolygon([rotate(rotate(c.center, c.orientingpt, 1.2*c.avgradius), c.center, th)
                                       for th in [th0, th0 + pi/12, th0 + pi, th0 + pi + pi/12]], c.center)
             k = random.choice([u'BW', u'ET'])
-            for t in self.tiles.itervalues():
+            for t in self.tiles.values():
                 if swath.contains(t.vector) and c.outer.contains(t.vector):
                     t.climate = ClimateInfo(None, None, k, None)
                     if t in self.populated:
@@ -97,7 +97,7 @@ class RacinationSimulation(object):
 
     @property
     def peoples(self):
-        return len({p for p in self.populated.itervalues()})
+        return len({p for p in self.populated.values()})
 
     @staticmethod
     def seafloor():

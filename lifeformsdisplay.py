@@ -75,6 +75,6 @@ class LifeformsDisplay(QWidget):
         else:
             indices = self.attributeindices[self.shownattribute]
             fn = lambda v, c: lifepop(pops, indices, v, self.season, c)
-        self._screen.usecolors({ v: (255,0,0) if t is self.selected else fn(v, snoworrock(t)) for v, t in self._sim.tiles.iteritems() })
+        self._screen.usecolors({ v: (255,0,0) if t is self.selected else fn(v, snoworrock(t)) for v, t in self._sim.tiles.items() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)

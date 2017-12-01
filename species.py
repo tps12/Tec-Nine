@@ -7,9 +7,9 @@ class ClimateParams(object):
         self.lightrange = lightrange
 
     def inrange(self, season):
-        return all([r[0] <= season[k] <= r[1] for (k, r) in ('temperature', self.temprange),
-                                                            ('precipitation', self.preciprange),
-                                                            ('insolation', self.lightrange)])
+        return all([r[0] <= season[k] <= r[1] for (k, r) in (('temperature', self.temprange),
+                                                             ('precipitation', self.preciprange),
+                                                             ('insolation', self.lightrange))])
 
 def mergeseasons(r, f, ss):
     if f in r:
@@ -57,7 +57,7 @@ class Species(object):
 
 def findregions(tiles, adj, params):
     rs = {}
-    for f, t in tiles.iteritems():
+    for f, t in tiles.items():
         if t.elevation <= 0:
             continue
         if all([params.inrange(s) for s in t.seasons]):
@@ -66,7 +66,7 @@ def findregions(tiles, adj, params):
                 if n in rs:
                     disjoint.union(rs[f], rs[n])
     regs = {}
-    for f, s in rs.iteritems():
+    for f, s in rs.items():
         r = s.root()
         if r not in regs:
             regs[r] = set()
@@ -75,7 +75,7 @@ def findregions(tiles, adj, params):
 
 def findseasonalregions(tiles, adj, params):
     rs = {}
-    for f, t in tiles.iteritems():
+    for f, t in tiles.items():
         if t.elevation <= 0:
             continue
         ss = tuple([i for i in range(len(t.seasons)) if params.inrange(t.seasons[i])])
@@ -88,7 +88,7 @@ def findseasonalregions(tiles, adj, params):
             if nk in rs:
                 disjoint.union(rs[k], rs[nk])
     regs = {}
-    for k, s in rs.iteritems():
+    for k, s in rs.items():
         f, ss = k
         rk = (s.root(), ss)
         if rk not in regs:
@@ -98,7 +98,7 @@ def findseasonalregions(tiles, adj, params):
 
 # regions may be separated by water, up to caller to sort it out
 def findmigratorypatterns(tiles, adj, params):
-    for t in tiles.itervalues():
+    for t in tiles.values():
         slen = len(t.seasons)
         break
     def gen():
@@ -117,7 +117,7 @@ def findhibernationregions(tiles, adj, params):
     toocold = max(0, min(0.3, params.temprange[0] - 0.01))
     winter = ClimateParams((toocold, params.temprange[0]), (0,1), (0,1))
     rs = {}
-    for f, t in tiles.iteritems():
+    for f, t in tiles.items():
         if t.elevation <= 0:
             continue
         ss = tuple([i for i in range(len(t.seasons)) if params.inrange(t.seasons[i])])
@@ -133,7 +133,7 @@ def findhibernationregions(tiles, adj, params):
             if nk in rs:
                 disjoint.union(rs[k], rs[nk])
     regs = {}
-    for k, s in rs.iteritems():
+    for k, s in rs.items():
         f, ss = k
         rk = (s.root(), ss)
         if rk not in regs:

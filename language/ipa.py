@@ -1,4 +1,4 @@
-from phonemes import vowels
+from .phonemes import vowels
 
 ipa = dict([
     ('i', u'\u0069'),

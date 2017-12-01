@@ -1,4 +1,4 @@
-from cPickle import dump, load
+from pickle import dump, load
 
 from grid import Grid
 
@@ -9,10 +9,10 @@ class Adjacency(object):
         cache = self.CACHE.format(grid.size)
 
         try:
-            with open(cache, 'r') as f:
+            with open(cache, 'rb') as f:
                 self._adj = load(f)
         except Exception as er:
-            print 'Cached adjacency list failed:', repr(er)
+            print('Cached adjacency list failed:', repr(er))
 
             size = grid.size
             grid = Grid()

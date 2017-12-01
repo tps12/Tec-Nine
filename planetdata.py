@@ -1,4 +1,4 @@
-from cPickle import dump, load
+from pickle import dump, load
 
 from climatemethod import ClimateInfo
 from race import Heritage
@@ -12,13 +12,13 @@ class Data(object):
         if 'version' not in data or data['version'] < 16:
                 raise ValueError('File version is too old')
 
-        races, agricultural = cls._population(data['races'], data['racenames'], data['agriculturalraces'], data['tiles'].iteritems())
+        races, agricultural = cls._population(data['races'], data['racenames'], data['agriculturalraces'], data['tiles'].items())
 
-        data['tiles'] = {v: cls._tile(t) for v,t in data['tiles'].iteritems()}
+        data['tiles'] = {v: cls._tile(t) for v,t in data['tiles'].items()}
 
         data['shapes'] = [Group([data['tiles'][tv] for tv in tvs], v) for (tvs, v) in data['shapes']]
 
-        data['population'] = {data['tiles'][v]: r for v, r in races.iteritems()}
+        data['population'] = {data['tiles'][v]: r for v, r in races.items()}
 
         data['agricultural'] = agricultural
 
@@ -26,7 +26,7 @@ class Data(object):
 
     @classmethod
     def load(cls, filename):
-        with open(filename, 'r') as f:
+        with open(filename, 'rb') as f:
             return cls.loaddata(load(f))
 
     @classmethod
@@ -54,7 +54,7 @@ class Data(object):
                                         if t.climate is not None else None,
                              'seasons': t.seasons if t.seasons is not None else None,
                              'race': rs.index(population[t]) if t in population else None }
-                           for v,t in tiles.iteritems()},
+                           for v,t in tiles.items()},
                 'shapes': [([tileindex[t.vector] for t in s.tiles], s.v) for s in shapes],
                 'races': rindex,
                 'racenames': rnames,
@@ -69,7 +69,7 @@ class Data(object):
     def save(cls, filename, data):
         if filename[-len(cls.EXTENSION):] != cls.EXTENSION:
             filename += cls.EXTENSION
-        with open(filename, 'w') as f:
+        with open(filename, 'wb') as f:
             dump(data, f, 0)
 
     @classmethod
@@ -92,7 +92,7 @@ class Data(object):
     @classmethod
     def _index(cls, tiles):
         tileindex = {}
-        for v,t in tiles.iteritems():
+        for v,t in tiles.items():
             tileindex[t.vector] = v
         return tileindex
 
@@ -105,7 +105,7 @@ class Data(object):
                     hs |= addh(a)
             return hs
         hset = set()
-        for h in population.itervalues():
+        for h in population.values():
             hset |= addh(h)
         hs = list(hset)
         names = [h.name for h in hs]

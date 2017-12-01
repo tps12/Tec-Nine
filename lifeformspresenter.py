@@ -40,7 +40,7 @@ class LifeformsPresenter(object):
         self._view.content.update()
         self._view.details.clear()
         if tile is not None:
-            for f, t in self._model.tiles.iteritems():
+            for f, t in self._model.tiles.items():
                 if t is tile:
                     species = []
                     for i in LifeformsDisplay.attributeindices[self._display.shownattribute]:

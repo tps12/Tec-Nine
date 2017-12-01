@@ -89,6 +89,6 @@ class ClimateDisplay(QWidget):
             fn = lambda t: attribute['function'](t, self.season)
         else:
             fn = attribute['function']
-        self._screen.usecolors({ v: fn(t) for (v, t) in self._sim.tiles.iteritems() })
+        self._screen.usecolors({ v: fn(t) for (v, t) in self._sim.tiles.items() })
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)

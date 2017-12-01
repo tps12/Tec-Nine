@@ -184,7 +184,7 @@ def contact(layers, intrusion):
 
     i = 0
     while i < len(facies) - 1:
-        if any([facies[i][n] == facies[i+1][n] for n in 0,1]):
+        if any([facies[i][n] == facies[i+1][n] for n in range(2)]):
             facies.pop(i)
         else:
             i += 1

@@ -9,15 +9,15 @@ class Timing(object):
         def __init__(self, name):
             self._start = time()
 
-            print name
-            print '-' * len(name)
+            print(name)
+            print('-' * len(name))
 
             self._t, self._current = None, None
 
         def _record(self):
             t = time()
             if self._t is not None:
-                print t - self._t
+                print(t - self._t)
             self._t = t
 
         def start(self, section):
@@ -27,5 +27,5 @@ class Timing(object):
 
         def done(self):
             self._record()
-            print 'total', time() - self._start
-            print
+            print('total', time() - self._start)
+            print()

@@ -5,16 +5,16 @@ class ClimateClassification(object):
         tf = lambda c: c * (templimits[1] - templimits[0]) + templimits[0]
         pf = lambda c: c * 1800.0/len(cs)
 
-        for v, (h, cs) in summary.iteritems():
+        for v, (h, cs) in summary.items():
             rts, rps, _ = zip(*cs)
 
-            ts = map(tf, rts)
-            ps = map(pf, rps)
+            ts = list(map(tf, rts))
+            ps = list(map(pf, rps))
 
             thr = sum(ts)/len(cs) * 20
             byt = sorted(range(len(ts)), key=lambda i: ts[i])
             tot = sum(ps)
-            inh = sum([ps[i] for i in byt[-len(byt)/2:]])
+            inh = sum([ps[i] for i in byt[-int(len(byt)/2):]])
             if inh >= 0.7 * tot:
                 thr += 280
             elif inh >= 0.3 * tot:
@@ -56,12 +56,12 @@ class ClimateClassification(object):
             else:
                 k = u'D'
                 
-            if (min([ps[i] for i in byt[-len(byt)/2:]]) <
-                max([ps[i] for i in byt[:len(byt)/2]])/10.0):
+            if (min([ps[i] for i in byt[-int(len(byt)/2):]]) <
+                max([ps[i] for i in byt[:int(len(byt)/2)]])/10.0):
                 k += u'w'
-            elif (min([ps[i] for i in byt[:len(byt)/2]]) <
+            elif (min([ps[i] for i in byt[:int(len(byt)/2)]]) <
                   min(30*len(ps),
-                      max([ps[i] for i in byt[-len(byt)/2:]])/3.0)):
+                      max([ps[i] for i in byt[-int(len(byt)/2):]])/3.0)):
                 k += u's'
             else:
                 k += u'f'

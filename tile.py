@@ -50,8 +50,8 @@ class Tile(object):
         return self.bottom, self._mountainosity, [{ 'rock': l.rock, 'thickness': l.thickness } for l in self.layers]
 
     def distance(self, other):
-        lat1, lon1 = [c * pi/180 for c in self.lat, self.lon]
-        lat2, lon2 = [c * pi/180 for c in other.lat, other.lon]
+        lat1, lon1 = [c * pi/180 for c in (self.lat, self.lon)]
+        lat2, lon2 = [c * pi/180 for c in (other.lat, other.lon)]
 
         dlat = lat2 - lat1
         dlon = lon2 - lon1

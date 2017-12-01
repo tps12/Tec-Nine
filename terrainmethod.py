@@ -6,7 +6,7 @@ from grid import Grid
 def terrain(grid, tiles):
     # first level, populate every land tile
     terrain = Grid(grid)
-    for v, t in tiles.iteritems():
+    for v, t in tiles.items():
         if t.elevation > 0:
             terrain.populate(v)
     # then subdivide that
