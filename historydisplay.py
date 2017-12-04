@@ -1,7 +1,28 @@
+import random
+
 from PySide.QtGui import QGridLayout, QWidget
 
 import color
 from sphereview import SphereView
+
+nationcolors = { }
+
+def nations(sim, rivers):
+    colors = { }
+    for f in sim.faces:
+        if (f in sim.tiles and sim.tiles[f].elevation == 0) or not sim.faceelevation(f):
+            colors[f] = 0, 0, 0
+        elif rivers and any([f in r for r in sim.riverroutes]):
+            colors[f] = 0, 0, 255
+        elif f in sim.boundaries:
+            nation = sim.boundaries[f]
+            if nation not in nationcolors:
+                nationcolors[nation] = (255 * random.random(), 255 * random.random(), 255 * random.random())
+            colors[f] = nationcolors[nation]
+        else:
+            p = sim.facepopulation(f)
+            colors[f] = color.warm(p/17.0) if p else (128, 128, 128)
+    return colors
 
 def population(sim, rivers):
     colors = { }
@@ -28,14 +49,14 @@ def capacity(sim, rivers):
     return colors
 
 class HistoryDisplay(QWidget):
-    _colorfunctions = [population, capacity]
+    _colorfunctions = [nations, population, capacity]
 
     def __init__(self, sim):
         QWidget.__init__(self)
         self._sim = sim
         self._screen = None
         self._rotate = 0
-        self._aspect = self._colorfunctions.index(population)
+        self._aspect = self._colorfunctions.index(nations)
         self._rivers = True
         self.setLayout(QGridLayout())
         self.invalidate()

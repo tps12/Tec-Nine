@@ -62,6 +62,9 @@ class HistorySimulation(object):
         self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, [])
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
 
+        self.nations = []
+        self.boundaries = {}
+
         initt.done()
 
     def _initgrid(self, gridsize):
@@ -95,6 +98,7 @@ class HistorySimulation(object):
         for f, ps in self._population.items():
             for p in ps:
                 neighborhood = [f] + [n for n in self._terrainadj[f] if n in self._elevation and self._elevation[n]]
+                nations = {self.boundaries[f]} if f in self.boundaries else {self.boundaries[n] for n in self._terrainadj[f]}
                 capacities = [self._capacity[n][1 if p.heritage in self.agricultural else 0] for n in neighborhood]
                 pops = [sum([np.thousands for np in self._population[n]]) for n in neighborhood]
                 K = max(0, sum(capacities) - sum(pops)) + capacities[0]
@@ -107,16 +111,17 @@ class HistorySimulation(object):
                         share = delta * spaces[i]
                         n = neighborhood[i]
                         if n not in deltas:
-                            deltas[n] = []
-                        for dp in deltas[n]:
+                            deltas[n] = ([], set())
+                        for dp in deltas[n][0]:
                             if dp.heritage is p.heritage:
                                 dp.thousands += share
                                 break
                         else:
-                            deltas[n].append(Population(p.heritage, share))
+                            deltas[n][0].append(Population(p.heritage, share))
+                        deltas[n][1].update(nations)
 
         stept.start('assigning growth values')
-        for f, dps in deltas.items():
+        for f, (dps, nations) in deltas.items():
             if f not in self._population:
                 self._population[f] = []
             ps = self._population[f]
@@ -127,6 +132,8 @@ class HistorySimulation(object):
                         break
                 else:
                     ps.append(dp)
+            if f not in self.boundaries:
+                self.boundaries[f] = random.choice(list(nations))
 
         stept.start('removing empty populations')
         for ps in self._population.values():
@@ -249,6 +256,17 @@ class HistorySimulation(object):
                         ps.append(Population(r, n))
         return population
 
+    @staticmethod
+    def nationalboundaries(terrain, population, agricultural, loadt):
+        loadt.start('creating national boundaries')
+        cities = list({f for f in terrain.faces if f in population and random.random() < 0.05})
+        citytree = PointTree(dict([[cities[i], i] for i in range(len(cities))]))
+        boundaries = {}
+        for f in terrain.faces:
+            if f in population and sum([p.thousands for p in population[f]]) > 0:
+                boundaries[f] = citytree.nearest(f)[0]
+        return [None for _ in range(len(cities))], boundaries
+
     def loaddata(self, data, loadt):
         random.setstate(data['random'])
         loadt.start('initializing grid')
@@ -276,6 +294,7 @@ class HistorySimulation(object):
         self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
         loadt.start('determining population')
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
+        self.nations, self.boundaries = self.nationalboundaries(self._terrain, self._population, self.agricultural, loadt)
         self._glaciationt = data['glaciationtime']
 
     def load(self, filename):

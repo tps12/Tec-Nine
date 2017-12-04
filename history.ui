@@ -72,6 +72,11 @@
          </property>
          <item>
           <property name="text">
+           <string>Nations</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>Population</string>
           </property>
          </item>
