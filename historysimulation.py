@@ -3,6 +3,7 @@ import random
 import statistics
 import time
 
+from dist2 import dist2
 from grid import Grid
 from hexadjacency import Adjacency
 from planetdata import Data
@@ -258,6 +259,10 @@ class HistorySimulation(object):
         return population
 
     @staticmethod
+    def hasagriculture(f, population, agricultural):
+        return f in population and any([p.heritage in agricultural for p in population[f]])
+
+    @staticmethod
     def cityprob(f, terrain, tiles, population, agricultural):
         coarse = terrain.prev.prev
         if f in coarse.vertices:
@@ -277,21 +282,55 @@ class HistorySimulation(object):
                 t = [pf for pf in terrain.prev.vertices[f] if pf in coarse.faces][0]
             k = tiles[t].climate.koeppen
         if k[0] == u'E': return 0
-        if not any([p.heritage in agricultural for p in population[f]]): return 0.25
+        if not HistorySimulation.hasagriculture(f, population, agricultural): return 0.25
         if k in (u'BW', u'BS', u'Af'): return 0.15
         return 0.05
 
     @staticmethod
-    def nationalboundaries(terrain, tiles, population, agricultural, loadt):
+    def nationalboundaries(terrain, elevation, rivers, adj, tiles, population, agricultural, loadt):
         loadt.start('creating national boundaries')
         cities = list({f for f in terrain.faces
                        if f in population and
                           random.random() < HistorySimulation.cityprob(f, terrain, tiles, population, agricultural)})
-        citytree = PointTree(dict([[cities[i], i] for i in range(len(cities))]))
+        def tree():
+            return PointTree(dict([[cities[i], i] for i in range(len(cities))]))
+        citytree = tree()
         boundaries = {}
         for f in terrain.faces:
             if f in population and sum([p.thousands for p in population[f]]) > 0:
-                boundaries[f] = citytree.nearest(f)[0]
+                candidates = citytree.nearest(f, 6)
+                paths, costs = [[f] for _ in candidates], [0 for _ in candidates]
+                while True:
+                    # find the cheapest path so far
+                    i = min(range(len(paths)), key=lambda i: costs[i])
+                    if costs[i] == float('inf'):
+                        # found a new nation
+                        cities.append(f)
+                        citytree = tree()
+                        boundaries[f] = len(cities)-1
+                        break
+                    city = cities[candidates[i]]
+                    if paths[i][-1] == city:
+                        boundaries[f] = candidates[i]
+                        break
+                    # advance it
+                    step = min(adj[paths[i][-1]], key=lambda n: dist2(city, n))
+                    paths[i].append(step)
+                    if step not in elevation or elevation[step] <= 0:
+                        # can't cross below sea level
+                        costs[i] += float('inf')
+                    elif step not in population or sum([p.thousands for p in population[step]]) <= 0:
+                        # can't cross unpopulated terrain
+                        costs[i] += float('inf')
+                    elif (HistorySimulation.hasagriculture(f, population, agricultural) !=
+                          HistorySimulation.hasagriculture(step, population, agricultural)):
+                        # can't include both agricultural and exclusively pre-agricultural people
+                        costs[i] += float('inf')
+                    elif any([step in r for r in rivers]):
+                        # difficult to span river
+                        costs[i] += 10
+                    else:
+                        costs[i] += 1
         return [None for _ in range(len(cities))], boundaries
 
     def loaddata(self, data, loadt):
@@ -321,7 +360,8 @@ class HistorySimulation(object):
         self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
         loadt.start('determining population')
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
-        self.nations, self.boundaries = self.nationalboundaries(self._terrain, self.tiles, self._population, self.agricultural, loadt)
+        self.nations, self.boundaries = self.nationalboundaries(
+            self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles, self._population, self.agricultural, loadt)
         self._glaciationt = data['glaciationtime']
 
     def load(self, filename):
