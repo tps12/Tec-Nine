@@ -1,5 +1,6 @@
 import math
 import random
+import statistics
 import time
 
 from grid import Grid
@@ -257,9 +258,35 @@ class HistorySimulation(object):
         return population
 
     @staticmethod
-    def nationalboundaries(terrain, population, agricultural, loadt):
+    def cityprob(f, terrain, tiles, population, agricultural):
+        coarse = terrain.prev.prev
+        if f in coarse.vertices:
+            # face is a vertex of the coarse grid, get mode climate if there is one
+            ks = [tiles[pf].climate.koeppen for pf in coarse.vertices[f]]
+            try:
+                k = statistics.mode(ks)
+            except statistics.StatisticsError:
+                k = random.choice(ks)
+        else:
+            # fully contained by coarse face
+            if f in coarse.faces:
+                t = f
+            else:
+                # edge face, is a vertex of parent grid, between three faces, exactly one of which
+                # is also in the coarse grid
+                t = [pf for pf in terrain.prev.vertices[f] if pf in coarse.faces][0]
+            k = tiles[t].climate.koeppen
+        if k[0] == u'E': return 0
+        if not any([p.heritage in agricultural for p in population[f]]): return 0.25
+        if k in (u'BW', u'BS', u'Af'): return 0.15
+        return 0.05
+
+    @staticmethod
+    def nationalboundaries(terrain, tiles, population, agricultural, loadt):
         loadt.start('creating national boundaries')
-        cities = list({f for f in terrain.faces if f in population and random.random() < 0.05})
+        cities = list({f for f in terrain.faces
+                       if f in population and
+                          random.random() < HistorySimulation.cityprob(f, terrain, tiles, population, agricultural)})
         citytree = PointTree(dict([[cities[i], i] for i in range(len(cities))]))
         boundaries = {}
         for f in terrain.faces:
@@ -294,7 +321,7 @@ class HistorySimulation(object):
         self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
         loadt.start('determining population')
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
-        self.nations, self.boundaries = self.nationalboundaries(self._terrain, self._population, self.agricultural, loadt)
+        self.nations, self.boundaries = self.nationalboundaries(self._terrain, self.tiles, self._population, self.agricultural, loadt)
         self._glaciationt = data['glaciationtime']
 
     def load(self, filename):
