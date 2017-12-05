@@ -6,6 +6,7 @@ import time
 from dist2 import dist2
 from grid import Grid
 from hexadjacency import Adjacency
+import lifeformsmethod
 from planetdata import Data
 from pointtree import PointTree
 import populationlevel
@@ -164,6 +165,12 @@ class HistorySimulation(object):
     @staticmethod
     def seafloor():
         return igneous.extrusive(0.5)
+
+    @staticmethod
+    def settlespecies(tiles, adj, timing):
+        fauna, plants, trees = [], [], []
+        lifeformsmethod.settle(fauna, plants, trees, tiles, adj, timing)
+        return fauna + plants + trees
 
     def faceelevation(self, f):
         return self._elevation[f] if f in self._elevation else 0
@@ -351,6 +358,7 @@ class HistorySimulation(object):
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
         loadt.start('initializing indexes')
         self.initindexes()
+        self._species = self.settlespecies(self.tiles, self.adj, loadt)
         loadt.start('running rivers')
         self.rivers = riversmethod.run(self.tiles.values(), self._tileadj, self.minriverelev, self.minriverprecip)
         self.riverroutes = list(routerivers(

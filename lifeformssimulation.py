@@ -1,10 +1,10 @@
-import codecs
 from math import pi
 import random
 
 from climatemethod import climate, temprange
 from grid import Grid
 from hexadjacency import *
+import lifeformsmethod
 from planetdata import Data
 from pointtree import PointTree
 from rock import igneous
@@ -82,42 +82,12 @@ class LifeformsSimulation(object):
             tile.climate = c[v]['classification']
             tile.seasons = c[v]['seasons']
 
-    @staticmethod
-    def populatefromparams(pop, name, params, tiles, adj, strats):
-        for s in strats:
-            habitats = s(tiles, adj, params)
-            if habitats:
-                pop.append(species.Species(name, habitats))
-                break
-
-    @staticmethod
-    def randomparams(temprange, preciprange, lightrange):
-        return species.ClimateParams(
-            tuple(sorted([random.gauss(*temprange[0]), random.gauss(*temprange[1])])),
-            tuple(sorted([random.gauss(*preciprange[0]), random.gauss(*preciprange[1])])),
-            tuple(sorted([random.gauss(*lightrange[0]), random.gauss(*lightrange[1])])))
-
     def settle(self):
         timing = self._timing.routine('settling species')
         timing.start('classifying climate')
         self.classify()
 
-        for (name, pop, ranges, strats) in [
-                ('animals', self.fauna,
-                 (((.4,.1), (.6,.1)), ((.25,.1), (.95,.1)), ((.1,.1), (.95,.1))),
-                 [species.findregions, species.findhibernationregions, species.findmigratorypatterns]),
-                ('plants', self.plants,
-                 (((.2,.1), (.95,.1)), ((.4,.2), (.95,.1)), ((.4,.2), (.95,.1))),
-                 [species.findseasonalregions]),
-                ('trees', self.trees,
-                 (((.2,.1), (.95,.1)), ((.5,.1), (.95,.1)), ((.5,.1), (.95,.1))),
-                 [species.findseasonalregions])]:
-            timing.start('settling {}'.format(name))
-            del pop[:]
-            with codecs.open('{}.txt'.format(name), 'r', 'utf-8') as f:
-                for line in f.readlines():
-                    self.populatefromparams(pop, line.strip(), self.randomparams(*ranges), self.tiles, self.adj, strats)
-            print('{} species of {}'.format(len(pop), name))
+        lifeformsmethod.settle(self.fauna, self.plants, self.trees, self.tiles, self.adj, timing)
 
         self._species = None
         timing.done()
