@@ -11,6 +11,7 @@ class HistoryPresenter(object):
         self._view = view
         self._view.start.clicked.connect(self.start)
         self._view.pause.clicked.connect(self.pause)
+        self._view.step.clicked.connect(self.step)
         self._view.load.clicked.connect(self.load)
         self._view.save.clicked.connect(self.save)
         self._view.done.clicked.connect(self.done)
@@ -81,22 +82,33 @@ class HistoryPresenter(object):
         self._view.start.setVisible(False)
         self._view.pause.setVisible(True)
         self._view.pause.setEnabled(True)
+        self._view.step.setEnabled(False)
         self._view.done.setEnabled(False)
 
     def stopped(self):
         self._view.start.setVisible(True)
         self._view.start.setEnabled(True)
         self._view.pause.setVisible(False)
+        self._view.step.setEnabled(True)
         self._view.done.setEnabled(True)
 
     def start(self):
         self._view.start.setEnabled(False)
+        self._view.step.setEnabled(False)
         self._view.done.setEnabled(False)
         self._worker.simulate(True)
 
     def pause(self):
         self._view.pause.setEnabled(False)
         self._worker.simulate(False)
+
+    def step(self):
+        self._view.start.setEnabled(False)
+        self._view.step.setEnabled(False)
+        self._model.update()
+        self.tick()
+        self._view.start.setEnabled(True)
+        self._view.step.setEnabled(True)
 
     def tick(self):
         self._ticks += 1

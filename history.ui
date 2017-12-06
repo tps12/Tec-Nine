@@ -126,6 +126,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="step">
+       <property name="text">
+        <string>Step</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QLabel" name="ticks">
