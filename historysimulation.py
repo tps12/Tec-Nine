@@ -25,6 +25,8 @@ class Population(object):
         self.heritage = heritage
         self.thousands = thousands
 
+minspecies = 20
+
 class HistorySimulation(object):
     coastprox = PrehistorySimulation.coastprox
     minriverelev = PrehistorySimulation.minriverelev
@@ -389,10 +391,13 @@ class HistorySimulation(object):
     @staticmethod
     def speciesnames(nationspecies):
         for ss in nationspecies:
-            vs, cs = phonemes()
-            l = list(lexicon(vs, cs, random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), len(ss)))
-            random.shuffle(l)
-            yield {l[i]: ss[i] for i in range(len(l))}
+            if len(ss) < minspecies:
+                yield {}
+            else:
+                vs, cs = phonemes()
+                l = list(lexicon(vs, cs, random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), len(ss)))
+                random.shuffle(l)
+                yield {l[i]: ss[i] for i in range(len(l))}
 
     def loaddata(self, data, loadt):
         random.setstate(data['random'])
@@ -426,6 +431,9 @@ class HistorySimulation(object):
             self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles, self._population, self.agricultural, loadt)
         loadt.start('bucketing life by nation')
         self._nationspecies = self.nationspecies(self.boundaries, self._terrain, self.tilespecies(self._species, self.seasons))
+        self.boundaries = {f: i for (f,i) in self.boundaries.items() if len(self._nationspecies[i]) >= minspecies}
+        self._population = {f: (ps if f in self.boundaries else []) for (f,ps) in self._population.items()}
+        loadt.start('naming species')
         self._speciesnames = list(self.speciesnames(self._nationspecies))
         self._glaciationt = data['glaciationtime']
 
