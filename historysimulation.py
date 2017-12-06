@@ -6,6 +6,8 @@ import time
 from dist2 import dist2
 from grid import Grid
 from hexadjacency import Adjacency
+from language.lexicon import lexicon
+from language.phonemes import phonemes
 import lifeformsmethod
 from planetdata import Data
 from pointtree import PointTree
@@ -27,6 +29,7 @@ class HistorySimulation(object):
     coastprox = PrehistorySimulation.coastprox
     minriverelev = PrehistorySimulation.minriverelev
     minriverprecip = PrehistorySimulation.minriverprecip
+    seasons = PrehistorySimulation.seasons
 
     _timing = Timing()
 
@@ -340,6 +343,57 @@ class HistorySimulation(object):
                         costs[i] += 1
         return [None for _ in range(len(cities))], boundaries
 
+    @staticmethod
+    def tilespecies(species, seasons):
+        populations = {}
+        for i in range(len(species)):
+            for f in species[i].seasonalrange(len(seasons)):
+                if f not in populations:
+                    populations[f] = set()
+                populations[f].add(i)
+        return {f: sorted(ss) for (f, ss) in populations.items()}
+
+    @staticmethod
+    def nationspecies(boundaries, terrain, tilespecies):
+        coarse = terrain.prev.prev
+        populations = []
+        for f, i in boundaries.items():
+            while i not in range(len(populations)):
+                populations.append(set())
+            if f in coarse.vertices:
+                # face is a vertex of the coarse grid, get union of three
+                for pf in coarse.vertices[f]:
+                    if pf not in tilespecies:
+                        continue
+                    for si in tilespecies[pf]:
+                        populations[i].add(si)
+            else:
+                # fully contained by coarse face
+                if f in coarse.faces:
+                    t = f
+                else:
+                    # edge face, is a vertex of parent grid, between three faces, exactly one of which
+                    # is also in the coarse grid
+                    t = [pf for pf in terrain.prev.vertices[f] if pf in coarse.faces][0]
+                if t not in tilespecies:
+                    continue
+                for si in tilespecies[t]:
+                    populations[i].add(si)
+        return [sorted(ss) for ss in populations]
+
+    def facenationspecies(self, f):
+        if f in self.boundaries:
+            return [self._species[s] for s in self._nationspecies[self.boundaries[f]]]
+        return []
+
+    @staticmethod
+    def speciesnames(nationspecies):
+        for ss in nationspecies:
+            vs, cs = phonemes()
+            l = list(lexicon(vs, cs, random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), len(ss)))
+            random.shuffle(l)
+            yield {l[i]: ss[i] for i in range(len(l))}
+
     def loaddata(self, data, loadt):
         random.setstate(data['random'])
         loadt.start('initializing grid')
@@ -370,6 +424,9 @@ class HistorySimulation(object):
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
         self.nations, self.boundaries = self.nationalboundaries(
             self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles, self._population, self.agricultural, loadt)
+        loadt.start('bucketing life by nation')
+        self._nationspecies = self.nationspecies(self.boundaries, self._terrain, self.tilespecies(self._species, self.seasons))
+        self._speciesnames = list(self.speciesnames(self._nationspecies))
         self._glaciationt = data['glaciationtime']
 
     def load(self, filename):

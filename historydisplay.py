@@ -24,6 +24,18 @@ def nations(sim, rivers):
             colors[f] = color.warm(p/17.0) if p else (128, 128, 128)
     return colors
 
+def species(sim, rivers):
+    colors = { }
+    for f in sim.faces:
+        if (f in sim.tiles and sim.tiles[f].elevation == 0) or not sim.faceelevation(f):
+            colors[f] = 0, 0, 0
+        elif rivers and any([f in r for r in sim.riverroutes]):
+            colors[f] = 0, 0, 255
+        else:
+            s = sim.facenationspecies(f)
+            colors[f] = color.warm(len(s)/2000) if s else (128, 128, 128)
+    return colors
+
 def population(sim, rivers):
     colors = { }
     for f in sim.faces:
@@ -49,7 +61,7 @@ def capacity(sim, rivers):
     return colors
 
 class HistoryDisplay(QWidget):
-    _colorfunctions = [nations, population, capacity]
+    _colorfunctions = [nations, species, population, capacity]
 
     def __init__(self, sim):
         QWidget.__init__(self)

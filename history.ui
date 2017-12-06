@@ -77,6 +77,11 @@
          </item>
          <item>
           <property name="text">
+           <string>Species</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>Population</string>
           </property>
          </item>
