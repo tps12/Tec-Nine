@@ -67,11 +67,13 @@ class HistorySimulation(object):
         self._glaciationt = 0
         self.initindexes()
 
-        self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, [])
-        self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
-
+        self._species = []
+        self._capacity = {}
+        self._population = {}
         self.nations = []
         self.boundaries = {}
+        self._nationspecies = {}
+        self._speciesnames = []
 
         initt.done()
 
@@ -97,7 +99,31 @@ class HistorySimulation(object):
     def nearest(self, loc):
         return self._indexedtiles[self._index.nearest(loc)[0]]
 
+    def initnations(self):
+        timing = self._timing.routine('initializing history')
+        self._species = self.settlespecies(self.tiles, self.adj, timing)
+        timing.start('determining carrying capacities')
+        self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
+        timing.start('determining population')
+        self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
+        self.nations, self.boundaries = self.nationalboundaries(
+            self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles, self._population, self.agricultural, timing)
+        timing.start('bucketing life by nation')
+        self._nationspecies = self.nationspecies(self.boundaries, self._terrain, self.tilespecies(self._species, self.seasons))
+        self.boundaries = {f: i for (f,i) in self.boundaries.items() if len(self._nationspecies[i]) >= minspecies}
+        self._population = {f: (ps if f in self.boundaries else []) for (f,ps) in self._population.items()}
+        timing.start('naming species')
+        self._speciesnames = list(self.speciesnames(self._nationspecies))
+        timing.done()
+
+        # to fill in coast at terrain scale
+        for _ in range(2):
+            self.update()
+
     def update(self):
+        if not self.nations:
+            self.initnations()
+
         stept = self._timing.routine('simulation step')
 
         stept.start('growing populations')
@@ -409,6 +435,7 @@ class HistorySimulation(object):
         self.shapes = data['shapes']
         self.populated = data['population']
         self.agricultural = data['agricultural']
+        self._glaciationt = data['glaciationtime']
         loadt.start('subdividing tiles')
         self._terrain = terrain(self.grid, self.tiles)
         self._terrainadj = Adjacency(self._terrain)
@@ -417,25 +444,19 @@ class HistorySimulation(object):
         self._elevation = {f: elevation(f, self._terrain, self.tiles) for f in self._terrain.faces}
         loadt.start('initializing indexes')
         self.initindexes()
-        self._species = self.settlespecies(self.tiles, self.adj, loadt)
         loadt.start('running rivers')
         self.rivers = riversmethod.run(self.tiles.values(), self._tileadj, self.minriverelev, self.minriverprecip)
         self.riverroutes = list(routerivers(
             self._terrain, self._terrainadj, {f: self.faceelevation(f) for f in self._terrain.faces},
             [[self._tileloc[t] for t in r] for r in self.rivers]))
-        loadt.start('determining carrying capacities')
-        self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
-        loadt.start('determining population')
-        self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
-        self.nations, self.boundaries = self.nationalboundaries(
-            self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles, self._population, self.agricultural, loadt)
-        loadt.start('bucketing life by nation')
-        self._nationspecies = self.nationspecies(self.boundaries, self._terrain, self.tilespecies(self._species, self.seasons))
-        self.boundaries = {f: i for (f,i) in self.boundaries.items() if len(self._nationspecies[i]) >= minspecies}
-        self._population = {f: (ps if f in self.boundaries else []) for (f,ps) in self._population.items()}
-        loadt.start('naming species')
-        self._speciesnames = list(self.speciesnames(self._nationspecies))
-        self._glaciationt = data['glaciationtime']
+
+        self._species = data['species']
+        self._capacity = data['terraincap']
+        self._population = data['terrainpop']
+        self.nations = data['nations']
+        self.boundaries = data['boundaries']
+        self._nationspecies = data['nationspecies']
+        self._speciesnames = data['speciesnames']
 
     def load(self, filename):
         loadt = self._timing.routine('loading state')
@@ -444,7 +465,7 @@ class HistorySimulation(object):
         loadt.done()
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True)
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._species, self._capacity, self._population, self.nations, self.boundaries, self._nationspecies, self._speciesnames)
 
     def save(self, filename):
         Data.save(filename, self.savedata())
