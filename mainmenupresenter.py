@@ -1,6 +1,7 @@
 from climate import Climate
 from erosion import Erosion
 from history import History
+from languageui import Language
 from lifeforms import Lifeforms
 from options import Options
 from population import Population
@@ -20,6 +21,7 @@ class MainMenuPresenter(object):
         self._view.tectonics.clicked.connect(self.tectonics)
         self._view.terrain.clicked.connect(self.terrain)
         self._view.history.clicked.connect(self.history)
+        self._view.language.clicked.connect(self.language)
         self._view.climate.clicked.connect(self.climate)
         self._view.rivers.clicked.connect(self.rivers)
         self._view.erosion.clicked.connect(self.erosion)
@@ -47,6 +49,9 @@ class MainMenuPresenter(object):
 
     def history(self):
         self._uistack.push(History(self._uistack))
+
+    def language(self):
+        self._uistack.push(Language(self._uistack))
 
     def climate(self):
         self._uistack.push(Climate(self._uistack))

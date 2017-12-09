@@ -8,6 +8,9 @@ class Syllable(object):
     def phonemes(self):
         return self.onset + self.nucleus + self.coda
 
+    def __repr__(self):
+        return ''.join(self.phonemes)
+
     def __eq__(self, other):
         return self.phonemes == other.phonemes
 
@@ -21,6 +24,9 @@ class Word(object):
     @property
     def phonemes(self):
         return [p for s in self.syllables for p in s.phonemes]
+
+    def __repr__(self):
+        return '\u00b7'.join([repr(s) for s in self.syllables])
 
     def __eq__(self, other):
         return self.syllables == other.syllables
