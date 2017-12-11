@@ -1,6 +1,7 @@
 import random
 
 from language.breaking import break_vowels
+import language.lenition
 from language.lexicon import lexicon
 from language.metaphony import a_mutate, i_mutate
 from language.phonemes import phonemes
@@ -29,3 +30,12 @@ def imutate(origins):
 
 def breakvowels(origins):
     return mutate(origins, break_vowels)
+
+def leniteopen(origins):
+    return mutate(origins, language.lenition.open)
+
+def lenitesonorize(origins):
+    return mutate(origins, language.lenition.sonorize)
+
+def lenitevocalize(origins):
+    return mutate(origins, language.lenition.vocalize)

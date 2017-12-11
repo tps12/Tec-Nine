@@ -68,6 +68,27 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="leniteopen">
+         <property name="text">
+          <string>Lenite</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="sonorize">
+         <property name="text">
+          <string>Sonorize</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="vocalize">
+         <property name="text">
+          <string>Vocalize</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>

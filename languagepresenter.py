@@ -12,6 +12,9 @@ class LanguagePresenter(object):
         self._view.amutate.clicked.connect(self.amutate)
         self._view.imutate.clicked.connect(self.imutate)
         self._view.breakvowels.clicked.connect(self.breakvowels)
+        self._view.leniteopen.clicked.connect(self.open)
+        self._view.sonorize.clicked.connect(self.sonorize)
+        self._view.vocalize.clicked.connect(self.vocalize)
 
         self._uistack = uistack
         self._listitemclass = listitemclass
@@ -57,3 +60,12 @@ class LanguagePresenter(object):
 
     def breakvowels(self):
         self.apply(languagesimulation.breakvowels)
+
+    def open(self):
+        self.apply(languagesimulation.leniteopen)
+
+    def sonorize(self):
+        self.apply(languagesimulation.lenitesonorize)
+
+    def vocalize(self):
+        self.apply(languagesimulation.lenitevocalize)
