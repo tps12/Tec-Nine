@@ -14,12 +14,16 @@ def mutate(origins, fn):
     shuffled = list(origins)
     random.shuffle(shuffled)
     mutations = {}
+    seen = set()
     for origin in shuffled:
         if origin in mutations:
             continue
         word = fn(origin)
-        if word != origin:
+        if word != origin and word not in seen:
             mutations[origin] = word
+            seen.add(word)
+        else:
+            seen.add(origin)
     return [mutations[origin] if origin in mutations else origin for origin in origins]
 
 def amutate(origins):
