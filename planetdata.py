@@ -22,11 +22,11 @@ class Data(object):
 
         data['agricultural'] = agricultural
 
-        if data['version'] < 17:
+        if data['version'] < 18:
             data['species'] = []
             data['terraincap'] = {}
             data['terrainpop'] = {}
-            data['nations'] = []
+            data['nationcolors'] = []
             data['boundaries'] = {}
             data['nationspecies'] = {}
             data['speciesnames'] = []
@@ -39,10 +39,10 @@ class Data(object):
             return cls.loaddata(load(f))
 
     @classmethod
-    def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet, species, terraincap, terrainpop, nations, boundaries, nationspecies, speciesnames):
+    def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet, species, terraincap, terrainpop, nationcolors, boundaries, nationspecies, speciesnames):
         tileindex = cls._index(tiles)
         rs, rnames, rindex, ags = cls._raceagindices(population, agricultural)
-        return {'version': 17,
+        return {'version': 18,
                 'random': random,
                 'gridsize': gridsize,
                 'stage': stage,
@@ -76,7 +76,7 @@ class Data(object):
                 'species': species,
                 'terraincap': terraincap,
                 'terrainpop': terrainpop,
-                'nations': nations,
+                'nationcolors': nationcolors,
                 'boundaries': boundaries,
                 'nationspecies': nationspecies,
                 'speciesnames': speciesnames}

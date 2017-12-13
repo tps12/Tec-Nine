@@ -70,7 +70,7 @@ class HistorySimulation(object):
         self._species = []
         self._capacity = {}
         self._population = {}
-        self.nations = []
+        self.nationcolors = []
         self.boundaries = {}
         self._nationspecies = {}
         self._speciesnames = []
@@ -106,7 +106,7 @@ class HistorySimulation(object):
         self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
         timing.start('determining population')
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
-        self.nations, self.boundaries = self.nationalboundaries(
+        self.nationcolors, self.boundaries = self.nationalboundaries(
             self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles, self._population, self.agricultural, timing)
         timing.start('bucketing life by nation')
         self._nationspecies = self.nationspecies(self.boundaries, self._terrain, self.tilespecies(self._species, self.seasons))
@@ -121,7 +121,7 @@ class HistorySimulation(object):
             self.update()
 
     def update(self):
-        if not self.nations:
+        if not self.nationcolors:
             self.initnations()
 
         stept = self._timing.routine('simulation step')
@@ -369,7 +369,22 @@ class HistorySimulation(object):
                         costs[i] += 10
                     else:
                         costs[i] += 1
-        return [None for _ in range(len(cities))], boundaries
+        loadt.start('assigning nation colors')
+        colors = [None for _ in cities]
+        for c in set(boundaries.values()):
+            # find the closest 6 cities
+            ns = citytree.nearest(cities[c], 6)
+            ncs = [colors[n] for n in ns if n in colors]
+            if len(ncs) == len(ns):
+                colors[c] = ncs[-1]
+            else:
+                colors[c] = random.choice(list(set(range(len(ns))) - set(ncs)))
+        return colors, boundaries
+
+    def facenationcolor(self, f):
+        if f in self.boundaries:
+            return self.nationcolors[self.boundaries[f]]
+        return None
 
     @staticmethod
     def tilespecies(species, seasons):
@@ -453,7 +468,7 @@ class HistorySimulation(object):
         self._species = data['species']
         self._capacity = data['terraincap']
         self._population = data['terrainpop']
-        self.nations = data['nations']
+        self.nationcolors = data['nationcolors']
         self.boundaries = data['boundaries']
         self._nationspecies = data['nationspecies']
         self._speciesnames = data['speciesnames']
@@ -465,7 +480,7 @@ class HistorySimulation(object):
         loadt.done()
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._species, self._capacity, self._population, self.nations, self.boundaries, self._nationspecies, self._speciesnames)
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._species, self._capacity, self._population, self.nationcolors, self.boundaries, self._nationspecies, self._speciesnames)
 
     def save(self, filename):
         Data.save(filename, self.savedata())

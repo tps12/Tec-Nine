@@ -1,11 +1,14 @@
-import random
-
 from PySide.QtGui import QGridLayout, QWidget
 
 import color
 from sphereview import SphereView
 
-nationcolors = { }
+nationcolors = [(165, 125, 175), # lavender
+                (125, 175, 125), # green
+                (125, 175, 175), # blue
+                (165, 175, 125), # yellow
+                (175, 125, 125), # pink
+                (175, 135, 125)] # orange
 
 def nations(sim, rivers):
     colors = { }
@@ -14,14 +17,13 @@ def nations(sim, rivers):
             colors[f] = 0, 0, 0
         elif rivers and any([f in r for r in sim.riverroutes]):
             colors[f] = 0, 0, 255
-        elif f in sim.boundaries:
-            nation = sim.boundaries[f]
-            if nation not in nationcolors:
-                nationcolors[nation] = (255 * random.random(), 255 * random.random(), 255 * random.random())
-            colors[f] = nationcolors[nation]
         else:
-            p = sim.facepopulation(f)
-            colors[f] = color.warm(p/17.0) if p else (128, 128, 128)
+            n = sim.facenationcolor(f)
+            if n is not None:
+                colors[f] = nationcolors[n]
+            else:
+                p = sim.facepopulation(f)
+                colors[f] = color.warm(p/17.0) if p else (128, 128, 128)
     return colors
 
 def species(sim, rivers):
