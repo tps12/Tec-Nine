@@ -1,7 +1,9 @@
 import random
 
+import language.ipa
 import language.metaphony
 import language.output
+import language.phonemes
 import languagesimulation
 
 class LanguagePresenter(object):
@@ -23,17 +25,19 @@ class LanguagePresenter(object):
 
     def _populate(self):
         self._view.source.clear()
-        for i in range(len(self._model[0])):
-            source, word = [m[i] for m in self._model[0:2]]
+        for i in range(len(self._model[0].lexicon)):
+            source, word = [m.lexicon[i] for m in self._model[0:2]]
             item = self._listitemclass(language.output.write(word))
             tip = '/{}/'.format(language.output.pronounce(word))
             if word != source:
                 tip += ' ({}, /{}/)'.format(language.output.write(source), language.output.pronounce(source))
             item.setToolTip(tip)
             self._view.source.addItem(item)
+        self._view.sourcephonemes.setText(', '.join([language.ipa.ipa[v] for v in language.phonemes.vowels if v in self._model[1].vowels] +
+                                                    [language.ipa.ipa[c] for c in language.phonemes.consonants if c in self._model[1].consonants]))
         self._view.dest.clear()
-        for i in range(len(self._model[2])):
-            source, origin, word = [m[i] for m in self._model]
+        for i in range(len(self._model[2].lexicon)):
+            source, origin, word = [m.lexicon[i] for m in self._model]
             item = self._listitemclass(language.output.write(word))
             tip = '/{}/'.format(language.output.pronounce(word))
             if word != source:
@@ -44,21 +48,23 @@ class LanguagePresenter(object):
                 font.setBold(True)
                 item.setFont(font)
             self._view.dest.addItem(item)
+        self._view.destphonemes.setText(', '.join([language.ipa.ipa[v] for v in language.phonemes.vowels if v in self._model[2].vowels] +
+                                                  [language.ipa.ipa[c] for c in language.phonemes.consonants if c in self._model[2].consonants]))
 
     def generate(self):
-        origins = sorted(languagesimulation.generate(), key=language.output.write)
-        self._model = (origins, list(origins), [])
+        origins = languagesimulation.generate()
+        origins.sort(lambda i: language.output.write(origins.lexicon[i]))
+        self._model = (origins, languagesimulation.Language(origins.lexicon), languagesimulation.Language([]))
         self._populate()
 
     def apply(self, fn):
-        origins = self._model[2] or self._model[1]
+        origins = self._model[2] if self._model[2].lexicon else self._model[1]
         words = fn(origins)
-        if words != origins:
-            self._model = tuple([[values[i] for i in sorted(range(len(values)), key=lambda i: language.output.write(origins[i]))]
-                                  for values in (self._model[0], origins, words)])
-        else:
-            self._model = tuple([[values[i] for i in sorted(range(len(values)), key=lambda i: language.output.write(words[i]))]
-                                  for values in (self._model[0], origins)] + [[]])
+        sortkey = lambda i: language.output.write(words.lexicon[i])
+        self._model = self._model[0], origins, words if words != origins else languagesimulation.Language([])
+        if words.lexicon:
+            for m in self._model:
+                m.sort(sortkey)
         self._populate()
 
     def amutate(self):

@@ -6,12 +6,34 @@ from language.lexicon import lexicon
 from language.metaphony import a_mutate, i_mutate
 from language.phonemes import phonemes
 
+class Language(object):
+    def __init__(self, lexicon):
+        self.lexicon = list(lexicon)
+        self.vowels, self.consonants = set(), set()
+        for word in lexicon:
+            for syllable in word.syllables:
+                for phoneme in syllable.onset:
+                    self.consonants.add(phoneme)
+                for phoneme in syllable.nucleus:
+                    self.vowels.add(phoneme)
+                for phoneme in syllable.coda:
+                    self.consonants.add(phoneme)
+
+    def sort(self, key):
+        self.lexicon = [self.lexicon[i] for i in sorted(range(len(self.lexicon)), key=key)]
+
+    def __eq__(self, other):
+        return self.lexicon == other.lexicon
+
+    def __hash__(self):
+        return hash((tuple(self.lexicon)))
+
 def generate():
     vs, cs = phonemes()
-    return list(lexicon(vs, cs, random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), 2000))
+    return Language(lexicon(vs, cs, random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), 2000))
 
 def mutate(origins, fn):
-    shuffled = list(origins)
+    shuffled = list(origins.lexicon)
     random.shuffle(shuffled)
     mutations = {}
     seen = set()
@@ -24,7 +46,7 @@ def mutate(origins, fn):
             seen.add(word)
         else:
             seen.add(origin)
-    return [mutations[origin] if origin in mutations else origin for origin in origins]
+    return Language([mutations[origin] if origin in mutations else origin for origin in origins.lexicon])
 
 def amutate(origins):
     return mutate(origins, a_mutate)
