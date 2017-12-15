@@ -10,6 +10,7 @@ class Language(object):
     def __init__(self, lexicon):
         self.lexicon = list(lexicon)
         self.vowels, self.consonants = set(), set()
+        numsyllables = numonsets = numcodas = 0
         for word in lexicon:
             for syllable in word.syllables:
                 for phoneme in syllable.onset:
@@ -18,6 +19,12 @@ class Language(object):
                     self.vowels.add(phoneme)
                 for phoneme in syllable.coda:
                     self.consonants.add(phoneme)
+                if syllable.onset:
+                    numonsets += 1
+                if syllable.coda:
+                    numcodas += 1
+                numsyllables += 1
+        self.onsetp, self.codap = [num/numsyllables for num in (numonsets, numcodas)]
 
     def sort(self, key):
         self.lexicon = [self.lexicon[i] for i in sorted(range(len(self.lexicon)), key=key)]

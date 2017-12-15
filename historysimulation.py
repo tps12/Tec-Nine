@@ -7,7 +7,9 @@ from dist2 import dist2
 from grid import Grid
 from hexadjacency import Adjacency
 from language.lexicon import lexicon
+import language.output
 from language.phonemes import phonemes
+import languagesimulation
 import lifeformsmethod
 from planetdata import Data
 from pointtree import PointTree
@@ -72,6 +74,7 @@ class HistorySimulation(object):
         self._population = {}
         self.nationcolors = []
         self.boundaries = {}
+        self._tilespecies = {}
         self._nationspecies = {}
         self._speciesnames = []
 
@@ -108,8 +111,10 @@ class HistorySimulation(object):
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
         self.nationcolors, self.boundaries = self.nationalboundaries(
             self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles, self._population, self.agricultural, timing)
+        timing.start('finding populations by location')
+        self._tilespecies = self.tilespecies(self._species, self.seasons)
         timing.start('bucketing life by nation')
-        self._nationspecies = self.nationspecies(self.boundaries, self._terrain, self.tilespecies(self._species, self.seasons))
+        self._nationspecies = self.nationspecies(self.boundaries, self._terrain, self._tilespecies)
         self.boundaries = {f: i for (f,i) in self.boundaries.items() if len(self._nationspecies[i]) >= minspecies}
         self._population = {f: (ps if f in self.boundaries else []) for (f,ps) in self._population.items()}
         timing.start('naming species')
@@ -155,6 +160,7 @@ class HistorySimulation(object):
                         deltas[n][1].update(nations)
 
         stept.start('assigning growth values')
+        frontierspecies = {}
         for f, (dps, nations) in deltas.items():
             if f not in self._population:
                 self._population[f] = []
@@ -167,7 +173,32 @@ class HistorySimulation(object):
                 else:
                     ps.append(dp)
             if f not in self.boundaries:
-                self.boundaries[f] = random.choice(list(nations))
+                i = random.choice(list(nations))
+                self.boundaries[f] = i
+                if i not in frontierspecies:
+                    frontierspecies[i] = set()
+
+        stept.start('getting species in expanded national boundaries')
+        for f in deltas:
+            nation_index = self.boundaries[f]
+            if nation_index in frontierspecies:
+                frontierspecies[nation_index] |= self.facespecies(f, self._terrain, self._tilespecies)
+
+        stept.start('naming new species')
+        for nation_index, species_indices in frontierspecies.items():
+            species_names = self._speciesnames[nation_index]
+            existing_species_indices = set(species_names.values())
+            species = self._nationspecies[nation_index]
+            for species_index in species_indices:
+                if species_index not in existing_species_indices:
+                    species.append(species_index)
+            existing_names = set(species_names.keys())
+            language = languagesimulation.Language(existing_names)
+            new_species = species[len(existing_names):]
+            new_names = list(lexicon(list(language.vowels), list(language.consonants), language.onsetp, language.codap, len(new_species), existing_names))
+            random.shuffle(new_names)
+            for j in range(len(new_species)):
+                species_names[new_names[j]] = new_species[j]
 
         stept.start('removing empty populations')
         for ps in self._population.values():
@@ -397,31 +428,37 @@ class HistorySimulation(object):
         return {f: sorted(ss) for (f, ss) in populations.items()}
 
     @staticmethod
+    def facespecies(f, terrain, tilespecies):
+        coarse = terrain.prev.prev
+        population = set()
+        if f in coarse.vertices:
+            # face is a vertex of the coarse grid, get union of three
+            for pf in coarse.vertices[f]:
+                if pf not in tilespecies:
+                    continue
+                for si in tilespecies[pf]:
+                    population.add(si)
+        else:
+            # fully contained by coarse face
+            if f in coarse.faces:
+                t = f
+            else:
+                # edge face, is a vertex of parent grid, between three faces, exactly one of which
+                # is also in the coarse grid
+                t = [pf for pf in terrain.prev.vertices[f] if pf in coarse.faces][0]
+            if t in tilespecies:
+                for si in tilespecies[t]:
+                    population.add(si)
+        return population
+
+    @staticmethod
     def nationspecies(boundaries, terrain, tilespecies):
         coarse = terrain.prev.prev
         populations = []
         for f, i in boundaries.items():
             while i not in range(len(populations)):
                 populations.append(set())
-            if f in coarse.vertices:
-                # face is a vertex of the coarse grid, get union of three
-                for pf in coarse.vertices[f]:
-                    if pf not in tilespecies:
-                        continue
-                    for si in tilespecies[pf]:
-                        populations[i].add(si)
-            else:
-                # fully contained by coarse face
-                if f in coarse.faces:
-                    t = f
-                else:
-                    # edge face, is a vertex of parent grid, between three faces, exactly one of which
-                    # is also in the coarse grid
-                    t = [pf for pf in terrain.prev.vertices[f] if pf in coarse.faces][0]
-                if t not in tilespecies:
-                    continue
-                for si in tilespecies[t]:
-                    populations[i].add(si)
+            populations[i] |= HistorySimulation.facespecies(f, terrain, tilespecies)
         return [sorted(ss) for ss in populations]
 
     def facenationspecies(self, f):
@@ -470,6 +507,7 @@ class HistorySimulation(object):
         self._population = data['terrainpop']
         self.nationcolors = data['nationcolors']
         self.boundaries = data['boundaries']
+        self._tilespecies = data['tilespecies']
         self._nationspecies = data['nationspecies']
         self._speciesnames = data['speciesnames']
 
@@ -480,7 +518,7 @@ class HistorySimulation(object):
         loadt.done()
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._species, self._capacity, self._population, self.nationcolors, self.boundaries, self._nationspecies, self._speciesnames)
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._species, self._capacity, self._population, self.nationcolors, self.boundaries, self._tilespecies, self._nationspecies, self._speciesnames)
 
     def save(self, filename):
         Data.save(filename, self.savedata())
