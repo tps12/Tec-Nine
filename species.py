@@ -7,9 +7,13 @@ class ClimateParams(object):
         self.lightrange = lightrange
 
     def inrange(self, season):
-        return all([r[0] <= season[k] <= r[1] for (k, r) in (('temperature', self.temprange),
-                                                             ('precipitation', self.preciprange),
-                                                             ('insolation', self.lightrange))])
+        for (k, r) in (('temperature', self.temprange),
+                       ('precipitation', self.preciprange),
+                       ('insolation', self.lightrange)):
+            value = season[k]
+            if value < r[0] or value > r[1]:
+                return False
+        return True
 
 def mergeseasons(r, f, ss):
     if f in r:
@@ -60,7 +64,10 @@ def findregions(tiles, adj, params):
     for f, t in tiles.items():
         if t.elevation <= 0:
             continue
-        if all([params.inrange(s) for s in t.seasons]):
+        for s in t.seasons:
+            if not params.inrange(s):
+                break
+        else:
             rs[f] = disjoint.set()
             for n in adj[f]:
                 if n in rs:
@@ -123,15 +130,17 @@ def findhibernationregions(tiles, adj, params):
         ss = tuple([i for i in range(len(t.seasons)) if params.inrange(t.seasons[i])])
         if not ss or len(ss) == len(t.seasons):
             continue
-        if any([not winter.inrange(t.seasons[i]) for i in range(len(t.seasons)) if i not in ss]):
-            # winter is too cold
-            continue
-        k = (f, ss)
-        rs[k] = disjoint.set()
-        for n in adj[f]:
-            nk = (n, ss)
-            if nk in rs:
-                disjoint.union(rs[k], rs[nk])
+        for i in range(len(t.seasons)):
+            if i not in ss and not winter.inrange(t.seasons[i]):
+                # winter is too cold
+                break
+        else:
+            k = (f, ss)
+            rs[k] = disjoint.set()
+            for n in adj[f]:
+                nk = (n, ss)
+                if nk in rs:
+                    disjoint.union(rs[k], rs[nk])
     regs = {}
     for k, s in rs.items():
         f, ss = k
