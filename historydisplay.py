@@ -10,6 +10,13 @@ nationcolors = [(165, 125, 175), # lavender
                 (175, 125, 125), # pink
                 (175, 135, 125)] # orange
 
+def phase(sim, f):
+    if sim.phase == 'species':
+        count = sim.facespeciescount(f)/2000
+        if count > 0:
+            return color.warm(count)
+    return (128, 128, 128)
+
 def nations(sim, rivers):
     colors = { }
     for f in sim.faces:
@@ -17,6 +24,8 @@ def nations(sim, rivers):
             colors[f] = 0, 0, 0
         elif rivers and any([f in r for r in sim.riverroutes]):
             colors[f] = 0, 0, 255
+        elif sim.phase != 'sim':
+            colors[f] = phase(sim, f)
         else:
             n = sim.facenationcolor(f)
             if n is not None:
@@ -33,6 +42,8 @@ def species(sim, rivers):
             colors[f] = 0, 0, 0
         elif rivers and any([f in r for r in sim.riverroutes]):
             colors[f] = 0, 0, 255
+        elif sim.phase != 'sim':
+            colors[f] = phase(sim, f)
         else:
             s = sim.facenationspecies(f)
             colors[f] = color.warm(len(s)/2000) if s else (128, 128, 128)
@@ -45,6 +56,8 @@ def population(sim, rivers):
             colors[f] = 0, 0, 0
         elif rivers and any([f in r for r in sim.riverroutes]):
             colors[f] = 0, 0, 255
+        elif sim.phase != 'sim':
+            colors[f] = phase(sim, f)
         else:
             p = sim.facepopulation(f)
             colors[f] = color.warm(p/17.0) if p else (128, 128, 128)
@@ -57,6 +70,8 @@ def capacity(sim, rivers):
             colors[f] = 0, 0, 0
         elif rivers and any([f in r for r in sim.riverroutes]):
             colors[f] = 0, 0, 255
+        elif sim.phase != 'sim':
+            colors[f] = phase(sim, f)
         else:
             p = sim.facecapacity(f)
             colors[f] = color.warm(p/17.0) if p else (128, 128, 128)

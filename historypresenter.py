@@ -6,6 +6,12 @@ from historysimulation import HistorySimulation
 from planetdata import Data
 from simthread import SimThread
 
+phasetext = {
+    'uninit': 'Uninitialized',
+    'species': 'Settling species...',
+    'sim': 'Simulating'
+}
+
 class HistoryPresenter(object):
     def __init__(self, view, uistack):
         self._view = view
@@ -21,6 +27,7 @@ class HistoryPresenter(object):
         self._worker.tick.connect(self.tick)
         self._worker.simstarted.connect(self.started)
         self._worker.simstopped.connect(self.stopped)
+        self._view.phase.setText(phasetext[self._model.phase])
         self._ticks = 0
         self._worker.start()
 
@@ -64,6 +71,7 @@ class HistoryPresenter(object):
                                                '*{0}'.format(Data.EXTENSION))[0]
         if len(filename) > 0:
             self._model.load(filename)
+            self._view.phase.setText(phasetext[self._model.phase])
             self._display.invalidate()
             self._view.content.update()
 
@@ -111,7 +119,9 @@ class HistoryPresenter(object):
         self._view.step.setEnabled(True)
 
     def tick(self):
-        self._ticks += 1
+        self._view.phase.setText(phasetext[self._model.phase])
+        if self._model.initialized:
+            self._ticks += 1
         self._view.ticks.setNum(self._ticks)
         #self._view.races.setNum(self._model.peoples)
         self._display.invalidate()

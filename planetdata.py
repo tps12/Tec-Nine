@@ -22,7 +22,8 @@ class Data(object):
 
         data['agricultural'] = agricultural
 
-        if data['version'] < 19:
+        if data['version'] < 20:
+            data['historyinited'] = False
             data['species'] = []
             data['terraincap'] = {}
             data['terrainpop'] = {}
@@ -40,10 +41,10 @@ class Data(object):
             return cls.loaddata(load(f))
 
     @classmethod
-    def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet, species, terraincap, terrainpop, nationcolors, boundaries, tilespecies, nationspecies, speciesnames):
+    def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet, historyinited, species, terraincap, terrainpop, nationcolors, boundaries, tilespecies, nationspecies, speciesnames):
         tileindex = cls._index(tiles)
         rs, rnames, rindex, ags = cls._raceagindices(population, agricultural)
-        return {'version': 19,
+        return {'version': 20,
                 'random': random,
                 'gridsize': gridsize,
                 'stage': stage,
@@ -74,14 +75,15 @@ class Data(object):
                 'haslife': lifet == 0,
                 'atmt': atmt,
                 'lifet': lifet,
-                'species': species,
-                'terraincap': terraincap,
-                'terrainpop': terrainpop,
-                'nationcolors': nationcolors,
-                'boundaries': boundaries,
-                'tilespecies': tilespecies,
-                'nationspecies': nationspecies,
-                'speciesnames': speciesnames}
+                'historyinited': historyinited,
+                'species': species if historyinited else [],
+                'terraincap': terraincap if historyinited else {},
+                'terrainpop': terrainpop if historyinited else {},
+                'nationcolors': nationcolors if historyinited else [],
+                'boundaries': boundaries if historyinited else {},
+                'tilespecies': tilespecies if historyinited else {},
+                'nationspecies': nationspecies if historyinited else {},
+                'speciesnames': speciesnames if historyinited else []}
 
     @classmethod
     def save(cls, filename, data):

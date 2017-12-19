@@ -69,6 +69,7 @@ class HistorySimulation(object):
         self._glaciationt = 0
         self.initindexes()
 
+        self.phase = 'uninit'
         self._species = []
         self._capacity = {}
         self._population = {}
@@ -77,6 +78,8 @@ class HistorySimulation(object):
         self._tilespecies = {}
         self._nationspecies = {}
         self._speciesnames = []
+        self._inited = False
+        self._initingnations = None
 
         initt.done()
 
@@ -102,9 +105,25 @@ class HistorySimulation(object):
     def nearest(self, loc):
         return self._indexedtiles[self._index.nearest(loc)[0]]
 
+    @property
+    def initialized(self):
+        return self._inited
+
     def initnations(self):
-        timing = self._timing.routine('initializing history')
-        self._species = self.settlespecies(self.tiles, self.adj, timing)
+        timing = yield
+        self.phase = 'species'
+        settle = self.settlespecies(self.tiles, self.adj)
+        next(settle)
+        settle.send(timing)
+        while True:
+            try:
+                timing = yield
+                self._species = settle.send(timing)
+                self._tilespecies = self.tilespecies(self._species, self.seasons)
+            except StopIteration:
+                break
+        self.phase = 'uninit'
+        timing = yield
         timing.start('determining carrying capacities')
         self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
         timing.start('determining population')
@@ -119,18 +138,29 @@ class HistorySimulation(object):
         self._population = {f: (ps if f in self.boundaries else []) for (f,ps) in self._population.items()}
         timing.start('naming species')
         self._speciesnames = list(self.speciesnames(self._nationspecies))
-        timing.done()
 
         # to fill in coast at terrain scale
+        timing.start('populating coasts')
         for _ in range(2):
-            self.update()
+            self.grow(timing)
+        self.phase = 'sim'
 
-    def update(self):
-        if not self.nationcolors:
-            self.initnations()
+    def keepiniting(self):
+        if not self._initingnations:
+            timing = self._timing.routine('initializing history')
+            self._initingnations = self.initnations()
+            next(self._initingnations)
+        else:
+            timing = self._timing.routine('continuing initialization')
 
-        stept = self._timing.routine('simulation step')
+        try:
+            self._initingnations.send(timing)
+        except StopIteration:
+            self._initingnations = None
+            self._inited = True
+        timing.done()
 
+    def grow(self, stept):
         stept.start('growing populations')
         grow = lambda p0, K: K/(1 + (K-p0)/p0 * math.exp(-0.25)) # k=0.25 pretty arbitrary, aiming for 1% yearly growth
         deltas = {}
@@ -205,6 +235,14 @@ class HistorySimulation(object):
             for i in [i for i in reversed(range(len(ps))) if not ps[i].thousands]:
                 del ps[i]
 
+    def update(self):
+        if not self._inited:
+            self.keepiniting()
+            return
+
+        stept = self._timing.routine('simulation step')
+        self.grow(stept)
+        time.sleep(0.25)
         stept.done()
 
     @property
@@ -229,10 +267,15 @@ class HistorySimulation(object):
         return igneous.extrusive(0.5)
 
     @staticmethod
-    def settlespecies(tiles, adj, timing):
+    def settlespecies(tiles, adj):
         fauna, plants, trees = [], [], []
-        lifeformsmethod.settle(fauna, plants, trees, tiles, adj, timing)
-        return fauna + plants + trees
+        timing = yield
+        skip = 0
+        while True:
+           skip = lifeformsmethod.settle(fauna, plants, trees, tiles, adj, timing, 5, skip)
+           timing = yield fauna + plants + trees
+           if skip is None:
+               break
 
     def faceelevation(self, f):
         return self._elevation[f] if f in self._elevation else 0
@@ -451,6 +494,9 @@ class HistorySimulation(object):
                     population.add(si)
         return population
 
+    def facespeciescount(self, f):
+        return len(self.facespecies(f, self._terrain, self._tilespecies))
+
     @staticmethod
     def nationspecies(boundaries, terrain, tilespecies):
         coarse = terrain.prev.prev
@@ -502,6 +548,7 @@ class HistorySimulation(object):
             self._terrain, self._terrainadj, {f: self.faceelevation(f) for f in self._terrain.faces},
             [[self._tileloc[t] for t in r] for r in self.rivers]))
 
+        self._inited = data['historyinited']
         self._species = data['species']
         self._capacity = data['terraincap']
         self._population = data['terrainpop']
@@ -510,6 +557,7 @@ class HistorySimulation(object):
         self._tilespecies = data['tilespecies']
         self._nationspecies = data['nationspecies']
         self._speciesnames = data['speciesnames']
+        self.phase = 'sim' if self._inited else 'uninit'
 
     def load(self, filename):
         loadt = self._timing.routine('loading state')
@@ -518,7 +566,7 @@ class HistorySimulation(object):
         loadt.done()
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._species, self._capacity, self._population, self.nationcolors, self.boundaries, self._tilespecies, self._nationspecies, self._speciesnames)
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._inited, self._species, self._capacity, self._population, self.nationcolors, self.boundaries, self._tilespecies, self._nationspecies, self._speciesnames)
 
     def save(self, filename):
         Data.save(filename, self.savedata())

@@ -1,5 +1,6 @@
 import codecs
 import random
+import time
 
 import species
 
@@ -16,7 +17,10 @@ def randomparams(temprange, preciprange, lightrange):
         tuple(sorted([random.gauss(*preciprange[0]), random.gauss(*preciprange[1])])),
         tuple(sorted([random.gauss(*lightrange[0]), random.gauss(*lightrange[1])])))
 
-def settle(fauna, plants, trees, tiles, adj, timing):
+def settle(fauna, plants, trees, tiles, adj, timing, limit=None, skip=0):
+    start = time.time() if limit is not None else None
+    attempted = 0
+    logged = False
     for (name, pop, ranges, strats) in [
             ('animals', fauna,
              (((.4,.1), (.6,.1)), ((.25,.1), (.95,.1)), ((.1,.1), (.95,.1))),
@@ -27,8 +31,15 @@ def settle(fauna, plants, trees, tiles, adj, timing):
             ('trees', trees,
              (((.2,.1), (.95,.1)), ((.5,.1), (.95,.1)), ((.5,.1), (.95,.1))),
              [species.findseasonalregions])]:
-        timing.start('settling {}'.format(name))
-        del pop[:]
         with codecs.open('{}.txt'.format(name), 'r', 'utf-8') as f:
             for line in f.readlines():
-                populatefromparams(pop, line.strip(), randomparams(*ranges), tiles, adj, strats)
+                if attempted >= skip:
+                    if not logged:
+                        timing.start('settling {}'.format(name))
+                        logged = True
+                    populatefromparams(pop, line.strip(), randomparams(*ranges), tiles, adj, strats)
+                    skip += 1
+                attempted += 1
+                if start and time.time() - start > limit:
+                    return skip
+    return None
