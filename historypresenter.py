@@ -9,6 +9,7 @@ from simthread import SimThread
 phasetext = {
     'uninit': 'Uninitialized',
     'species': 'Settling species...',
+    'nations': 'Defining nations...',
     'sim': 'Simulating'
 }
 

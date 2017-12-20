@@ -122,14 +122,19 @@ class HistorySimulation(object):
                 self._tilespecies = self.tilespecies(self._species, self.seasons)
             except StopIteration:
                 break
-        self.phase = 'uninit'
-        timing = yield
+        self.phase = 'nations'
         timing.start('determining carrying capacities')
         self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
         timing.start('determining population')
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
-        self.nationcolors, self.boundaries = self.nationalboundaries(
-            self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles, self._population, self.agricultural, timing)
+        timing.start('creating national boundaries')
+        for _ in self.nationalboundaries(self.nationcolors, self.boundaries,
+                                         self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles,
+                                         self._population, self.agricultural):
+            timing = yield
+            timing.start('continuing national boundaries')
+        self.phase = 'uninit'
+        timing = yield
         timing.start('finding populations by location')
         self._tilespecies = self.tilespecies(self._species, self.seasons)
         timing.start('bucketing life by nation')
@@ -399,15 +404,29 @@ class HistorySimulation(object):
         return 0.05
 
     @staticmethod
-    def nationalboundaries(terrain, elevation, rivers, adj, tiles, population, agricultural, loadt):
-        loadt.start('creating national boundaries')
+    def colornations(colors, cities, citytree, boundaries):
+        while len(colors) < len(cities):
+            colors.append(None)
+        for c in set(boundaries.values()):
+            # find the closest 6 cities
+            ns = citytree.nearest(cities[c], 6)
+            ncs = [colors[n] for n in ns if n in colors]
+            if len(ncs) == len(ns):
+                colors[c] = ncs[-1]
+            else:
+                colors[c] = random.choice(list(set(range(len(ns))) - set(ncs)))
+
+    @staticmethod
+    def nationalboundaries(colors, boundaries, terrain, elevation, rivers, adj, tiles, population, agricultural):
+        start = time.time()
         cities = list({f for f in terrain.faces
                        if f in population and
                           random.random() < HistorySimulation.cityprob(f, terrain, tiles, population, agricultural)})
+        # save state so the ultimate result isn't dependent on timing
+        state = random.getstate()
         def tree():
             return PointTree(dict([[cities[i], i] for i in range(len(cities))]))
         citytree = tree()
-        boundaries = {}
         for f in terrain.faces:
             if f in population and sum([p.thousands for p in population[f]]) > 0:
                 candidates = citytree.nearest(f, 6)
@@ -443,21 +462,18 @@ class HistorySimulation(object):
                         costs[i] += 10
                     else:
                         costs[i] += 1
-        loadt.start('assigning nation colors')
-        colors = [None for _ in cities]
-        for c in set(boundaries.values()):
-            # find the closest 6 cities
-            ns = citytree.nearest(cities[c], 6)
-            ncs = [colors[n] for n in ns if n in colors]
-            if len(ncs) == len(ns):
-                colors[c] = ncs[-1]
-            else:
-                colors[c] = random.choice(list(set(range(len(ns))) - set(ncs)))
-        return colors, boundaries
+            if time.time() - start > 5:
+                HistorySimulation.colornations(colors, cities, citytree, boundaries)
+                yield
+                start = time.time()
+        random.setstate(state)
+        HistorySimulation.colornations(colors, cities, citytree, boundaries)
 
     def facenationcolor(self, f):
         if f in self.boundaries:
-            return self.nationcolors[self.boundaries[f]]
+            n = self.boundaries[f]
+            if n < len(self.nationcolors):
+                return self.nationcolors[n]
         return None
 
     @staticmethod
