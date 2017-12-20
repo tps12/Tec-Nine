@@ -10,6 +10,7 @@ phasetext = {
     'uninit': 'Uninitialized',
     'species': 'Settling species...',
     'nations': 'Defining nations...',
+    'langs': 'Creating languages...',
     'sim': 'Simulating'
 }
 

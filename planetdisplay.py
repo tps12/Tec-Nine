@@ -12,16 +12,6 @@ def redbluescale(v):
     b = 255 * v
     return r, 0, b
 
-def coolscale(v):
-    m = 1020
-    r = 255 - m * v if v < 0.25 else 0
-    g = (255 if v < 0.75 else
-         255 - m * (v - 0.75))
-    b = (255 - m * v if v < 0.25 else
-         m * (v - 0.25) if v < 0.5 else
-         255)
-    return r, g, b
-
 def climatecolor(tile):
     h, c = tile.elevation, tile.climate
 

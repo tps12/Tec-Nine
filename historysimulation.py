@@ -133,8 +133,9 @@ class HistorySimulation(object):
                                          self._population, self.agricultural):
             timing = yield
             timing.start('continuing national boundaries')
-        self.phase = 'uninit'
         timing = yield
+        self.phase = 'langs'
+        start = time.time()
         timing.start('finding populations by location')
         self._tilespecies = self.tilespecies(self._species, self.seasons)
         timing.start('bucketing life by nation')
@@ -142,9 +143,16 @@ class HistorySimulation(object):
         self.boundaries = {f: i for (f,i) in self.boundaries.items() if len(self._nationspecies[i]) >= minspecies}
         self._population = {f: (ps if f in self.boundaries else []) for (f,ps) in self._population.items()}
         timing.start('naming species')
-        self._speciesnames = list(self.speciesnames(self._nationspecies))
+        for lang in self.speciesnames(self._nationspecies):
+            self._speciesnames.append(lang)
+            if time.time() - start > 5:
+                timing = yield
+                timing.start('continuing naming species')
+                start = time.time()
 
         # to fill in coast at terrain scale
+        timing = yield
+        self.phase = 'uninit'
         timing.start('populating coasts')
         for _ in range(2):
             self.grow(timing)
@@ -538,6 +546,13 @@ class HistorySimulation(object):
                 l = list(lexicon(vs, cs, random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), len(ss)))
                 random.shuffle(l)
                 yield {l[i]: ss[i] for i in range(len(l))}
+
+    def facewordcount(self, f):
+        if f in self.boundaries:
+            n = self.boundaries[f]
+            if n < len(self._speciesnames):
+                return len(self._speciesnames[n])
+        return 0
 
     def loaddata(self, data, loadt):
         random.setstate(data['random'])

@@ -19,6 +19,10 @@ def phase(sim, f):
         n = sim.facenationcolor(f)
         if n is not None:
             return nationcolors[n]
+    elif sim.phase == 'langs':
+        count = sim.facewordcount(f)/2000
+        if count > 0:
+            return color.cool(count)
     return (128, 128, 128)
 
 def nations(sim, rivers):
