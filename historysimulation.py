@@ -151,10 +151,10 @@ class HistorySimulation(object):
                 start = time.time()
 
         # to fill in coast at terrain scale
-        timing = yield
-        self.phase = 'uninit'
-        timing.start('populating coasts')
+        self.phase = 'coasts'
         for _ in range(2):
+            timing = yield
+            timing.start('populating coasts')
             self.grow(timing)
         self.phase = 'sim'
 

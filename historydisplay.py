@@ -15,7 +15,7 @@ def phase(sim, f):
         count = sim.facespeciescount(f)/2000
         if count > 0:
             return color.warm(count)
-    elif sim.phase == 'nations':
+    elif sim.phase in ('nations', 'coasts'):
         n = sim.facenationcolor(f)
         if n is not None:
             return nationcolors[n]

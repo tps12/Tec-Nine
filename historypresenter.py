@@ -11,6 +11,7 @@ phasetext = {
     'species': 'Settling species...',
     'nations': 'Defining nations...',
     'langs': 'Creating languages...',
+    'coasts': 'Populating coasts...',
     'sim': 'Simulating'
 }
 
