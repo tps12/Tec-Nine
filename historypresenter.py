@@ -34,7 +34,7 @@ class HistoryPresenter(object):
         self._ticks = 0
         self._worker.start()
 
-        self._display = HistoryDisplay(self._model)
+        self._display = HistoryDisplay(self._model, self.selecttile)
 
         self._view.content.setLayout(QGridLayout())
         self._view.content.layout().addWidget(self._display)
@@ -51,6 +51,18 @@ class HistoryPresenter(object):
         self._view.pause.setVisible(False)
 
         self._uistack = uistack
+
+    def selecttile(self, tile):
+        for f, t in self._model.tiles.items():
+            if t is tile:
+                if f in self._model.boundaries:
+                    n = self._model.boundaries[f]
+                    self._display.selectnations(n, self._model.nationtradepartners(n))
+                else:
+                    self._display.selectnations(None, set())
+                break
+        self._display.invalidate()
+        self._view.content.update()
 
     def rotate(self, value):
         self._display.rotate = value

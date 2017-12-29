@@ -81,6 +81,8 @@ class HistorySimulation(object):
         self._inited = False
         self._initingnations = None
 
+        self._tradepartners = set()
+
         initt.done()
 
     def _initgrid(self, gridsize):
@@ -248,6 +250,73 @@ class HistorySimulation(object):
             for i in [i for i in reversed(range(len(ps))) if not ps[i].thousands]:
                 del ps[i]
 
+    @staticmethod
+    def nationalextents(boundaries):
+        extents = []
+        for f, n in boundaries.items():
+            while n > len(extents)-1:
+                extents.append(set())
+            extents[n].add(f)
+        return extents
+
+    @staticmethod
+    def riverneighbors(f, terrainadj, rivers):
+        ns = terrainadj[f]
+        res = set(ns)
+        for g in ns:
+            for r in rivers:
+                if g in r:
+                    res |= terrainadj[g]
+                break
+        return res
+
+    @staticmethod
+    def neighboringnations(extents, terrainadj, rivers, boundaries):
+        neighbors = [set() for _ in extents]
+        for n in range(len(extents)):
+            for f in extents[n]:
+                neighbors[n] |= {boundaries[g] for g in HistorySimulation.riverneighbors(f, terrainadj, rivers) if g in boundaries} - {n}
+        return neighbors
+
+    @staticmethod
+    def tradepressure(neighbors, nationspecies):
+        pressure = [{} for _ in neighbors]
+        for n in range(len(neighbors)):
+            native = set(nationspecies[n])
+            for o in neighbors[n]:
+                p = len(set(nationspecies[o]) - native)
+                if p > 0:
+                    pressure[n][o] = p
+        return pressure
+
+    @staticmethod
+    def tradingeligibility(pressure, nationspecies, threshold):
+        return [{o for (o, p) in pressure[n].items() if p >= len(nationspecies[n]) * threshold}
+                for n in range(len(pressure))]
+
+    @staticmethod
+    def mutualpartners(eligible):
+        return [{o for o in eligible[n] if n in eligible[o]}
+                for n in range(len(eligible))]
+
+    @staticmethod
+    def tradepartners(mutual, pressure, threshold):
+        return {tuple(sorted((n, o))) for n in range(len(mutual)) for o in mutual[n]
+                if abs(1 - pressure[n][o]/pressure[o][n]) < threshold}
+
+    def facehighlighted(self, f):
+        if f in self.boundaries:
+            n = self.boundaries[f]
+            for g in self.riverneighbors(f, self._terrainadj, self.riverroutes):
+                if g in self.boundaries:
+                    o = self.boundaries[g]
+                    if o != n and tuple(sorted([n, o])) in self._tradepartners:
+                        return True
+        return False
+
+    def nationtradepartners(self, n):
+        return {o for (o, p) in self._tradepartners if p == n} | {p for (o, p) in self._tradepartners if o == n}
+
     def update(self):
         if not self._inited:
             self.keepiniting()
@@ -255,6 +324,20 @@ class HistorySimulation(object):
 
         stept = self._timing.routine('simulation step')
         self.grow(stept)
+
+        stept.start('finding extents of nations')
+        extents = self.nationalextents(self.boundaries)
+        stept.start('identifying neighbors')
+        neighbors = self.neighboringnations(extents, self._terrainadj, self.riverroutes, self.boundaries)
+        stept.start('determining trade benefit for neighbors')
+        pressure = self.tradepressure(neighbors, self._nationspecies)
+        stept.start('finding eligible trade partners')
+        eligible = self.tradingeligibility(pressure, self._nationspecies, 0.05)
+        stept.start('identifying mutually eligible partners')
+        mutual = self.mutualpartners(eligible)
+        stept.start('establishing trade relationships')
+        self._tradepartners |= self.tradepartners(mutual, pressure, 0.5)
+
         time.sleep(0.25)
         stept.done()
 
@@ -476,13 +559,6 @@ class HistorySimulation(object):
                 start = time.time()
         random.setstate(state)
         HistorySimulation.colornations(colors, cities, citytree, boundaries)
-
-    def facenationcolor(self, f):
-        if f in self.boundaries:
-            n = self.boundaries[f]
-            if n < len(self.nationcolors):
-                return self.nationcolors[n]
-        return None
 
     @staticmethod
     def tilespecies(species, seasons):

@@ -25,25 +25,50 @@ def phase(sim, f):
             return color.cool(count)
     return (128, 128, 128)
 
-def nations(sim, rivers):
+def selectednationcolor(sim, f, selectednations):
+    if f in sim.boundaries:
+        n = sim.boundaries[f]
+        if n == selectednations[0]:
+            return (0, 255, 0)
+        if n in selectednations[1]:
+            return (255, 255, 0)
+    return None
+
+def facenationcolor(sim, f):
+    if f in sim.boundaries:
+        n = sim.boundaries[f]
+        if n < len(sim.nationcolors):
+            return sim.nationcolors[n]
+    return None
+
+def nations(sim, rivers, selectednations):
     colors = { }
     for f in sim.faces:
         if (f in sim.tiles and sim.tiles[f].elevation == 0) or not sim.faceelevation(f):
             colors[f] = 0, 0, 0
-        elif rivers and any([f in r for r in sim.riverroutes]):
+            continue
+        if rivers and any([f in r for r in sim.riverroutes]):
             colors[f] = 0, 0, 255
-        elif sim.phase != 'sim':
+            continue
+        if sim.phase != 'sim':
             colors[f] = phase(sim, f)
+            continue
+        s = selectednationcolor(sim, f, selectednations)
+        if s is not None:
+            colors[f] = s
+            continue
+        if sim.facehighlighted(f):
+            colors[f] = (0, 128, 0)
+            continue
+        n = facenationcolor(sim, f)
+        if n is not None:
+            colors[f] = nationcolors[n]
         else:
-            n = sim.facenationcolor(f)
-            if n is not None:
-                colors[f] = nationcolors[n]
-            else:
-                p = sim.facepopulation(f)
-                colors[f] = color.warm(p/17.0) if p else (128, 128, 128)
+            p = sim.facepopulation(f)
+            colors[f] = color.warm(p/17.0) if p else (128, 128, 128)
     return colors
 
-def species(sim, rivers):
+def species(sim, rivers, _):
     colors = { }
     for f in sim.faces:
         if (f in sim.tiles and sim.tiles[f].elevation == 0) or not sim.faceelevation(f):
@@ -57,7 +82,7 @@ def species(sim, rivers):
             colors[f] = color.warm(len(s)/2000) if s else (128, 128, 128)
     return colors
 
-def population(sim, rivers):
+def population(sim, rivers, _):
     colors = { }
     for f in sim.faces:
         if (f in sim.tiles and sim.tiles[f].elevation == 0) or not sim.faceelevation(f):
@@ -71,7 +96,7 @@ def population(sim, rivers):
             colors[f] = color.warm(p/17.0) if p else (128, 128, 128)
     return colors
 
-def capacity(sim, rivers):
+def capacity(sim, rivers, _):
     colors = { }
     for f in sim.faces:
         if (f in sim.tiles and sim.tiles[f].elevation == 0) or not sim.faceelevation(f):
@@ -88,13 +113,15 @@ def capacity(sim, rivers):
 class HistoryDisplay(QWidget):
     _colorfunctions = [nations, species, population, capacity]
 
-    def __init__(self, sim):
+    def __init__(self, sim, selecthandler):
         QWidget.__init__(self)
         self._sim = sim
         self._screen = None
         self._rotate = 0
         self._aspect = self._colorfunctions.index(nations)
         self._rivers = True
+        self._select = selecthandler
+        self._selectednations = (None, set())
         self.setLayout(QGridLayout())
         self.invalidate()
 
@@ -129,6 +156,12 @@ class HistoryDisplay(QWidget):
     def tilecolor(self, tile, populated):
         return self._colorfunctions[self._aspect](tile, populated)
 
+    def select(self, x, y, z):
+        self._select(self._sim.nearest((z,-x,y)) if abs(z) < 2 else None)
+
+    def selectnations(self, n, ps):
+        self._selectednations = (n, ps)
+
     def invalidate(self):
         if self._sim.terrainchanged and self._screen is not None:
             self.layout().removeItem(self.layout().itemAt(0))
@@ -136,6 +169,7 @@ class HistoryDisplay(QWidget):
             self._sim.terrainchanged = False
         if self._screen is None:
             self._screen = SphereView(self._sim.faces, self)
-        self._screen.usecolors(self._colorfunctions[self._aspect](self._sim, self._rivers))
+            self._screen.clicked.connect(self.select)
+        self._screen.usecolors(self._colorfunctions[self._aspect](self._sim, self._rivers, self._selectednations))
         self._screen.rotate(self._rotate)
         self.layout().addWidget(self._screen)
