@@ -30,6 +30,20 @@
    <item>
     <layout class="QHBoxLayout">
      <item>
+      <widget class="QPushButton" name="borrow">
+       <property name="text">
+        <string>Borrow</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="borrowed" />
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
       <layout class="QVBoxLayout">
        <item>
         <widget class="QListWidget" name="source">

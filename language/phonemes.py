@@ -25,6 +25,32 @@ consonantplaces = [
 
 consonants = [c for p in consonantplaces for c in p]
 
+def nearest(p, ps, places):
+    for i in range(len(places)):
+        if p in places[i]:
+            target = i, places[i].index(p)
+            break
+    for j in range(target[1], len(places[target[0]])):
+        if places[target[0]][target[1]] in ps:
+            return places[target[0]][target[1]]
+    for j in range(target[1], -1, -1):
+        if places[target[0]][target[1]] in ps:
+            return places[target[0]][target[1]]
+    for i in range(target[0]-1, -1, -1):
+        for q in places[i]:
+            if q in ps:
+                return q
+    for i in range(target[0], len(places)):
+        for q in places[i]:
+            if q in ps:
+                return q
+
+def nearestvowel(v, vs):
+    return nearest(v, vs, vowelpositions)
+
+def nearestconsonant(c, cs):
+    return nearest(c, cs, consonantplaces)
+
 def backness(phoneme):
     if phoneme in vowels:
         for i in range(len(vowelpositions)):

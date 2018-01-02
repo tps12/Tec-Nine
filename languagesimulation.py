@@ -72,3 +72,18 @@ def lenitesonorize(origins):
 
 def lenitevocalize(origins):
     return mutate(origins, language.lenition.vocalize)
+
+def adaptsounds(word, vs, cs):
+    ss = []
+    for s in word.syllables:
+        o = []
+        for p in s.onset:
+            o.append(language.phonemes.nearestconsonant(p, cs))
+        n = []
+        for p in s.nucleus:
+            n.append(language.phonemes.nearestvowel(p, vs))
+        c = []
+        for p in s.coda:
+            c.append(language.phonemes.nearestconsonant(p, cs))
+        ss.append(language.words.Syllable(o, n, c))
+    return language.words.Word(ss)

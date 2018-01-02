@@ -11,6 +11,7 @@ class LanguagePresenter(object):
         self._view = view
 
         self._view.generate.clicked.connect(self.generate)
+        self._view.borrow.clicked.connect(self.borrow)
         self._view.amutate.clicked.connect(self.amutate)
         self._view.imutate.clicked.connect(self.imutate)
         self._view.breakvowels.clicked.connect(self.breakvowels)
@@ -55,6 +56,24 @@ class LanguagePresenter(object):
         origins = languagesimulation.generate()
         origins.sort(lambda i: language.output.write(origins.lexicon[i]))
         self._model = (origins, languagesimulation.Language(origins.lexicon), languagesimulation.Language([]))
+        self._populate()
+
+    def borrow(self):
+        source = list(languagesimulation.generate().lexicon)
+        random.shuffle(source)
+        borrowed = source[0]
+        origins = self._model[2] if self._model[2].lexicon else self._model[1]
+        words = languagesimulation.Language(origins.lexicon)
+        adapted = languagesimulation.adaptsounds(borrowed, words.vowels, words.consonants)
+        self._model[0].lexicon.append(borrowed)
+        origins.lexicon.append(borrowed)
+        words.lexicon.append(adapted)
+        sortkey = lambda i: language.output.write(words.lexicon[i])
+        self._model = self._model[0], origins, words
+        for m in self._model:
+            m.sort(sortkey)
+        self._view.borrowed.setText('{}\u2192{}'.format(language.output.write(borrowed), language.output.write(adapted)))
+        self._view.borrowed.setToolTip('/{}/\u2192/{}/'.format(language.output.pronounce(borrowed), language.output.pronounce(adapted)))
         self._populate()
 
     def apply(self, fn):
