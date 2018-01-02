@@ -5,6 +5,7 @@ import language.lenition
 from language.lexicon import lexicon
 from language.metaphony import a_mutate, i_mutate
 from language.phonemes import phonemes
+import language.phonotactics
 
 class Language(object):
     def __init__(self, lexicon):
@@ -25,6 +26,7 @@ class Language(object):
                     numcodas += 1
                 numsyllables += 1
         self.onsetp, self.codap = [num/numsyllables if numsyllables > 0 else 0 for num in (numonsets, numcodas)]
+        self.constraints = language.phonotactics.constraints(self.lexicon)
 
     def sort(self, key):
         self.lexicon = [self.lexicon[i] for i in sorted(range(len(self.lexicon)), key=key)]
@@ -86,4 +88,16 @@ def adaptsounds(word, vs, cs):
         for p in s.coda:
             c.append(language.phonemes.nearestconsonant(p, cs))
         ss.append(language.words.Syllable(o, n, c))
+    return language.words.Word(ss)
+
+def constrain(word, constraints, vs):
+    ss = []
+    # get best vowel for breaking up clusters
+    for v in language.phonemes.anaptyxity:
+        if v in vs:
+            filler = v
+            break
+    for syllable in word.syllables:
+        ss += language.phonotactics.constrainonset(syllable, constraints, filler)
+        ss = ss[:-1] + language.phonotactics.constraincoda(ss[-1], constraints, filler)
     return language.words.Word(ss)

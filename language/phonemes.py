@@ -9,6 +9,10 @@ vowelpositions = [
 
 vowels = [v for p in vowelpositions for v in p]
 
+# vowels in order of how "schwa-like" they are, for inserting to enforce phonotactic constraints
+anaptyxity = ['@', 'V"', 'o-', 'V', 'e', 'E', 'i"', 'a', 'u-', 'A', 'i', '&']
+assert set(vowels) == set(anaptyxity)
+
 consonantplaces = [
     ['m', 'p', 'b', 'P', 'B',],                 # bilabial         (close)
     ['M', 'f', 'v'],                            # labiodental

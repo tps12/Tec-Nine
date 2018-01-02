@@ -65,16 +65,27 @@ class LanguagePresenter(object):
         origins = self._model[2] if self._model[2].lexicon else self._model[1]
         words = languagesimulation.Language(origins.lexicon)
         adapted = languagesimulation.adaptsounds(borrowed, words.vowels, words.consonants)
+        constrained = languagesimulation.constrain(adapted, words.constraints, words.vowels)
+
+        text = language.output.write(borrowed)
+        tip = '/{}/'.format(language.output.pronounce(borrowed))
+        if adapted != borrowed:
+            text += '\u2192{}'.format(language.output.write(adapted))
+            tip += '\u2192/{}/'.format(language.output.pronounce(adapted))
+        if constrained != adapted:
+            text += '\u2192{}'.format(language.output.write(constrained))
+            tip += '\u2192/{}/'.format(language.output.pronounce(constrained))
+
         self._model[0].lexicon.append(borrowed)
         origins.lexicon.append(borrowed)
-        words.lexicon.append(adapted)
+        words.lexicon.append(constrained)
         sortkey = lambda i: language.output.write(words.lexicon[i])
         self._model = self._model[0], origins, words
         for m in self._model:
             m.sort(sortkey)
-        self._view.borrowed.setText('{}\u2192{}'.format(language.output.write(borrowed), language.output.write(adapted)))
-        self._view.borrowed.setToolTip('/{}/\u2192/{}/'.format(language.output.pronounce(borrowed), language.output.pronounce(adapted)))
         self._populate()
+        self._view.borrowed.setText(text)
+        self._view.borrowed.setToolTip(tip)
 
     def apply(self, fn):
         origins = self._model[2] if self._model[2].lexicon else self._model[1]
