@@ -1,3 +1,4 @@
+from . import phonemes
 from .words import Syllable
 
 class Constraints(object):
@@ -12,6 +13,12 @@ def constraints(lexicon):
             onsets.add(tuple(syllable.onset))
             codae.add(tuple(syllable.coda))
     return Constraints(onsets, codae)
+
+# get best vowel for breaking up clusters
+def filler(vs):
+    for v in phonemes.anaptyxity:
+        if v in vs:
+            return v
 
 def constrainonset(syllable, constraints, filler):
     if not syllable.onset:
@@ -44,3 +51,7 @@ def constraincoda(syllable, constraints, filler):
         # otherwise, if the last one is a valid *onset*, then append a vowel and treat the rest as above
         if tuple(clusters[-1]) in constraints.onsets and all([tuple(cluster) in constraints.codae for cluster in clusters[:-1]]):
             return [Syllable(syllable.onset, syllable.nucleus, clusters[0] if len(clusters) > 1 else [])] + [Syllable(cluster, [filler], []) for cluster in clusters[1:]] + [Syllable(clusters[-1], [filler], [])]
+
+def constrain(syllable, constraints, filler):
+    ss = constrainonset(syllable, constraints, filler)
+    return ss[:-1] + constraincoda(ss[-1], constraints, filler)

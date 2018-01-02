@@ -39,7 +39,7 @@ class Language(object):
 
 def generate():
     vs, cs = phonemes()
-    return Language(lexicon(vs, cs, random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), 2000))
+    return Language(lexicon(vs, cs, random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), None, 2000))
 
 def mutate(origins, fn):
     shuffled = list(origins.lexicon)
@@ -91,13 +91,8 @@ def adaptsounds(word, vs, cs):
     return language.words.Word(ss)
 
 def constrain(word, constraints, vs):
+    filler = language.phonotactics.filler(vs)
     ss = []
-    # get best vowel for breaking up clusters
-    for v in language.phonemes.anaptyxity:
-        if v in vs:
-            filler = v
-            break
     for syllable in word.syllables:
-        ss += language.phonotactics.constrainonset(syllable, constraints, filler)
-        ss = ss[:-1] + language.phonotactics.constraincoda(ss[-1], constraints, filler)
+        ss += language.phonotactics.constrain(syllable, constraints, filler)
     return language.words.Word(ss)

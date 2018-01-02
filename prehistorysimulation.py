@@ -95,7 +95,7 @@ class PrehistorySimulation(object):
 
     def newrace(self):
         vs, cs = phonemes()
-        name = output.write(random.choice(list(lexicon(vs, cs, 0.5, 0.5, 1000))))
+        name = output.write(random.choice(list(lexicon(vs, cs, 0.5, 0.5, None, 1000))))
         return name[0].upper() + name[1:]
 
     def update(self):
