@@ -24,7 +24,7 @@ class Language(object):
                 if syllable.coda:
                     numcodas += 1
                 numsyllables += 1
-        self.onsetp, self.codap = [num/numsyllables for num in (numonsets, numcodas)]
+        self.onsetp, self.codap = [num/numsyllables if numsyllables > 0 else 0 for num in (numonsets, numcodas)]
 
     def sort(self, key):
         self.lexicon = [self.lexicon[i] for i in sorted(range(len(self.lexicon)), key=key)]
