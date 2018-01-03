@@ -18,6 +18,9 @@ class LanguagePresenter(object):
         self._view.leniteopen.clicked.connect(self.open)
         self._view.sonorize.clicked.connect(self.sonorize)
         self._view.vocalize.clicked.connect(self.vocalize)
+        self._view.apheresize.clicked.connect(self.apheresize)
+        self._view.syncopate.clicked.connect(self.syncopate)
+        self._view.apocopate.clicked.connect(self.apocopate)
 
         self._uistack = uistack
         self._listitemclass = listitemclass
@@ -114,3 +117,12 @@ class LanguagePresenter(object):
 
     def vocalize(self):
         self.apply(languagesimulation.lenitevocalize)
+
+    def apheresize(self):
+        self.apply(languagesimulation.apheresize)
+
+    def syncopate(self):
+        self.apply(languagesimulation.syncopate)
+
+    def apocopate(self):
+        self.apply(languagesimulation.apocopate)

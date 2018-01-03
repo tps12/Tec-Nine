@@ -1,6 +1,7 @@
 import random
 
 from language.breaking import break_vowels
+import language.elision
 import language.lenition
 from language.lexicon import lexicon
 from language.metaphony import a_mutate, i_mutate
@@ -84,6 +85,15 @@ def lenitesonorize(origins):
 
 def lenitevocalize(origins):
     return mutate(origins, language.lenition.vocalize)
+
+def apheresize(origins):
+    return mutate(origins, language.elision.apheresize)
+
+def syncopate(origins):
+    return mutate(origins, language.elision.syncopate)
+
+def apocopate(origins):
+    return mutate(origins, language.elision.apocopate)
 
 def adaptsounds(word, vs, cs, stress):
     ss = []

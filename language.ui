@@ -110,6 +110,27 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="apheresize">
+         <property name="text">
+          <string>Apheresize</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="syncopate">
+         <property name="text">
+          <string>Syncopate</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="apocopate">
+         <property name="text">
+          <string>Apocopate</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
