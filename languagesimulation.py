@@ -95,6 +95,17 @@ def syncopate(origins):
 def apocopate(origins):
     return mutate(origins, language.elision.apocopate)
 
+soundchanges = [
+    a_mutate,
+    i_mutate,
+    break_vowels,
+    language.lenition.open,
+    language.lenition.sonorize,
+    language.lenition.vocalize,
+    language.elision.apheresize,
+    language.elision.syncopate,
+    language.elision.apocopate]
+
 def adaptsounds(word, vs, cs, stress):
     ss = []
     for s in word.syllables:

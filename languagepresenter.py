@@ -62,7 +62,10 @@ class LanguagePresenter(object):
         self._populate()
 
     def borrow(self):
-        source = list(languagesimulation.generate().lexicon)
+        lang = languagesimulation.generate()
+        for _ in range(3):
+            lang = languagesimulation.mutate(lang, random.choice(languagesimulation.soundchanges))
+        source = list(lang.lexicon)
         random.shuffle(source)
         borrowed = source[0]
         origins = self._model[2] if self._model[2].lexicon else self._model[1]
