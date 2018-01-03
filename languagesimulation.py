@@ -12,6 +12,7 @@ class Language(object):
         self.lexicon = list(lexicon)
         self.vowels, self.consonants = set(), set()
         numsyllables = numonsets = numcodas = 0
+        stresses = {}
         for word in lexicon:
             for syllable in word.syllables:
                 for phoneme in syllable.onset:
@@ -25,8 +26,17 @@ class Language(object):
                 if syllable.coda:
                     numcodas += 1
                 numsyllables += 1
+            if word.stress not in stresses:
+                stresses[word.stress] = 1
+            else:
+                stresses[word.stress] += 1
+            if (word.stress - len(word.syllables)) not in stresses:
+                stresses[word.stress - len(word.syllables)] = 1
+            else:
+                stresses[word.stress - len(word.syllables)] += 1
         self.onsetp, self.codap = [num/numsyllables if numsyllables > 0 else 0 for num in (numonsets, numcodas)]
         self.constraints = language.phonotactics.constraints(self.lexicon)
+        self.stress = max(stresses.items(), key=lambda stresscount: stresscount[1])[0] if stresses else None
 
     def sort(self, key):
         self.lexicon = [self.lexicon[i] for i in sorted(range(len(self.lexicon)), key=key)]
@@ -39,7 +49,7 @@ class Language(object):
 
 def generate():
     vs, cs = phonemes()
-    return Language(lexicon(vs, cs, random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), None, 2000))
+    return Language(lexicon(vs, cs, round(random.gauss(-0.5, 1)), random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), None, 2000))
 
 def mutate(origins, fn):
     shuffled = list(origins.lexicon)
@@ -75,7 +85,7 @@ def lenitesonorize(origins):
 def lenitevocalize(origins):
     return mutate(origins, language.lenition.vocalize)
 
-def adaptsounds(word, vs, cs):
+def adaptsounds(word, vs, cs, stress):
     ss = []
     for s in word.syllables:
         o = []
@@ -88,11 +98,11 @@ def adaptsounds(word, vs, cs):
         for p in s.coda:
             c.append(language.phonemes.nearestconsonant(p, cs))
         ss.append(language.words.Syllable(o, n, c))
-    return language.words.Word(ss)
+    return language.words.Word(ss, stress)
 
-def constrain(word, constraints, vs):
+def constrain(word, constraints, vs, stress):
     filler = language.phonotactics.filler(vs)
     ss = []
     for syllable in word.syllables:
         ss += language.phonotactics.constrain(syllable, constraints, filler)
-    return language.words.Word(ss)
+    return language.words.Word(ss, stress)

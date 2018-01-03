@@ -64,8 +64,8 @@ class LanguagePresenter(object):
         borrowed = source[0]
         origins = self._model[2] if self._model[2].lexicon else self._model[1]
         words = languagesimulation.Language(origins.lexicon)
-        adapted = languagesimulation.adaptsounds(borrowed, words.vowels, words.consonants)
-        constrained = languagesimulation.constrain(adapted, words.constraints, words.vowels)
+        adapted = languagesimulation.adaptsounds(borrowed, words.vowels, words.consonants, words.stress)
+        constrained = languagesimulation.constrain(adapted, words.constraints, words.vowels, words.stress)
 
         text = language.output.write(borrowed)
         tip = '/{}/'.format(language.output.pronounce(borrowed))

@@ -43,12 +43,14 @@ def i_mutate(word):
                 if af != a:
                     return Word(word.syllables[:i] +
                                 [af] +
-                                word.syllables[i+1:])
+                                word.syllables[i+1:],
+                                word.stress)
                 ar = raisen(a)
                 if ar != a:
                     return Word(word.syllables[:i] +
                                 [ar] +
-                                word.syllables[i+1:])
+                                word.syllables[i+1:],
+                                word.stress)
     return word
 
 def a_mutate(word):
@@ -60,5 +62,6 @@ def a_mutate(word):
                 if al != a:
                     return Word(word.syllables[:i] +
                                 [al] +
-                                word.syllables[i+1:])
+                                word.syllables[i+1:],
+                                word.stress)
     return word

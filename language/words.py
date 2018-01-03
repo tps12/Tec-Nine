@@ -17,9 +17,13 @@ class Syllable(object):
     def __hash__(self):
         return hash((tuple(self.phonemes)))
 
+def normalize(stress, n):
+  return max(n + stress, 0) if stress < 0 else min(stress, n-1)
+
 class Word(object):
-    def __init__(self, syllables):
+    def __init__(self, syllables, stress):
         self.syllables = syllables
+        self.stress = normalize(stress, len(self.syllables))
 
     @property
     def phonemes(self):

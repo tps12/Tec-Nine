@@ -240,7 +240,7 @@ class HistorySimulation(object):
             existing_names = set(species_names.keys())
             language = languagesimulation.Language(existing_names)
             new_species = species[len(existing_names):]
-            new_names = list(lexicon(list(language.vowels), list(language.consonants), language.onsetp, language.codap, language.constraints, len(new_species), existing_names))
+            new_names = list(lexicon(list(language.vowels), list(language.consonants), language.stress, language.onsetp, language.codap, language.constraints, len(new_species), existing_names))
             random.shuffle(new_names)
             for j in range(len(new_species)):
                 species_names[new_names[j]] = new_species[j]
@@ -619,7 +619,7 @@ class HistorySimulation(object):
                 yield {}
             else:
                 vs, cs = phonemes()
-                l = list(lexicon(vs, cs, random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), len(ss)))
+                l = list(lexicon(vs, cs, round(random.gauss(-0.5, 1)), random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), len(ss)))
                 random.shuffle(l)
                 yield {l[i]: ss[i] for i in range(len(l))}
 

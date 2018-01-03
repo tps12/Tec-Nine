@@ -26,5 +26,6 @@ def break_vowels(word):
             if ab != word.syllables[i]:
                 return Word(word.syllables[:i] +
                             [ab] +
-                            word.syllables[i+1:])
+                            word.syllables[i+1:],
+                            word.stress)
     return word

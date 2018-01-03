@@ -41,7 +41,8 @@ def open(word):
                     raise ValueError('Did not expect lenition to {}-length sequence'.format(len(l)))
                 return Word(word.syllables[:i] +
                             [a, b] +
-                            word.syllables[i+2:])
+                            word.syllables[i+2:],
+                            word.stress)
     return word
 
 def sonorize(word):
@@ -73,7 +74,8 @@ def sonorize(word):
                             Syllable([l], word.syllables[i+1].nucleus, word.syllables[i+1].coda))
                 return Word(word.syllables[:i] +
                             [a, b] +
-                            word.syllables[i+2:])
+                            word.syllables[i+2:],
+                            word.stress)
     return word
 
 def vocalize(word):
@@ -94,5 +96,6 @@ def vocalize(word):
                             Syllable([l], word.syllables[i+1].nucleus, word.syllables[i+1].coda))
                 return Word(word.syllables[:i] +
                             [a, b] +
-                            word.syllables[i+2:])
+                            word.syllables[i+2:],
+                            word.stress)
     return word
