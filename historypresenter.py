@@ -25,7 +25,7 @@ class HistoryPresenter(object):
         self._view.save.clicked.connect(self.save)
         self._view.done.clicked.connect(self.done)
 
-        self._model = HistorySimulation(6)
+        self._model = HistorySimulation(6, True)
         self._worker = SimThread(self._model)
         self._worker.tick.connect(self.tick)
         self._worker.simstarted.connect(self.started)

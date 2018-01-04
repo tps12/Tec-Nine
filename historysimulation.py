@@ -37,7 +37,7 @@ class HistorySimulation(object):
 
     _timing = Timing()
 
-    def __init__(self, gridsize):
+    def __init__(self, gridsize, pauseafterinit):
         initt = self._timing.routine('simulation setup')
 
         initt.start('building grid')
@@ -82,6 +82,8 @@ class HistorySimulation(object):
         self._initingnations = None
 
         self._tradepartners = set()
+
+        self._pauseafterinit = pauseafterinit
 
         initt.done()
 
@@ -320,7 +322,7 @@ class HistorySimulation(object):
     def update(self):
         if not self._inited:
             self.keepiniting()
-            return
+            return self._inited and self._pauseafterinit
 
         stept = self._timing.routine('simulation step')
         self.grow(stept)
