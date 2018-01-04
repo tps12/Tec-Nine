@@ -619,7 +619,7 @@ class HistorySimulation(object):
                 yield {}
             else:
                 vs, cs = phonemes()
-                l = list(lexicon(vs, cs, round(random.gauss(-0.5, 1)), random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), len(ss)))
+                l = list(lexicon(vs, cs, round(random.gauss(-0.5, 1)), random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), None, len(ss)))
                 random.shuffle(l)
                 yield {l[i]: ss[i] for i in range(len(l))}
 
