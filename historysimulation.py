@@ -281,12 +281,16 @@ class HistorySimulation(object):
         return neighbors
 
     @staticmethod
-    def tradepressure(neighbors, nationspecies):
+    def tradepressure(neighbors, nationspecies, partners):
         pressure = [{} for _ in neighbors]
         for n in range(len(neighbors)):
             native = set(nationspecies[n])
             for o in neighbors[n]:
-                p = len(set(nationspecies[o]) - native)
+                ospecies = set(nationspecies[o])
+                for partner in HistorySimulation.lookuptradepartners(o, partners):
+                    if partner != n:
+                        ospecies |= set(nationspecies[partner])
+                p = len(ospecies - native)
                 if p > 0:
                     pressure[n][o] = p
         return pressure
@@ -302,9 +306,8 @@ class HistorySimulation(object):
                 for n in range(len(eligible))]
 
     @staticmethod
-    def tradepartners(mutual, pressure, threshold):
-        return {tuple(sorted((n, o))) for n in range(len(mutual)) for o in mutual[n]
-                if abs(1 - pressure[n][o]/pressure[o][n]) < threshold}
+    def tradepartners(mutual, pressure):
+        return {tuple(sorted((n, o))) for n in range(len(mutual)) for o in mutual[n]}
 
     def facehighlighted(self, f):
         if f in self.boundaries:
@@ -316,8 +319,12 @@ class HistorySimulation(object):
                         return True
         return False
 
+    @staticmethod
+    def lookuptradepartners(n, partners):
+        return {o for (o, p) in partners if p == n} | {p for (o, p) in partners if o == n}
+
     def nationtradepartners(self, n):
-        return {o for (o, p) in self._tradepartners if p == n} | {p for (o, p) in self._tradepartners if o == n}
+        return self.lookuptradepartners(n, self._tradepartners)
 
     def update(self):
         if not self._inited:
@@ -332,13 +339,13 @@ class HistorySimulation(object):
         stept.start('identifying neighbors')
         neighbors = self.neighboringnations(extents, self._terrainadj, self.riverroutes, self.boundaries)
         stept.start('determining trade benefit for neighbors')
-        pressure = self.tradepressure(neighbors, self._nationspecies)
+        pressure = self.tradepressure(neighbors, self._nationspecies, self._tradepartners)
         stept.start('finding eligible trade partners')
         eligible = self.tradingeligibility(pressure, self._nationspecies, 0.05)
         stept.start('identifying mutually eligible partners')
         mutual = self.mutualpartners(eligible)
         stept.start('establishing trade relationships')
-        self._tradepartners |= self.tradepartners(mutual, pressure, 0.5)
+        self._tradepartners |= self.tradepartners(mutual, pressure)
 
         time.sleep(0.25)
         stept.done()
