@@ -332,6 +332,18 @@ class HistorySimulation(object):
             return self._inited and self._pauseafterinit
 
         stept = self._timing.routine('simulation step')
+
+        stept.start('making sound changes')
+        for names in self._speciesnames:
+            changed = {}
+            for name in sorted(names.keys()):
+                newname = random.choice(languagesimulation.soundchanges)(name)
+                if name != newname and newname not in names:
+                    changed[name] = newname
+            for (name, newname) in changed.items():
+                names[newname] = names[name]
+                del names[name]
+
         self.grow(stept)
 
         stept.start('finding extents of nations')
@@ -347,7 +359,6 @@ class HistorySimulation(object):
         stept.start('establishing trade relationships')
         self._tradepartners |= self.tradepartners(mutual, pressure)
 
-        time.sleep(0.25)
         stept.done()
 
     @property
