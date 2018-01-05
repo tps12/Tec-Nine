@@ -9,6 +9,7 @@ from hexadjacency import Adjacency
 from language.lexicon import lexicon
 import language.output
 from language.phonemes import phonemes
+import language.stats
 import languagesimulation
 import lifeformsmethod
 from planetdata import Data
@@ -240,7 +241,7 @@ class HistorySimulation(object):
                 if species_index not in existing_species_indices:
                     species.append(species_index)
             existing_names = set(species_names.keys())
-            language = languagesimulation.Language(existing_names)
+            language = language.stats.Language(existing_names)
             new_species = species[len(existing_names):]
             new_names = list(lexicon(list(language.vowels), list(language.consonants), language.stress, language.onsetp, language.codap, language.constraints, len(new_species), existing_names))
             random.shuffle(new_names)
