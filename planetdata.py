@@ -9,7 +9,7 @@ class Data(object):
 
     @classmethod
     def loaddata(cls, data):
-        if 'version' not in data or data['version'] < 21:
+        if 'version' not in data or data['version'] < 22:
                 raise ValueError('File version is too old')
 
         races, agricultural = cls._population(data['races'], data['racenames'], data['agriculturalraces'], data['tiles'].items())
@@ -30,10 +30,10 @@ class Data(object):
             return cls.loaddata(load(f))
 
     @classmethod
-    def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet, historyinited, species, terraincap, terrainpop, nationcolors, boundaries, tilespecies, nationspecies, speciesnames):
+    def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet, historyinited, species, terraincap, terrainpop, nationcolors, boundaries, tilespecies, nationspecies, nationlangs):
         tileindex = cls._index(tiles)
         rs, rnames, rindex, ags = cls._raceagindices(population, agricultural)
-        return {'version': 21,
+        return {'version': 22,
                 'random': random,
                 'gridsize': gridsize,
                 'stage': stage,
@@ -72,7 +72,7 @@ class Data(object):
                 'boundaries': boundaries if historyinited else {},
                 'tilespecies': tilespecies if historyinited else {},
                 'nationspecies': nationspecies if historyinited else {},
-                'speciesnames': speciesnames if historyinited else []}
+                'nationlangs': nationlangs if historyinited else []}
 
     @classmethod
     def save(cls, filename, data):

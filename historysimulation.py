@@ -6,6 +6,7 @@ import time
 from dist2 import dist2
 from grid import Grid
 from hexadjacency import Adjacency
+import language.dictionary
 from language.lexicon import lexicon
 import language.output
 from language.phonemes import phonemes
@@ -78,7 +79,7 @@ class HistorySimulation(object):
         self.boundaries = {}
         self._tilespecies = {}
         self._nationspecies = {}
-        self._speciesnames = []
+        self._nationlangs = []
         self._inited = False
         self._initingnations = None
 
@@ -148,8 +149,8 @@ class HistorySimulation(object):
         self.boundaries = {f: i for (f,i) in self.boundaries.items() if len(self._nationspecies[i]) >= minspecies}
         self._population = {f: (ps if f in self.boundaries else []) for (f,ps) in self._population.items()}
         timing.start('naming species')
-        for lang in self.speciesnames(self._nationspecies):
-            self._speciesnames.append(lang)
+        for lang in self.langfromspecies(self._nationspecies):
+            self._nationlangs.append(lang)
             if time.time() - start > 5:
                 timing = yield
                 timing.start('continuing naming species')
@@ -234,19 +235,18 @@ class HistorySimulation(object):
 
         stept.start('naming new species')
         for nation_index, species_indices in frontierspecies.items():
-            species_names = self._speciesnames[nation_index]
-            existing_species_indices = set(species_names.values())
+            dictionary = self._nationlangs[nation_index]
             species = self._nationspecies[nation_index]
             for species_index in species_indices:
-                if species_index not in existing_species_indices:
+                if not dictionary.describes('species', species_index):
                     species.append(species_index)
-            existing_names = set(species_names.keys())
-            language = language.stats.Language(existing_names)
+            existing_names = set(dictionary.lexicon())
+            lang = language.stats.Language(existing_names)
             new_species = species[len(existing_names):]
-            new_names = list(lexicon(list(language.vowels), list(language.consonants), language.stress, language.onsetp, language.codap, language.constraints, len(new_species), existing_names))
+            new_names = list(lexicon(list(lang.vowels), list(lang.consonants), lang.stress, lang.onsetp, lang.codap, lang.constraints, len(new_species), existing_names))
             random.shuffle(new_names)
             for j in range(len(new_species)):
-                species_names[new_names[j]] = new_species[j]
+                dictionary.add(new_names[j], 'species', new_species[j])
 
         stept.start('removing empty populations')
         for ps in self._population.values():
@@ -335,15 +335,16 @@ class HistorySimulation(object):
         stept = self._timing.routine('simulation step')
 
         stept.start('making sound changes')
-        for names in self._speciesnames:
-            changed = {}
-            for name in sorted(names.keys()):
+        for dictionary in self._nationlangs:
+            if dictionary is None:
+                continue
+            changes = {}
+            for name in sorted(dictionary.lexicon(), key=language.output.pronounce):
                 newname = random.choice(languagesimulation.soundchanges)(name)
-                if name != newname and newname not in names:
-                    changed[name] = newname
-            for (name, newname) in changed.items():
-                names[newname] = names[name]
-                del names[name]
+                if name != newname and not dictionary.defines(newname) and newname not in changes:
+                    changes[newname] = name
+            for (newname, name) in changes.items():
+                dictionary.rename(name, newname)
 
         self.grow(stept)
 
@@ -634,21 +635,26 @@ class HistorySimulation(object):
         return []
 
     @staticmethod
-    def speciesnames(nationspecies):
-        for ss in nationspecies:
+    def langfromspecies(nationspecies):
+        for n in range(len(nationspecies)):
+            ss = nationspecies[n]
             if len(ss) < minspecies:
-                yield {}
+                yield None
             else:
                 vs, cs = phonemes()
-                l = list(lexicon(vs, cs, round(random.gauss(-0.5, 1)), random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), None, len(ss)))
+                l = list(lexicon(vs, cs, round(random.gauss(-0.5, 1)), random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), None, len(ss) + 1))
                 random.shuffle(l)
-                yield {l[i]: ss[i] for i in range(len(l))}
+                d = language.dictionary.Dictionary()
+                for i in range(len(l)-1):
+                    d.add(l[i], 'species', ss[i])
+                d.add(l[-1], 'nation', n)
+                yield d
 
     def facewordcount(self, f):
         if f in self.boundaries:
             n = self.boundaries[f]
-            if n < len(self._speciesnames):
-                return len(self._speciesnames[n])
+            if n < len(self._nationlangs):
+                return len(self._nationlangs[n].lexicon())
         return 0
 
     def loaddata(self, data, loadt):
@@ -684,7 +690,7 @@ class HistorySimulation(object):
         self.boundaries = data['boundaries']
         self._tilespecies = data['tilespecies']
         self._nationspecies = data['nationspecies']
-        self._speciesnames = data['speciesnames']
+        self._nationlangs = data['nationlangs']
         self.phase = 'sim' if self._inited else 'uninit'
 
     def load(self, filename):
@@ -694,7 +700,7 @@ class HistorySimulation(object):
         loadt.done()
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._inited, self._species, self._capacity, self._population, self.nationcolors, self.boundaries, self._tilespecies, self._nationspecies, self._speciesnames)
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._inited, self._species, self._capacity, self._population, self.nationcolors, self.boundaries, self._tilespecies, self._nationspecies, self._nationlangs)
 
     def save(self, filename):
         Data.save(filename, self.savedata())
