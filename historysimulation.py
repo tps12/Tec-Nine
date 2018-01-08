@@ -283,12 +283,13 @@ class HistorySimulation(object):
 
     @staticmethod
     def tradepressure(neighbors, nationspecies, partners):
+        memo = {}
         pressure = [{} for _ in neighbors]
         for n in range(len(neighbors)):
             native = set(nationspecies[n])
             for o in neighbors[n]:
                 ospecies = set(nationspecies[o])
-                for partner in HistorySimulation.lookuptradepartners(o, partners):
+                for partner in HistorySimulation.recursivetradepartners(o, partners, memo):
                     if partner != n:
                         ospecies |= set(nationspecies[partner])
                 p = len(ospecies - native)
@@ -323,6 +324,20 @@ class HistorySimulation(object):
     @staticmethod
     def lookuptradepartners(n, partners):
         return {o for (o, p) in partners if p == n} | {p for (o, p) in partners if o == n}
+
+    @staticmethod
+    def recursivetradepartners(n, partners, memo, seen=None):
+        seen = seen if seen is not None else set()
+        if n in memo:
+            return memo[n]
+        if n in seen:
+            return set()
+        seen.add(n)
+        os = HistorySimulation.lookuptradepartners(n, partners)
+        for o in sorted(list(os)):
+            os |= HistorySimulation.recursivetradepartners(o, partners, memo, seen)
+        memo[n] = os
+        return os
 
     def nationtradepartners(self, n):
         return self.lookuptradepartners(n, self._tradepartners)
