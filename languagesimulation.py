@@ -72,15 +72,13 @@ def search(initgens, yieldfn):
     outputs = [next(g) for g in gens]
     while True:
         yield yieldfn(outputs)
-        i = len(gens) - 1
-        while i >= 0:
+        for i in range(len(gens)):
             try:
                 outputs[i] = next(gens[i])
                 break
             except StopIteration:
                 gens[i] = initgens[i]()
                 outputs[i] = next(gens[i])
-                i -= 1
         else:
             break
 
