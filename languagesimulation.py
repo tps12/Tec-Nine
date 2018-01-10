@@ -67,24 +67,77 @@ soundchanges = [
     language.elision.syncopate,
     language.elision.apocopate]
 
+def adaptcluster(ps, gen, src):
+    reset = lambda i: gen(ps[i], src)
+    gens = [reset(i) for i in range(len(ps))]
+    qs = [next(g) for g in gens]
+    while True:
+        yield qs
+        i = len(gens) - 1
+        while i >= 0:
+            try:
+                qs[i] = next(gens[i])
+                break
+            except StopIteration:
+                gens[i] = reset(i)
+                qs[i] = next(gens[i])
+                i -= 1
+        else:
+            break
+
+def adaptsyllable(syllable, vs, cs):
+    reset = lambda i: [adaptcluster(syllable.onset, language.phonemes.nearestconsonants, cs),
+                       adaptcluster(syllable.nucleus, language.phonemes.nearestvowels, vs),
+                       adaptcluster(syllable.coda, language.phonemes.nearestconsonants, cs)][i]
+    gens = [reset(i) for i in range(3)]
+    ps = [next(g) for g in gens]
+    while True:
+        yield language.words.Syllable(*ps)
+        i = len(gens) - 1
+        while i >= 0:
+            try:
+                ps[i] = next(gens[i])
+                break
+            except StopIteration:
+                gens[i] = reset(i)
+                ps[i] = next(gens[i])
+                i -= 1
+        else:
+            break
+
 def adaptsounds(word, vs, cs, stress):
-    ss = []
-    for s in word.syllables:
-        o = []
-        for p in s.onset:
-            o.append(language.phonemes.nearestconsonant(p, cs))
-        n = []
-        for p in s.nucleus:
-            n.append(language.phonemes.nearestvowel(p, vs))
-        c = []
-        for p in s.coda:
-            c.append(language.phonemes.nearestconsonant(p, cs))
-        ss.append(language.words.Syllable(o, n, c))
-    return language.words.Word(ss, stress)
+    reset = lambda i: adaptsyllable(word.syllables[i], vs, cs)
+    gens = [reset(i) for i in range(len(word.syllables))]
+    ss = [next(g) for g in gens]
+    while True:
+        yield language.words.Word(ss, stress)
+        i = len(gens) - 1
+        while i >= 0:
+            try:
+                ss[i] = next(gens[i])
+                break
+            except StopIteration:
+                gens[i] = reset(i)
+                ss[i] = next(gens[i])
+                i -= 1
+        else:
+            break
 
 def constrain(word, constraints, vs, stress):
     filler = language.phonotactics.filler(vs)
-    ss = []
-    for syllable in word.syllables:
-        ss += language.phonotactics.constrain(syllable, constraints, filler)
-    return language.words.Word(ss, stress)
+    reset = lambda i: language.phonotactics.constrain(word.syllables[i], constraints, filler)
+    gens = [reset(i) for i in range(len(word.syllables))]
+    ss = [next(g) for g in gens]
+    while True:
+        yield language.words.Word([s for g in ss for s in g], stress)
+        i = len(gens) - 1
+        while i >= 0:
+            try:
+                ss[i] = next(gens[i])
+                break
+            except StopIteration:
+                gens[i] = reset(i)
+                ss[i] = next(gens[i])
+                i -= 1
+        else:
+            break

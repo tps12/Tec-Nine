@@ -36,24 +36,24 @@ def nearest(p, ps, places):
             break
     for j in range(target[1], len(places[target[0]])):
         if places[target[0]][target[1]] in ps:
-            return places[target[0]][target[1]]
+            yield places[target[0]][target[1]]
     for j in range(target[1], -1, -1):
         if places[target[0]][target[1]] in ps:
-            return places[target[0]][target[1]]
+            yield places[target[0]][target[1]]
     for i in range(target[0]-1, -1, -1):
         for q in places[i]:
             if q in ps:
-                return q
+                yield q
     for i in range(target[0], len(places)):
         for q in places[i]:
             if q in ps:
-                return q
+                yield q
 
-def nearestvowel(v, vs):
-    return nearest(v, vs, vowelpositions)
+def nearestvowels(v, vs):
+    yield from nearest(v, vs, vowelpositions)
 
-def nearestconsonant(c, cs):
-    return nearest(c, cs, consonantplaces)
+def nearestconsonants(c, cs):
+    yield from nearest(c, cs, consonantplaces)
 
 def backness(phoneme):
     if phoneme in vowels:

@@ -18,7 +18,7 @@ def lexicon(vs, cs, stress, onsetp=0.9, codap=0.5, constraints=None, n=10000, se
       onset = [choice(cs)] if random() < onsetp else []
       coda = [choice(cs)] if random() < codap else []
       s = Syllable(onset, [choice(vs)], coda)
-      ss += phonotactics.constrain(s, constraints, filler) if constraints else [s]
+      ss += next(phonotactics.constrain(s, constraints, filler)) if constraints else [s]
       w = Word(ss, stress)
       ps = wordkey(w)
       if ps not in seen:

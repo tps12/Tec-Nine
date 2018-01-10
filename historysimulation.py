@@ -342,6 +342,34 @@ class HistorySimulation(object):
     def nationtradepartners(self, n):
         return self.lookuptradepartners(n, self._tradepartners)
 
+    @staticmethod
+    def borrow(word, lang, stats):
+        for adapted in languagesimulation.adaptsounds(word, stats.vowels, stats.consonants, stats.stress):
+            for borrowed in languagesimulation.constrain(adapted, stats.constraints, stats.vowels, stats.stress):
+                if not lang.defines(borrowed):
+                    return borrowed
+        # nothing unique yet, try adding a new suffix
+        for adapted in languagesimulation.adaptsounds(word, stats.vowels, stats.consonants, stats.stress):
+            for borrowed in languagesimulation.constrain(adapted, stats.constraints, stats.vowels, stats.stress):
+                borrowed = language.words.Word(
+                    borrowed.syllables +
+                        lexicon(list(stats.vowels), list(stats.consonants), 0, stats.onsetp, stats.codap, stats.constraints, 1).pop().syllables,
+                    stats.stress)
+                if not lang.defines(borrowed):
+                    return borrowed
+        raise Exception("Couldn't borrow {}".format(word))
+
+    @staticmethod
+    def loanwords(imp, exp, species, langs):
+        implang, explang = langs[imp], langs[exp]
+        impstats = language.stats.Language(implang.lexicon())
+        if not implang.describes('nation', exp):
+            implang.add(HistorySimulation.borrow(explang.describe('nation', exp), implang, impstats), 'nation', exp)
+        impspecies = species[imp]
+        for s in species[exp]:
+            if not implang.describes('species', s):
+                implang.add(HistorySimulation.borrow(explang.describe('species', s), implang, impstats), 'species', s)
+
     def update(self):
         if not self._inited:
             self.keepiniting()
@@ -375,6 +403,11 @@ class HistorySimulation(object):
         mutual = self.mutualpartners(eligible)
         stept.start('establishing trade relationships')
         self._tradepartners |= self.tradepartners(mutual, pressure)
+
+        stept.start('loaning words')
+        for (n, o) in self._tradepartners:
+            self.loanwords(n, o, self._nationspecies, self._nationlangs)
+            self.loanwords(o, n, self._nationspecies, self._nationlangs)
 
         stept.done()
 
