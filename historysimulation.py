@@ -705,6 +705,17 @@ class HistorySimulation(object):
             resources |= {('species', s) for s in self._nationspecies[partner] if s not in self._nationspecies[n]}
         return resources
 
+    def exports(self, n):
+        resources = set()
+        for partner in self.lookuptradepartners(n, self._tradepartners):
+            resources |= {('species', s) for s in self._nationspecies[n] if s not in self._nationspecies[partner]}
+        return resources
+
+    def resource(self, kind, index):
+        if kind == 'species':
+            return self._species[index]
+        raise NotImplementedError("Don't know about {} resources".format(kind))
+
     @staticmethod
     def langfromspecies(nationspecies):
         for n in range(len(nationspecies)):
@@ -720,6 +731,9 @@ class HistorySimulation(object):
                     d.add(l[i], 'species', ss[i])
                 d.add(l[-1], 'nation', n)
                 yield d
+
+    def language(self, n):
+        return self._nationlangs[n]
 
     def facewordcount(self, f):
         if f in self.boundaries:

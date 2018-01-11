@@ -3,6 +3,7 @@ from PySide.QtGui import QGridLayout, QFileDialog
 
 from historydisplay import HistoryDisplay
 from historysimulation import HistorySimulation
+import language.output
 from planetdata import Data
 from simthread import SimThread
 
@@ -15,8 +16,11 @@ phasetext = {
     'sim': 'Simulating'
 }
 
+def capitalize(s):
+    return s[0].upper() + s[1:]
+
 class HistoryPresenter(object):
-    def __init__(self, view, uistack):
+    def __init__(self, view, uistack, listitemclass):
         self._view = view
         self._view.start.clicked.connect(self.start)
         self._view.pause.clicked.connect(self.pause)
@@ -50,19 +54,59 @@ class HistoryPresenter(object):
 
         self._view.pause.setVisible(False)
 
+        self._listitemclass = listitemclass
+
         self._uistack = uistack
 
     def selecttile(self, tile):
         for f, t in self._model.tiles.items():
             if t is tile:
-                if f in self._model.boundaries:
-                    n = self._model.boundaries[f]
-                    self._display.selectnations(n, self._model.nationtradepartners(n))
-                else:
-                    self._display.selectnations(None, set())
+                selected = self._model.boundaries[f] if f in self._model.boundaries else None
+                self._display.selectnations(selected, self._model.nationtradepartners(selected))
                 break
         self._display.invalidate()
         self._view.content.update()
+        self._view.details.clear()
+        if selected is not None:
+            lang = self._model.language(selected)
+            word = lang.describe('nation', selected)
+            name = self._listitemclass([capitalize(language.output.write(word))])
+            name.setToolTip(0, '/{}/'.format(language.output.pronounce(word)))
+            self._view.details.addTopLevelItem(name)
+
+            trade = self._listitemclass(['Trade'])
+            partners = self._listitemclass(['Partners'])
+            for partner in self._model.nationtradepartners(selected):
+                word = lang.describe('nation', partner)
+                text = capitalize(language.output.write(word))
+                tip = '/{}/'.format(language.output.pronounce(word))
+                original = self._model.language(partner).describe('nation', partner)
+                if language.output.write(original) != language.output.write(word):
+                    text += ' ({})'.format(capitalize(language.output.write(original)))
+                if language.output.pronounce(original) != language.output.pronounce(word):
+                    tip += ' (/{}/)'.format(language.output.pronounce(original))
+                name = self._listitemclass([text])
+                name.setToolTip(0, tip)
+                partners.addChild(name)
+            trade.addChild(partners)
+
+            for (heading, resourcesfn) in [('Imports', self._model.imports),
+                                           ('Exports', self._model.exports)]:
+                item = self._listitemclass([heading])
+                values = []
+                for (kind, index) in resourcesfn(selected):
+                    text = self._model.resource(kind, index).name
+                    word = lang.describe(kind, index)
+                    text += ' ({})'.format(language.output.write(word))
+                    tip = '/{}/'.format(language.output.pronounce(word))
+                    values.append((text, tip))
+                for (text, tip) in sorted(values):
+                    name = self._listitemclass([text])
+                    name.setToolTip(0, tip)
+                    item.addChild(name)
+                trade.addChild(item)
+
+            self._view.details.addTopLevelItem(trade)
 
     def rotate(self, value):
         self._display.rotate = value
