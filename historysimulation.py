@@ -283,13 +283,12 @@ class HistorySimulation(object):
 
     @staticmethod
     def tradepressure(neighbors, nationspecies, partners):
-        memo = {}
         pressure = [{} for _ in neighbors]
         for n in range(len(neighbors)):
             native = set(nationspecies[n])
             for o in neighbors[n]:
                 ospecies = set(nationspecies[o])
-                for partner in HistorySimulation.recursivetradepartners(o, partners, memo):
+                for partner in HistorySimulation.recursivetradepartners(o, partners, {}):
                     if partner != n:
                         ospecies |= set(nationspecies[partner])
                 p = len(ospecies - native)
@@ -332,10 +331,9 @@ class HistorySimulation(object):
             return memo[n]
         if n in seen:
             return set()
-        seen.add(n)
         os = HistorySimulation.lookuptradepartners(n, partners)
         for o in sorted(list(os)):
-            os |= HistorySimulation.recursivetradepartners(o, partners, memo, seen)
+            os |= HistorySimulation.recursivetradepartners(o, partners, memo, seen | {n})
         memo[n] = os
         return os
 
@@ -360,15 +358,20 @@ class HistorySimulation(object):
         raise Exception("Couldn't borrow {}".format(word))
 
     @staticmethod
-    def loanwords(imp, exp, species, langs):
-        implang, explang = langs[imp], langs[exp]
-        impstats = language.stats.Language(implang.lexicon())
-        if not implang.describes('nation', exp):
-            implang.add(HistorySimulation.borrow(explang.describe('nation', exp), implang, impstats), 'nation', exp)
-        impspecies = species[imp]
-        for s in species[exp]:
-            if not implang.describes('species', s):
-                implang.add(HistorySimulation.borrow(explang.describe('species', s), implang, impstats), 'species', s)
+    def borrowfrom(resource, langs, src, dest, tradepartners, seen=None):
+        seen = seen if seen is not None else {dest}
+        if langs[dest].describes(*resource):
+            return True
+        if not langs[src].describes(*resource):
+            for partner in HistorySimulation.lookuptradepartners(src, tradepartners):
+                if partner in seen:
+                    continue
+                if HistorySimulation.borrowfrom(resource, langs, partner, src, tradepartners, seen | {src}):
+                    break
+            else:
+                return False
+        langs[dest].add(HistorySimulation.borrow(langs[src].describe(*resource), langs[dest], language.stats.Language(langs[dest].lexicon())), *resource)
+        return True
 
     def update(self):
         if not self._inited:
@@ -405,9 +408,22 @@ class HistorySimulation(object):
         self._tradepartners |= self.tradepartners(mutual, pressure)
 
         stept.start('loaning words')
-        for (n, o) in self._tradepartners:
-            self.loanwords(n, o, self._nationspecies, self._nationlangs)
-            self.loanwords(o, n, self._nationspecies, self._nationlangs)
+        memo = {}
+        for n in range(len(self.nationcolors)):
+            lang = None
+            partners = self.nationtradepartners(n)
+            for partner in partners:
+                if lang is None:
+                    lang = self._nationlangs[n]
+                    stats = language.stats.Language(lang.lexicon())
+                if not lang.describes('nation', partner):
+                    lang.add(HistorySimulation.borrow(self._nationlangs[partner].describe('nation', partner), lang, stats), 'nation', partner)
+            for resource in self.imports(n, memo):
+                if lang.describes(*resource):
+                    continue
+                for partner in partners:
+                    if self.borrowfrom(resource, self._nationlangs, partner, n, self._tradepartners):
+                        break
 
         stept.done()
 
@@ -681,6 +697,13 @@ class HistorySimulation(object):
         if f in self.boundaries:
             return [self._species[s] for s in self._nationspecies[self.boundaries[f]]]
         return []
+
+    def imports(self, n, memo=None):
+        memo = memo if memo is not None else {}
+        resources = set()
+        for partner in self.recursivetradepartners(n, self._tradepartners, {}):
+            resources |= {('species', s) for s in self._nationspecies[partner] if s not in self._nationspecies[n]}
+        return resources
 
     @staticmethod
     def langfromspecies(nationspecies):
