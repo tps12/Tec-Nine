@@ -408,7 +408,6 @@ class HistorySimulation(object):
         self._tradepartners |= self.tradepartners(mutual, pressure)
 
         stept.start('loaning words')
-        memo = {}
         stats = [language.stats.Language(lang.lexicon()) if lang is not None else None for lang in self._nationlangs]
         for n in range(len(self.nationcolors)):
             lang = None
@@ -418,7 +417,7 @@ class HistorySimulation(object):
                     lang = self._nationlangs[n]
                 if not lang.describes('nation', partner):
                     lang.add(HistorySimulation.borrow(self._nationlangs[partner].describe('nation', partner), lang, stats[n]), 'nation', partner)
-            for resource in self.imports(n, memo):
+            for resource in self.imports(n):
                 if lang.describes(*resource):
                     continue
                 for partner in partners:
@@ -698,8 +697,7 @@ class HistorySimulation(object):
             return [self._species[s] for s in self._nationspecies[self.boundaries[f]]]
         return []
 
-    def imports(self, n, memo=None):
-        memo = memo if memo is not None else {}
+    def imports(self, n):
         resources = set()
         for partner in self.recursivetradepartners(n, self._tradepartners, {}):
             resources |= {('species', s) for s in self._nationspecies[partner] if s not in self._nationspecies[n]}
