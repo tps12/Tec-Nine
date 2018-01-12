@@ -358,7 +358,7 @@ class HistorySimulation(object):
         raise Exception("Couldn't borrow {}".format(word))
 
     @staticmethod
-    def borrowfrom(resource, langs, src, dest, tradepartners, seen=None):
+    def borrowfrom(resource, langs, stats, src, dest, tradepartners, seen=None):
         seen = seen if seen is not None else {dest}
         if langs[dest].describes(*resource):
             return True
@@ -366,11 +366,11 @@ class HistorySimulation(object):
             for partner in HistorySimulation.lookuptradepartners(src, tradepartners):
                 if partner in seen:
                     continue
-                if HistorySimulation.borrowfrom(resource, langs, partner, src, tradepartners, seen | {src}):
+                if HistorySimulation.borrowfrom(resource, langs, stats, partner, src, tradepartners, seen | {src}):
                     break
             else:
                 return False
-        langs[dest].add(HistorySimulation.borrow(langs[src].describe(*resource), langs[dest], language.stats.Language(langs[dest].lexicon())), *resource)
+        langs[dest].add(HistorySimulation.borrow(langs[src].describe(*resource), langs[dest], stats[dest]), *resource)
         return True
 
     def update(self):
@@ -409,20 +409,20 @@ class HistorySimulation(object):
 
         stept.start('loaning words')
         memo = {}
+        stats = [language.stats.Language(lang.lexicon()) if lang is not None else None for lang in self._nationlangs]
         for n in range(len(self.nationcolors)):
             lang = None
             partners = self.nationtradepartners(n)
             for partner in partners:
                 if lang is None:
                     lang = self._nationlangs[n]
-                    stats = language.stats.Language(lang.lexicon())
                 if not lang.describes('nation', partner):
-                    lang.add(HistorySimulation.borrow(self._nationlangs[partner].describe('nation', partner), lang, stats), 'nation', partner)
+                    lang.add(HistorySimulation.borrow(self._nationlangs[partner].describe('nation', partner), lang, stats[n]), 'nation', partner)
             for resource in self.imports(n, memo):
                 if lang.describes(*resource):
                     continue
                 for partner in partners:
-                    if self.borrowfrom(resource, self._nationlangs, partner, n, self._tradepartners):
+                    if self.borrowfrom(resource, self._nationlangs, stats, partner, n, self._tradepartners):
                         break
 
         stept.done()
