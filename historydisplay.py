@@ -32,6 +32,8 @@ def selectednationcolor(sim, f, selectednations):
             return (0, 255, 0)
         if n in selectednations[1]:
             return (255, 255, 0)
+        if n in selectednations[2]:
+            return (255, 0, 0)
     return None
 
 def facenationcolor(sim, f):
@@ -57,8 +59,9 @@ def nations(sim, rivers, selectednations):
         if s is not None:
             colors[f] = s
             continue
-        if sim.facehighlighted(f):
-            colors[f] = (0, 128, 0)
+        t = sim.facehighlighted(f)
+        if t is not None:
+            colors[f] = (0, 128, 0) if t == 'trade' else (128, 0, 0)
             continue
         n = facenationcolor(sim, f)
         if n is not None:
@@ -121,7 +124,7 @@ class HistoryDisplay(QWidget):
         self._aspect = self._colorfunctions.index(nations)
         self._rivers = True
         self._select = selecthandler
-        self._selectednations = (None, set())
+        self._selectednations = (None, set(), set())
         self.setLayout(QGridLayout())
         self.invalidate()
 
@@ -159,8 +162,8 @@ class HistoryDisplay(QWidget):
     def select(self, x, y, z):
         self._select(self._sim.nearest((z,-x,y)) if abs(z) < 2 else None)
 
-    def selectnations(self, n, ps):
-        self._selectednations = (n, ps)
+    def selectnations(self, n, ps, cs):
+        self._selectednations = (n, ps, cs)
 
     def invalidate(self):
         if self._sim.terrainchanged and self._screen is not None:

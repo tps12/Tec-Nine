@@ -62,7 +62,7 @@ class HistoryPresenter(object):
         for f, t in self._model.tiles.items():
             if t is tile:
                 selected = self._model.boundaries[f] if f in self._model.boundaries else None
-                self._display.selectnations(selected, self._model.nationtradepartners(selected))
+                self._display.selectnations(selected, self._model.nationtradepartners(selected), self._model.nationconflictrivals(selected))
                 break
         self._display.invalidate()
         self._view.content.update()
@@ -112,6 +112,26 @@ class HistoryPresenter(object):
                 trade.addChild(item)
 
             self._view.details.addTopLevelItem(trade)
+
+            conflict = self._listitemclass(['Conflict'])
+            rivals = self._listitemclass(['Rivals'])
+            for rival in self._model.nationconflictrivals(selected):
+                if lang.describes('nation', rival):
+                    word = lang.describe('nation', rival)
+                else:
+                    word = self._model.language(rival).describe('nation', rival)
+                text = capitalize(language.output.write(word))
+                tip = '/{}/'.format(language.output.pronounce(word))
+                original = self._model.language(rival).describe('nation', rival)
+                if language.output.write(original) != language.output.write(word):
+                    text += ' ({})'.format(capitalize(language.output.write(original)))
+                if language.output.pronounce(original) != language.output.pronounce(word):
+                    tip += ' (/{}/)'.format(language.output.pronounce(original))
+                name = self._listitemclass([text])
+                name.setToolTip(0, tip)
+                rivals.addChild(name)
+            conflict.addChild(rivals)
+            self._view.details.addTopLevelItem(conflict)
 
     def rotate(self, value):
         self._display.rotate = value

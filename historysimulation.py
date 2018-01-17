@@ -83,6 +83,7 @@ class HistorySimulation(object):
         self._inited = False
         self._initingnations = None
 
+        self._conflicts = set()
         self._tradepartners = set()
 
         self._pauseafterinit = pauseafterinit
@@ -286,6 +287,53 @@ class HistorySimulation(object):
         return neighbors
 
     @staticmethod
+    def nationalpopulations(extents, population):
+        return [sum([p.thousands for t in extents[n] for p in population[t]]) for n in range(len(extents))]
+
+    @staticmethod
+    def tension(neighbors, nationalpopulations, nationspecies, partners):
+        tension = [{} for _ in neighbors]
+        for n in range(len(neighbors)):
+            native = set(nationspecies[n])
+            pop = nationalpopulations[n]
+            for o in neighbors[n]:
+                dr = len(set(nationspecies[o]) - native)/len(native) # unique foreign resources as a fraction of native
+                opop = nationalpopulations[o]
+                dp = (pop - opop)/opop # excess native population as a fraction of foreign
+                if dr > 0 and dp > 0:
+                    # potential for aggression of n towards o
+                    tension[n][o] = dr + dp
+        return tension
+
+    @staticmethod
+    def conflicts(tension, partners, threshold):
+        conflicts = set()
+        for n in range(len(tension)):
+            rivals = [o for o in tension[n] if tuple(sorted([o, n])) not in partners and tension[n][o] >= threshold]
+            if not rivals:
+                continue
+            priority = max([o for o in rivals], key=lambda o: tension[n][o])
+            conflicts.add(tuple(sorted([priority, n])))
+        return conflicts
+
+    @staticmethod
+    def lookupopponents(n, conflicts):
+        return {o for (o, p) in conflicts if p == n} | {p for (o, p) in conflicts if o == n}
+
+    def nationconflictrivals(self, n):
+        return self.lookupopponents(n, self._conflicts)
+
+    @staticmethod
+    def victors(conflicts, nationalpopulations, threshold):
+        opps = [HistorySimulation.lookupopponents(n, conflicts) for n in range(len(nationalpopulations))]
+        forces = [nationalpopulations[n]/len(opps[n]) if opps[n] else None for n in range(len(opps))]
+        for (n, o) in conflicts:
+            if forces[o] and forces[n]/forces[o] > (1 + threshold):
+                yield (n, o)
+            if forces[n] and forces[o]/forces[n] > (1 + threshold):
+                yield (o, n)
+
+    @staticmethod
     def tradepressure(neighbors, nationspecies, partners):
         pressure = [{} for _ in neighbors]
         for n in range(len(neighbors)):
@@ -320,9 +368,13 @@ class HistorySimulation(object):
             for g in self.riverneighbors(f, self._terrainadj, self.riverroutes):
                 if g in self.boundaries:
                     o = self.boundaries[g]
-                    if o != n and tuple(sorted([n, o])) in self._tradepartners:
-                        return True
-        return False
+                    if o != n:
+                        pair = tuple(sorted([n, o]))
+                        if pair in self._tradepartners:
+                            return 'trade'
+                        if pair in self._conflicts:
+                            return 'conflict'
+        return None
 
     @staticmethod
     def lookuptradepartners(n, partners):
@@ -427,6 +479,31 @@ class HistorySimulation(object):
                 for partner in partners:
                     if self.borrowfrom(resource, self._nationlangs, stats, partner, n, self._tradepartners):
                         break
+            rivals = self.nationconflictrivals(n)
+            for rival in rivals:
+                if lang is None:
+                    lang = self._nationlangs[n]
+                if not lang.describes('nation', rival):
+                    lang.add(HistorySimulation.borrow(self._nationlangs[rival].describe('nation', rival), lang, stats[n]), 'nation', rival)
+
+        stept.start('summing national populations')
+        nationalpopulations = self.nationalpopulations(extents, self._population)
+        stept.start('determining military tension')
+        tension = self.tension(neighbors, nationalpopulations, self._nationspecies, self._tradepartners)
+        stept.start('establishing conflicts')
+        self._conflicts |= self.conflicts(tension, self._tradepartners, 1)
+        stept.start('resolving conflicts')
+        results = set(self.victors(self._conflicts, nationalpopulations, .5))
+        losers = {loser for (_, loser) in results}
+        resolved = set()
+        for (winner, loser) in results:
+            if winner not in losers:
+                for t in extents[loser]:
+                    self.boundaries[t] = winner
+            resolved.add(tuple(sorted([winner, loser])))
+        for conflict in resolved:
+            self._conflicts.remove(conflict)
+        self.populatenations(stept)
 
         stept.done()
 
