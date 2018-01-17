@@ -778,16 +778,22 @@ class HistorySimulation(object):
             return [self._species[s] for s in self._nationspecies[self.boundaries[f]]]
         return []
 
+    def resources(self, n):
+        if n >= len(self._nationspecies):
+            return set()
+        return {('species', s) for s in self._nationspecies[n]}
+
     def imports(self, n):
         resources = set()
         for partner in self.recursivetradepartners(n, self._tradepartners, {}):
-            resources |= {('species', s) for s in self._nationspecies[partner] if s not in self._nationspecies[n]}
-        return resources
+            resources |= self.resources(partner)
+        return resources - self.resources(n)
 
     def exports(self, n):
         resources = set()
+        native = self.resources(n)
         for partner in self.lookuptradepartners(n, self._tradepartners):
-            resources |= {('species', s) for s in self._nationspecies[n] if s not in self._nationspecies[partner]}
+            resources |= native - self.resources(partner)
         return resources
 
     def resource(self, kind, index):
