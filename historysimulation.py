@@ -463,6 +463,13 @@ class HistorySimulation(object):
         stept.start('establishing trade relationships')
         self._tradepartners |= self.tradepartners(mutual, pressure)
 
+        stept.start('summing national populations')
+        nationalpopulations = self.nationalpopulations(extents, self._population)
+        stept.start('determining military tension')
+        tension = self.tension(neighbors, nationalpopulations, self._nationspecies, self._tradepartners)
+        stept.start('establishing conflicts')
+        self._conflicts |= self.conflicts(tension, self._tradepartners, 1)
+
         stept.start('loaning words')
         stats = [language.stats.Language(lang.lexicon()) if lang is not None else None for lang in self._nationlangs]
         for n in range(len(self.nationcolors)):
@@ -485,13 +492,11 @@ class HistorySimulation(object):
                     lang = self._nationlangs[n]
                 if not lang.describes('nation', rival):
                     lang.add(HistorySimulation.borrow(self._nationlangs[rival].describe('nation', rival), lang, stats[n]), 'nation', rival)
+                for resource in self.resources(rival):
+                    if lang.describes(*resource):
+                        continue
+                    self.borrowfrom(resource, self._nationlangs, stats, rival, n, {})
 
-        stept.start('summing national populations')
-        nationalpopulations = self.nationalpopulations(extents, self._population)
-        stept.start('determining military tension')
-        tension = self.tension(neighbors, nationalpopulations, self._nationspecies, self._tradepartners)
-        stept.start('establishing conflicts')
-        self._conflicts |= self.conflicts(tension, self._tradepartners, 1)
         stept.start('resolving conflicts')
         results = set(self.victors(self._conflicts, nationalpopulations, .5))
         losers = {loser for (_, loser) in results}
