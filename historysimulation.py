@@ -237,16 +237,17 @@ class HistorySimulation(object):
         for nation_index, species_indices in frontierspecies.items():
             dictionary = self._nationlangs[nation_index]
             species = self._nationspecies[nation_index]
+            new_species = []
             for species_index in species_indices:
                 if not dictionary.describes('species', species_index):
-                    species.append(species_index)
+                    new_species.append(species_index)
             existing_names = set(dictionary.lexicon())
             lang = language.stats.Language(existing_names)
-            new_species = species[len(existing_names):]
             new_names = list(lexicon(list(lang.vowels), list(lang.consonants), lang.stress, lang.onsetp, lang.codap, lang.constraints, len(new_species), existing_names))
             random.shuffle(new_names)
             for j in range(len(new_species)):
                 dictionary.add(new_names[j], 'species', new_species[j])
+            species += new_species
 
         stept.start('removing empty populations')
         for ps in self._population.values():
