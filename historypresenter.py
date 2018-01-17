@@ -77,7 +77,10 @@ class HistoryPresenter(object):
             trade = self._listitemclass(['Trade'])
             partners = self._listitemclass(['Partners'])
             for partner in self._model.nationtradepartners(selected):
-                word = lang.describe('nation', partner)
+                if lang.describes('nation', partner):
+                    word = lang.describe('nation', partner)
+                else:
+                    word = self._model.language(partner).describe('nation', partner)
                 text = capitalize(language.output.write(word))
                 tip = '/{}/'.format(language.output.pronounce(word))
                 original = self._model.language(partner).describe('nation', partner)
@@ -95,14 +98,16 @@ class HistoryPresenter(object):
                 item = self._listitemclass([heading])
                 values = []
                 for (kind, index) in resourcesfn(selected):
-                    text = self._model.resource(kind, index).name
-                    word = lang.describe(kind, index)
-                    text += ' ({})'.format(language.output.write(word))
-                    tip = '/{}/'.format(language.output.pronounce(word))
+                    text, tip = self._model.resource(kind, index).name, None
+                    if lang.describes(kind, index):
+                        word = lang.describe(kind, index)
+                        text += ' ({})'.format(language.output.write(word))
+                        tip = '/{}/'.format(language.output.pronounce(word))
                     values.append((text, tip))
                 for (text, tip) in sorted(values):
                     name = self._listitemclass([text])
-                    name.setToolTip(0, tip)
+                    if tip is not None:
+                        name.setToolTip(0, tip)
                     item.addChild(name)
                 trade.addChild(item)
 
