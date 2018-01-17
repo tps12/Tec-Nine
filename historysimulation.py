@@ -144,10 +144,7 @@ class HistorySimulation(object):
         start = time.time()
         timing.start('finding populations by location')
         self._tilespecies = self.tilespecies(self._species, self.seasons)
-        timing.start('bucketing life by nation')
-        self._nationspecies = self.nationspecies(self.boundaries, self._terrain, self._tilespecies)
-        self.boundaries = {f: i for (f,i) in self.boundaries.items() if len(self._nationspecies[i]) >= minspecies}
-        self._population = {f: (ps if f in self.boundaries else []) for (f,ps) in self._population.items()}
+        self.populatenations(timing)
         timing.start('naming species')
         for lang in self.langfromspecies(self._nationspecies):
             self._nationlangs.append(lang)
@@ -163,6 +160,12 @@ class HistorySimulation(object):
             timing.start('populating coasts')
             self.grow(timing)
         self.phase = 'sim'
+
+    def populatenations(self, timing):
+        timing.start('bucketing life by nation')
+        self._nationspecies = self.nationspecies(self.boundaries, self._terrain, self._tilespecies)
+        self.boundaries = {f: i for (f,i) in self.boundaries.items() if len(self._nationspecies[i]) >= minspecies}
+        self._population = {f: (ps if f in self.boundaries else []) for (f,ps) in self._population.items()}
 
     def keepiniting(self):
         if not self._initingnations:
