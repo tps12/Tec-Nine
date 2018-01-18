@@ -492,22 +492,20 @@ class HistorySimulation(object):
                     lang = self._nationlangs[n]
                 if not lang.describes('nation', rival):
                     lang.add(HistorySimulation.borrow(self._nationlangs[rival].describe('nation', rival), lang, stats[n]), 'nation', rival)
-                for resource in self.resources(rival):
-                    if lang.describes(*resource):
-                        continue
-                    self.borrowfrom(resource, self._nationlangs, stats, rival, n, {})
 
         stept.start('resolving conflicts')
         results = set(self.victors(self._conflicts, nationalpopulations, .5))
         losers = {loser for (_, loser) in results}
-        resolved = set()
         for (winner, loser) in results:
             if winner not in losers:
                 for t in extents[loser]:
                     self.boundaries[t] = winner
-            resolved.add(tuple(sorted([winner, loser])))
-        for conflict in resolved:
-            self._conflicts.remove(conflict)
+                lang = self._nationlangs[winner]
+                for resource in self.resources(loser):
+                    if lang.describes(*resource):
+                        continue
+                    self.borrowfrom(resource, self._nationlangs, stats, loser, winner, {})
+            self._conflicts.remove(tuple(sorted([winner, loser])))
         self.populatenations(stept)
 
         stept.done()
