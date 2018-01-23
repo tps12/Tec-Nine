@@ -59,6 +59,7 @@ class HistoryPresenter(object):
         self._uistack = uistack
 
     def selecttile(self, tile):
+        selected = None
         for f, t in self._model.tiles.items():
             if t is tile:
                 selected = self._model.boundaries[f] if f in self._model.boundaries else None
