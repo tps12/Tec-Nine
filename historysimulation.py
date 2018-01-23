@@ -7,6 +7,7 @@ from dist2 import dist2
 from grid import Grid
 from hexadjacency import Adjacency
 import language.dictionary
+import language.lazy
 from language.lexicon import lexicon
 import language.output
 from language.phonemes import phonemes
@@ -241,17 +242,12 @@ class HistorySimulation(object):
         for nation_index, species_indices in frontierspecies.items():
             dictionary = self._nationlangs[nation_index]
             species = self._nationspecies[nation_index]
-            new_species = []
+            unnamed = []
             for species_index in species_indices:
                 if not dictionary.describes('species', species_index):
-                    new_species.append(species_index)
-            existing_names = set(dictionary.lexicon())
-            lang = language.stats.Language(existing_names)
-            new_names = list(lexicon(list(lang.vowels), list(lang.consonants), lang.stress, lang.onsetp, lang.codap, lang.constraints, len(new_species), existing_names))
-            random.shuffle(new_names)
-            for j in range(len(new_species)):
-                dictionary.add(new_names[j], 'species', new_species[j])
-            species += new_species
+                    unnamed.append(('species', species_index))
+                    species.append(species_index)
+            dictionary.coin(unnamed)
 
         stept.start('removing empty populations')
         for ps in self._population.values():
@@ -397,24 +393,7 @@ class HistorySimulation(object):
         return self.lookuptradepartners(n, self._tradepartners)
 
     @staticmethod
-    def borrow(word, lang, stats):
-        for adapted in languagesimulation.adaptsounds(word, stats.vowels, stats.consonants, stats.stress):
-            for borrowed in languagesimulation.constrain(adapted, stats.constraints, stats.vowels, stats.stress):
-                if not lang.defines(borrowed):
-                    return borrowed
-        # nothing unique yet, try adding a new suffix
-        for adapted in languagesimulation.adaptsounds(word, stats.vowels, stats.consonants, stats.stress):
-            for borrowed in languagesimulation.constrain(adapted, stats.constraints, stats.vowels, stats.stress):
-                borrowed = language.words.Word(
-                    borrowed.syllables +
-                        lexicon(list(stats.vowels), list(stats.consonants), 0, stats.onsetp, stats.codap, stats.constraints, 1).pop().syllables,
-                    stats.stress)
-                if not lang.defines(borrowed):
-                    return borrowed
-        raise Exception("Couldn't borrow {}".format(word))
-
-    @staticmethod
-    def borrowfrom(resource, langs, stats, src, dest, tradepartners, seen=None):
+    def borrowfrom(resource, langs, src, dest, tradepartners, seen=None):
         seen = seen if seen is not None else {dest}
         if langs[dest].describes(*resource):
             return True
@@ -422,11 +401,11 @@ class HistorySimulation(object):
             for partner in HistorySimulation.lookuptradepartners(src, tradepartners):
                 if partner in seen:
                     continue
-                if HistorySimulation.borrowfrom(resource, langs, stats, partner, src, tradepartners, seen | {src}):
+                if HistorySimulation.borrowfrom(resource, langs, partner, src, tradepartners, seen | {src}):
                     break
             else:
                 return False
-        langs[dest].add(HistorySimulation.borrow(langs[src].describe(*resource), langs[dest], stats[dest]), *resource)
+        langs[dest].borrow(resource[0], resource[1], src)
         return True
 
     def update(self):
@@ -440,13 +419,7 @@ class HistorySimulation(object):
         for dictionary in self._nationlangs:
             if dictionary is None:
                 continue
-            changes = {}
-            for name in sorted(dictionary.lexicon(), key=language.output.pronounce):
-                newname = random.choice(languagesimulation.soundchanges)(name)
-                if name != newname and not dictionary.defines(newname) and newname not in changes:
-                    changes[newname] = name
-            for (newname, name) in changes.items():
-                dictionary.rename(name, newname)
+            dictionary.changesounds()
 
         self.grow(stept)
 
@@ -471,7 +444,6 @@ class HistorySimulation(object):
         self._conflicts |= self.conflicts(tension, self._tradepartners, 1)
 
         stept.start('loaning words')
-        stats = [language.stats.Language(lang.lexicon()) if lang is not None else None for lang in self._nationlangs]
         for n in range(len(self.nationcolors)):
             lang = None
             partners = self.nationtradepartners(n)
@@ -479,19 +451,19 @@ class HistorySimulation(object):
                 if lang is None:
                     lang = self._nationlangs[n]
                 if not lang.describes('nation', partner):
-                    lang.add(HistorySimulation.borrow(self._nationlangs[partner].describe('nation', partner), lang, stats[n]), 'nation', partner)
+                    lang.borrow('nation', partner, partner)
             for resource in self.imports(n):
                 if lang.describes(*resource):
                     continue
                 for partner in partners:
-                    if self.borrowfrom(resource, self._nationlangs, stats, partner, n, self._tradepartners):
+                    if self.borrowfrom(resource, self._nationlangs, partner, n, self._tradepartners):
                         break
             rivals = self.nationconflictrivals(n)
             for rival in rivals:
                 if lang is None:
                     lang = self._nationlangs[n]
                 if not lang.describes('nation', rival):
-                    lang.add(HistorySimulation.borrow(self._nationlangs[rival].describe('nation', rival), lang, stats[n]), 'nation', rival)
+                    lang.borrow('nation', rival, rival)
 
         stept.start('resolving conflicts')
         results = set(self.victors(self._conflicts, nationalpopulations, .5))
@@ -504,7 +476,7 @@ class HistorySimulation(object):
                 for resource in self.resources(loser):
                     if lang.describes(*resource):
                         continue
-                    self.borrowfrom(resource, self._nationlangs, stats, loser, winner, {})
+                    self.borrowfrom(resource, self._nationlangs, loser, winner, {})
             self._conflicts.remove(tuple(sorted([winner, loser])))
         self.populatenations(stept)
 
@@ -811,23 +783,16 @@ class HistorySimulation(object):
             if len(ss) < minspecies:
                 yield None
             else:
-                vs, cs = phonemes()
-                l = list(lexicon(vs, cs, round(random.gauss(-0.5, 1)), random.gauss(0.5, 0.1), random.gauss(0.5, 0.1), None, len(ss) + 1))
-                random.shuffle(l)
-                d = language.dictionary.Dictionary()
-                for i in range(len(l)-1):
-                    d.add(l[i], 'species', ss[i])
-                d.add(l[-1], 'nation', n)
-                yield d
+                yield language.lazy.History(HistorySimulation._timing, [('species', s) for s in ss] + [('nation', n)])
 
     def language(self, n):
-        return self._nationlangs[n]
+        return self._nationlangs[n].reify(self._nationlangs)
 
     def facewordcount(self, f):
         if f in self.boundaries:
             n = self.boundaries[f]
             if n < len(self._nationlangs):
-                return len(self._nationlangs[n].lexicon())
+                return len(self._nationlangs[n])
         return 0
 
     def loaddata(self, data, loadt):
