@@ -443,6 +443,21 @@ class HistorySimulation(object):
         stept.start('establishing conflicts')
         self._conflicts |= self.conflicts(tension, self._tradepartners, 1)
 
+        stept.start('resolving conflicts')
+        results = set(self.victors(self._conflicts, nationalpopulations, .5))
+        losers = {loser for (_, loser) in results}
+        for (winner, loser) in results:
+            if winner not in losers:
+                for t in extents[loser]:
+                    self.boundaries[t] = winner
+                lang = self._nationlangs[winner]
+                for resource in self.resources(loser):
+                    if lang.describes(*resource):
+                        continue
+                    self.borrowfrom(resource, self._nationlangs, loser, winner, {})
+            self._conflicts.remove(tuple(sorted([winner, loser])))
+        self.populatenations(stept)
+
         stept.start('loaning words')
         for n in range(len(self.nationcolors)):
             lang = None
@@ -464,21 +479,6 @@ class HistorySimulation(object):
                     lang = self._nationlangs[n]
                 if not lang.describes('nation', rival):
                     lang.borrow('nation', rival, rival)
-
-        stept.start('resolving conflicts')
-        results = set(self.victors(self._conflicts, nationalpopulations, .5))
-        losers = {loser for (_, loser) in results}
-        for (winner, loser) in results:
-            if winner not in losers:
-                for t in extents[loser]:
-                    self.boundaries[t] = winner
-                lang = self._nationlangs[winner]
-                for resource in self.resources(loser):
-                    if lang.describes(*resource):
-                        continue
-                    self.borrowfrom(resource, self._nationlangs, loser, winner, {})
-            self._conflicts.remove(tuple(sorted([winner, loser])))
-        self.populatenations(stept)
 
         stept.done()
 
