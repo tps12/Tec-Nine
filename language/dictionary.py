@@ -1,6 +1,6 @@
 class Dictionary(object):
     def __init__(self):
-        self._words = {}
+        self._worddefs = {}
         self._defwords = {}
 
     def add(self, word, kind, index):
