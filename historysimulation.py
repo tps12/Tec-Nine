@@ -30,6 +30,7 @@ class Population(object):
         self.heritage = heritage
         self.thousands = thousands
 
+colorcount = 6
 minspecies = 20
 
 class HistorySimulation(object):
@@ -408,6 +409,14 @@ class HistorySimulation(object):
         langs[dest].borrow(resource[0], resource[1], src)
         return True
 
+    @staticmethod
+    def splitprobability(lentiles):
+        x = lentiles - 25 # inflection point at 25 tiles
+        sign = -1 if x < 0 else 1
+        root = sign * math.pow(sign * x, 1/3)
+        y = 3 + root # > 0
+        return y/600 # min ~0.0001, ~0.01 at 50
+
     def update(self):
         if not self._inited:
             self.keepiniting()
@@ -456,6 +465,35 @@ class HistorySimulation(object):
                         continue
                     self.borrowfrom(resource, self._nationlangs, loser, winner, {})
             self._conflicts.remove(tuple(sorted([winner, loser])))
+
+        stept.start('breaking up nations')
+        winners = {winner for (winner, _) in results}
+        for n in range(len(extents)):
+            if n in winners or n in losers:
+                continue
+            tiles = extents[n]
+            if not tiles:
+                continue
+            if random.random() >= self.splitprobability(len(tiles)):
+                continue
+            cities = self.randomcities(tiles, self._terrain, self.tiles, self._population, self.agricultural)
+            if len(cities) < 2:
+                continue
+            self.splitted = n
+            ncount = len(self.nationcolors)
+            for c in cities[1:]:
+                self.nationcolors.append(random.randint(0, colorcount-1))
+                o = len(self._nationlangs)
+                self._nationlangs.append(self._nationlangs[n].clone())
+                self._nationlangs[o].coin([('nation', o)])
+            for f in tiles:
+                i = HistorySimulation.nearestcity(
+                    f, cities, range(len(cities)), self._elevation, self.riverroutes, self._terrainadj, self._population, self.agricultural)
+                if i > 0:
+                    self.boundaries[f] = ncount + i-1
+            for pair in [pair for pair in self._tradepartners if n in pair]:
+                self._tradepartners.remove(pair)
+
         self.populatenations(stept)
 
         stept.start('loaning words')
@@ -640,8 +678,8 @@ class HistorySimulation(object):
         while len(colors) < len(cities):
             colors.append(None)
         for c in set(boundaries.values()):
-            # find the closest 6 cities
-            ns = citytree.nearest(cities[c], 6)
+            # find the closest cities
+            ns = citytree.nearest(cities[c], colorcount)
             ncs = [colors[n] for n in ns if n in colors]
             if len(ncs) == len(ns):
                 colors[c] = ncs[-1]
@@ -649,11 +687,45 @@ class HistorySimulation(object):
                 colors[c] = random.choice(list(set(range(len(ns))) - set(ncs)))
 
     @staticmethod
+    def randomcities(faces, terrain, tiles, population, agricultural):
+        return list({f for f in faces
+                     if f in population and
+                         random.random() < HistorySimulation.cityprob(f, terrain, tiles, population, agricultural)})
+
+    @staticmethod
+    def nearestcity(f, cities, candidates, elevation, rivers, adj, population, agricultural):
+        paths, costs = [[f] for _ in candidates], [0 for _ in candidates]
+        while True:
+            # find the cheapest path so far
+            i = min(range(len(paths)), key=lambda i: costs[i])
+            if costs[i] == float('inf'):
+                return None
+            city = cities[candidates[i]]
+            if paths[i][-1] == city:
+                return i
+            # advance it
+            step = min(adj[paths[i][-1]], key=lambda n: dist2(city, n))
+            paths[i].append(step)
+            if step not in elevation or elevation[step] <= 0:
+                # can't cross below sea level
+                costs[i] += float('inf')
+            elif step not in population or sum([p.thousands for p in population[step]]) <= 0:
+                # can't cross unpopulated terrain
+                costs[i] += float('inf')
+            elif (HistorySimulation.hasagriculture(f, population, agricultural) !=
+                  HistorySimulation.hasagriculture(step, population, agricultural)):
+                # can't include both agricultural and exclusively pre-agricultural people
+                costs[i] += float('inf')
+            elif any([step in r for r in rivers]):
+                # difficult to span river
+                costs[i] += 10
+            else:
+                costs[i] += 1
+
+    @staticmethod
     def nationalboundaries(colors, boundaries, terrain, elevation, rivers, adj, tiles, population, agricultural):
         start = time.time()
-        cities = list({f for f in terrain.faces
-                       if f in population and
-                          random.random() < HistorySimulation.cityprob(f, terrain, tiles, population, agricultural)})
+        cities = HistorySimulation.randomcities(terrain.faces, terrain, tiles, population, agricultural)
         # save state so the ultimate result isn't dependent on timing
         state = random.getstate()
         def tree():
@@ -662,38 +734,14 @@ class HistorySimulation(object):
         for f in terrain.faces:
             if f in population and sum([p.thousands for p in population[f]]) > 0:
                 candidates = citytree.nearest(f, 6)
-                paths, costs = [[f] for _ in candidates], [0 for _ in candidates]
-                while True:
-                    # find the cheapest path so far
-                    i = min(range(len(paths)), key=lambda i: costs[i])
-                    if costs[i] == float('inf'):
-                        # found a new nation
-                        cities.append(f)
-                        citytree = tree()
-                        boundaries[f] = len(cities)-1
-                        break
-                    city = cities[candidates[i]]
-                    if paths[i][-1] == city:
-                        boundaries[f] = candidates[i]
-                        break
-                    # advance it
-                    step = min(adj[paths[i][-1]], key=lambda n: dist2(city, n))
-                    paths[i].append(step)
-                    if step not in elevation or elevation[step] <= 0:
-                        # can't cross below sea level
-                        costs[i] += float('inf')
-                    elif step not in population or sum([p.thousands for p in population[step]]) <= 0:
-                        # can't cross unpopulated terrain
-                        costs[i] += float('inf')
-                    elif (HistorySimulation.hasagriculture(f, population, agricultural) !=
-                          HistorySimulation.hasagriculture(step, population, agricultural)):
-                        # can't include both agricultural and exclusively pre-agricultural people
-                        costs[i] += float('inf')
-                    elif any([step in r for r in rivers]):
-                        # difficult to span river
-                        costs[i] += 10
-                    else:
-                        costs[i] += 1
+                i = HistorySimulation.nearestcity(f, cities, candidates, elevation, rivers, adj, population, agricultural)
+                if i is None:
+                    # found a new nation
+                    cities.append(f)
+                    citytree = tree()
+                    boundaries[f] = len(cities)-1
+                else:
+                    boundaries[f] = candidates[i]
             if time.time() - start > 5:
                 HistorySimulation.colornations(colors, cities, citytree, boundaries)
                 yield

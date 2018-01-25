@@ -91,6 +91,15 @@ class History(object):
         self._changes = [[]]
         self.coin(concepts)
 
+    def clone(self):
+        clone = History(self._timing, [])
+        clone._concepts = list(self._concepts)
+        clone._lookup = dict(self._lookup)
+        clone._loans = dict(self._loans)
+        clone._neologisms = dict(self._neologisms)
+        clone._changes = [list(changes) for changes in self._changes]
+        return clone
+
     @staticmethod
     def _nextstate():
         state = random.getstate()
