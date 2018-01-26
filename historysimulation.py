@@ -296,6 +296,8 @@ class HistorySimulation(object):
             for o in neighbors[n]:
                 dr = len(set(nationspecies[o]) - native)/len(native) # unique foreign resources as a fraction of native
                 opop = nationalpopulations[o]
+                if not opop:
+                    continue
                 dp = (pop - opop)/opop # excess native population as a fraction of foreign
                 if dr > 0 and dp > 0:
                     # potential for aggression of n towards o
