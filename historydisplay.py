@@ -47,7 +47,7 @@ def nations(sim, rivers, selectednations):
     colors = { }
     for f in sim.faces:
         if (f in sim.tiles and sim.tiles[f].elevation == 0) or not sim.faceelevation(f):
-            colors[f] = 0, 0, 0
+            colors[f] = 0, 0, 255
             continue
         if rivers and any([f in r for r in sim.riverroutes]):
             colors[f] = 0, 0, 255
@@ -75,7 +75,7 @@ def species(sim, rivers, _):
     colors = { }
     for f in sim.faces:
         if (f in sim.tiles and sim.tiles[f].elevation == 0) or not sim.faceelevation(f):
-            colors[f] = 0, 0, 0
+            colors[f] = 0, 0, 255
         elif rivers and any([f in r for r in sim.riverroutes]):
             colors[f] = 0, 0, 255
         elif sim.phase != 'sim':
@@ -89,7 +89,7 @@ def population(sim, rivers, _):
     colors = { }
     for f in sim.faces:
         if (f in sim.tiles and sim.tiles[f].elevation == 0) or not sim.faceelevation(f):
-            colors[f] = 0, 0, 0
+            colors[f] = 0, 0, 255
         elif rivers and any([f in r for r in sim.riverroutes]):
             colors[f] = 0, 0, 255
         elif sim.phase != 'sim':
@@ -103,7 +103,7 @@ def capacity(sim, rivers, _):
     colors = { }
     for f in sim.faces:
         if (f in sim.tiles and sim.tiles[f].elevation == 0) or not sim.faceelevation(f):
-            colors[f] = 0, 0, 0
+            colors[f] = 0, 0, 255
         elif rivers and any([f in r for r in sim.riverroutes]):
             colors[f] = 0, 0, 255
         elif sim.phase != 'sim':
