@@ -135,6 +135,16 @@ class HistoryPresenter(object):
             conflict.addChild(rivals)
             self._view.details.addTopLevelItem(conflict)
 
+            wordlist = self._listitemclass(['Language'])
+            for word in sorted(lang.lexicon(), key=language.output.write):
+                (kind, index) = lang.define(word)
+                name = language.output.write(word)
+                text = '{} (/{}/): {}'.format(capitalize(name) if kind is 'nation' else name,
+                                              language.output.pronounce(word),
+                                              'nation' if kind == 'nation' else self._model.resource(kind, index).name)
+                wordlist.addChild(self._listitemclass([text]))
+            self._view.details.addTopLevelItem(wordlist)
+
     def rotate(self, value):
         self._display.rotate = value
         self._view.content.update()
