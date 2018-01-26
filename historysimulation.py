@@ -507,12 +507,11 @@ class HistorySimulation(object):
                     lang = self._nationlangs[n]
                 if not lang.describes('nation', partner):
                     lang.borrow('nation', partner, partner)
-            for resource in self.imports(n):
-                if lang.describes(*resource):
-                    continue
-                for partner in partners:
-                    if self.borrowfrom(resource, self._nationlangs, partner, n, self._tradepartners):
-                        break
+            for (partner, resources) in self.imports(n).items():
+                for resource in resources:
+                    if lang.describes(*resource):
+                        continue
+                    self.borrowfrom(resource, self._nationlangs, partner, n, self._tradepartners)
             rivals = self.nationconflictrivals(n)
             for rival in rivals:
                 if lang is None:
@@ -809,17 +808,14 @@ class HistorySimulation(object):
         return {('species', s) for s in self._nationspecies[n]}
 
     def imports(self, n):
-        resources = set()
-        for partner in self.recursivetradepartners(n, self._tradepartners, {}):
-            resources |= self.resources(partner)
-        return resources - self.resources(n)
+        native = self.resources(n)
+        return {partner: (self.resources(partner) - native)
+                for partner in self.recursivetradepartners(n, self._tradepartners, {})}
 
     def exports(self, n):
-        resources = set()
         native = self.resources(n)
-        for partner in self.lookuptradepartners(n, self._tradepartners):
-            resources |= native - self.resources(partner)
-        return resources
+        return {partner: (native - self.resources(partner))
+                for partner in self.lookuptradepartners(n, self._tradepartners)}
 
     def resource(self, kind, index):
         if kind == 'species':

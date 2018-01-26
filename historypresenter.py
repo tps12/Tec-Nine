@@ -98,7 +98,8 @@ class HistoryPresenter(object):
                                            ('Exports', self._model.exports)]:
                 item = self._listitemclass([heading])
                 values = []
-                for (kind, index) in resourcesfn(selected):
+                resources = resourcesfn(selected).values()
+                for (kind, index) in set.union(*resources) if resources else set():
                     text, tip = self._model.resource(kind, index).name, None
                     if lang.describes(kind, index):
                         word = lang.describe(kind, index)
