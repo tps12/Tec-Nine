@@ -75,65 +75,69 @@ class HistoryPresenter(object):
             name.setToolTip(0, '/{}/'.format(language.output.pronounce(word)))
             self._view.details.addTopLevelItem(name)
 
-            trade = self._listitemclass(['Trade'])
-            partners = self._listitemclass(['Partners'])
-            for partner in self._model.nationtradepartners(selected):
-                if lang.describes('nation', partner):
-                    word = lang.describe('nation', partner)
-                else:
-                    word = self._model.language(partner).describe('nation', partner)
-                text = capitalize(language.output.write(word))
-                tip = '/{}/'.format(language.output.pronounce(word))
-                original = self._model.language(partner).describe('nation', partner)
-                if language.output.write(original) != language.output.write(word):
-                    text += ' ({})'.format(capitalize(language.output.write(original)))
-                if language.output.pronounce(original) != language.output.pronounce(word):
-                    tip += ' (/{}/)'.format(language.output.pronounce(original))
-                name = self._listitemclass([text])
-                name.setToolTip(0, tip)
-                partners.addChild(name)
-            trade.addChild(partners)
-
-            for (heading, resourcesfn) in [('Imports', self._model.imports),
-                                           ('Exports', self._model.exports)]:
-                item = self._listitemclass([heading])
-                values = []
-                resources = resourcesfn(selected).values()
-                for (kind, index) in set.union(*resources) if resources else set():
-                    text, tip = self._model.resource(kind, index).name, None
-                    if lang.describes(kind, index):
-                        word = lang.describe(kind, index)
-                        text += ' ({})'.format(language.output.write(word))
-                        tip = '/{}/'.format(language.output.pronounce(word))
-                    values.append((text, tip))
-                for (text, tip) in sorted(values):
+            tradepartners = self._model.nationtradepartners(selected)
+            if tradepartners:
+                trade = self._listitemclass(['Trade'])
+                partners = self._listitemclass(['Partners'])
+                for partner in tradepartners:
+                    if lang.describes('nation', partner):
+                        word = lang.describe('nation', partner)
+                    else:
+                        word = self._model.language(partner).describe('nation', partner)
+                    text = capitalize(language.output.write(word))
+                    tip = '/{}/'.format(language.output.pronounce(word))
+                    original = self._model.language(partner).describe('nation', partner)
+                    if language.output.write(original) != language.output.write(word):
+                        text += ' ({})'.format(capitalize(language.output.write(original)))
+                    if language.output.pronounce(original) != language.output.pronounce(word):
+                        tip += ' (/{}/)'.format(language.output.pronounce(original))
                     name = self._listitemclass([text])
-                    if tip is not None:
-                        name.setToolTip(0, tip)
-                    item.addChild(name)
-                trade.addChild(item)
+                    name.setToolTip(0, tip)
+                    partners.addChild(name)
+                trade.addChild(partners)
 
-            self._view.details.addTopLevelItem(trade)
+                for (heading, resourcesfn) in [('Imports', self._model.imports),
+                                               ('Exports', self._model.exports)]:
+                    item = self._listitemclass([heading])
+                    values = []
+                    resources = resourcesfn(selected).values()
+                    for (kind, index) in set.union(*resources) if resources else set():
+                        text, tip = self._model.resource(kind, index).name, None
+                        if lang.describes(kind, index):
+                            word = lang.describe(kind, index)
+                            text += ' ({})'.format(language.output.write(word))
+                            tip = '/{}/'.format(language.output.pronounce(word))
+                        values.append((text, tip))
+                    for (text, tip) in sorted(values):
+                        name = self._listitemclass([text])
+                        if tip is not None:
+                            name.setToolTip(0, tip)
+                        item.addChild(name)
+                    trade.addChild(item)
 
-            conflict = self._listitemclass(['Conflict'])
-            rivals = self._listitemclass(['Rivals'])
-            for rival in self._model.nationconflictrivals(selected):
-                if lang.describes('nation', rival):
-                    word = lang.describe('nation', rival)
-                else:
-                    word = self._model.language(rival).describe('nation', rival)
-                text = capitalize(language.output.write(word))
-                tip = '/{}/'.format(language.output.pronounce(word))
-                original = self._model.language(rival).describe('nation', rival)
-                if language.output.write(original) != language.output.write(word):
-                    text += ' ({})'.format(capitalize(language.output.write(original)))
-                if language.output.pronounce(original) != language.output.pronounce(word):
-                    tip += ' (/{}/)'.format(language.output.pronounce(original))
-                name = self._listitemclass([text])
-                name.setToolTip(0, tip)
-                rivals.addChild(name)
-            conflict.addChild(rivals)
-            self._view.details.addTopLevelItem(conflict)
+                self._view.details.addTopLevelItem(trade)
+
+            conflictrivals = self._model.nationconflictrivals(selected)
+            if conflictrivals:
+                conflict = self._listitemclass(['Conflict'])
+                rivals = self._listitemclass(['Rivals'])
+                for rival in conflictrivals:
+                    if lang.describes('nation', rival):
+                        word = lang.describe('nation', rival)
+                    else:
+                        word = self._model.language(rival).describe('nation', rival)
+                    text = capitalize(language.output.write(word))
+                    tip = '/{}/'.format(language.output.pronounce(word))
+                    original = self._model.language(rival).describe('nation', rival)
+                    if language.output.write(original) != language.output.write(word):
+                        text += ' ({})'.format(capitalize(language.output.write(original)))
+                    if language.output.pronounce(original) != language.output.pronounce(word):
+                        tip += ' (/{}/)'.format(language.output.pronounce(original))
+                    name = self._listitemclass([text])
+                    name.setToolTip(0, tip)
+                    rivals.addChild(name)
+                conflict.addChild(rivals)
+                self._view.details.addTopLevelItem(conflict)
 
             wordlist = self._listitemclass(['Language'])
             for word in sorted(lang.lexicon(), key=language.output.write):
