@@ -19,6 +19,11 @@ phasetext = {
 def capitalize(s):
     return s[0].upper() + s[1:]
 
+def conjoin(items):
+    if len(items) == 1:
+        return items[0]
+    return '{} and {}'.format(', '.join(items[:-1]), items[-1])
+
 class HistoryPresenter(object):
     def __init__(self, view, uistack, listitemclass):
         self._view = view
@@ -146,7 +151,25 @@ class HistoryPresenter(object):
                 text = '{} (/{}/): {}'.format(capitalize(name) if kind is 'nation' else name,
                                               language.output.pronounce(word),
                                               'nation' if kind == 'nation' else self._model.resource(kind, index).name)
-                wordlist.addChild(self._listitemclass([text]))
+                entry = self._listitemclass([text])
+                wordorigin = lang.origin(word)
+                if wordorigin is not None:
+                    ultimate = wordorigin.ultimate()
+                    ultimateword = language.output.write(ultimate.word)
+                    if ultimate.language[0] != selected:
+                        origin = 'From {}'.format(capitalize(language.output.write(ultimate.language[1])))
+                        if ultimateword != name:
+                            origin += ' "{}"'.format(capitalize(ultimateword) if kind == 'nation' else ultimateword)
+                        via = wordorigin.pedigree()[1:-1]
+                        if via:
+                            origin += ' via {}'.format(conjoin([capitalize(language.output.write(l[1])) for l in via]))
+                    elif ultimateword != name:
+                        origin = 'From "{}"'.format(capitalize(ultimateword) if kind == 'nation' else ultimateword)
+                    else:
+                        origin = None
+                    if origin is not None:
+                        entry.addChild(self._listitemclass([origin]))
+                wordlist.addChild(entry)
             self._view.details.addTopLevelItem(wordlist)
 
     def rotate(self, value):

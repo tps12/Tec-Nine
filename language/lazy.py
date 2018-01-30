@@ -27,6 +27,7 @@ def reify(langs, index, ticks, borrowsubset, timing, indent):
     (conceptlist, soundchanges, neologisms, loans) = (
         langs[index]._concepts, langs[index]._changes, langs[index]._neologisms, langs[index]._loans)
     concept_words = {}
+    origins = {}
     existing = set()
     for t in range(ticks):
         timing.start('{}applying sound changes'.format(indent))
@@ -59,7 +60,9 @@ def reify(langs, index, ticks, borrowsubset, timing, indent):
                 for i in range(len(concept_indices)):
                     (concept, coined) = (conceptlist[concept_indices[i]], words[i])
                     concept_words[concept] = coined
+                    origins[concept] = language.dictionary.Origin(coined, None)
                     existing.add(coined)
+
         if t in loans:
             timing.start('{}borrowing words'.format(indent))
             if stats is None:
@@ -70,15 +73,25 @@ def reify(langs, index, ticks, borrowsubset, timing, indent):
                     continue
                 timing.start('{}reifying language {}'.format(indent, src))
                 src_dict = reify(langs, src, t+1, concepts, timing, indent + ' ')
+                src_name = src_dict.describe('nation', src)
                 for concept in concepts:
-                    borrowed = borrow(src_dict.describe(*concept), stats, existing)
+                    original = src_dict.describe(*concept)
+                    borrowed = borrow(original, stats, existing)
                     concept_words[concept] = borrowed
                     existing.add(borrowed)
+                    origins[concept] = language.dictionary.Origin(original, (src, src_name), src_dict.origin(original))
+
+    timing.start('{}setting origins'.format(indent))
+    lang_name = concept_words[('nation', index)]
+    for origin in origins.values():
+        if origin.language is None:
+            origin.language = (index, lang_name)
 
     timing.start('{}building dictionary'.format(indent))
     dictionary = language.dictionary.Dictionary()
     for ((kind, index), word) in concept_words.items():
-        dictionary.add(word, kind, index)
+        origin = origins[(kind, index)] if (kind, index) in origins else None
+        dictionary.add(word, kind, index, origin)
     return dictionary
 
 class History(object):
