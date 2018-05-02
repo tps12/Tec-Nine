@@ -1,4 +1,8 @@
-from random import randint, sample
+import bisect
+import itertools
+from random import randint, random, sample
+
+from . import segment
 
 vowelpositions = [
   # front   ->   back
@@ -78,17 +82,30 @@ def height(vowel):
             return i
     raise ValueError
 
+def weightedsample(population, weights, k):
+    remaining = list(population)
+    res = []
+    for _ in range(k):
+        dist = list(itertools.accumulate([weights[s] for s in remaining]))
+        res.append(remaining.pop(bisect.bisect(dist, random() * dist[-1])))
+    return res
+
+segmentweights = { s: segment.frequencies[s] if s in segment.frequencies else 1
+                   for s in vowels + consonants }
+
 def phonemes(nv = None, nc = None):
     global vowels, consonants
 
     # subset of possible vowels
     nv = (int(len(vowels)/2), int(3*len(vowels)/5)) if nv is None else nv
-    vs = sample(vowels, randint(max(0, min(len(vowels), nv[0])),
+    vs = weightedsample(vowels, segmentweights,
+                        randint(max(0, min(len(vowels), nv[0])),
                                 max(0, min(len(vowels), nv[1]))))
 
     # subset of possible consonants
     nc = (int(len(consonants)/5), int(3*len(consonants)/5)) if nc is None else nc
-    cs = sample(consonants, randint(max(0, min(len(consonants), nc[0])),
-                                    max(0, min(len(consonants), nc[1]))))
+    cs = weightedsample(consonants, segmentweights,
+                        randint(max(0, min(len(consonants), nc[0])),
+                                max(0, min(len(consonants), nc[1]))))
 
     return vs, cs
