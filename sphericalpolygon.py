@@ -2,14 +2,12 @@ from numpy import array
 from numpy.linalg import norm
 
 from greatcirclearc import *
-from latrange import *
 
 class SphericalPolygon(object):
-    def __init__(self, vectors, centroid):
+    def __init__(self, vectors):
         self._vectors = [v for v in vectors]
         self._arcs = [self._getarc(self._vectors[i], self._vectors[i+1])
                       for i in range(-1, len(self._vectors)-1)]
-        self._centroid = centroid
         self._externalvector = self._guessexternal(self._vectors)
 
     @staticmethod

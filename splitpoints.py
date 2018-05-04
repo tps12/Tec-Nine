@@ -5,9 +5,6 @@ import random
 
 from numpy.linalg import norm
 
-from latrange import *
-from sphericalpolygon import *
-
 from grid import Grid
 from movemethod import rotate
 from sphericalpolygon import SphericalPolygon
@@ -50,7 +47,7 @@ class SplitPoints(object):
 
         r = 1.145
         shape = SphericalPolygon([rotate(rotate(p, o, r*random.uniform(0.9,1.1)), p, th)
-                                  for th in [i*pi/8 for i in range(16)]], p)
+                                  for th in [i*pi/8 for i in range(16)]])
 
         for t in self.tiles.values():
             t.bottom = 0

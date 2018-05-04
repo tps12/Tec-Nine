@@ -5,7 +5,6 @@ from numpy import array, cross, dot
 from numpy.linalg import norm
 
 from dist2 import dist2
-from sphericalpolygon import SphericalPolygon
 
 def rotate(p, axis, theta):
     """Rotate a vector about an axis by a specified amount."""

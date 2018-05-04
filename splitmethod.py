@@ -92,7 +92,7 @@ def split(tiles):
     va /= norm(va)
     vb = -va
 
-    p = SphericalPolygon(vs, average(vs)/norm(average(vs)))
+    p = SphericalPolygon(vs)
     a, b = [], []
     for t in tiles:
         if p.contains(t.vector):

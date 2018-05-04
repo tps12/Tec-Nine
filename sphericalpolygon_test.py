@@ -21,8 +21,7 @@ class SphericalPolygonTestCase(TestCase):
                               (47.22, -68.73),
                               (44.56, -67.10),
                               (30.26, -82.53),
-                              (32.47, -117.20)],
-                             self.vector((38.62, -98.62)))
+                              (32.47, -117.20)])
         self.assertTrue(p.contains(self.vector((38.62, -98.62))))
                               
     def test_alberta_outside_us(self):          
@@ -33,8 +32,7 @@ class SphericalPolygonTestCase(TestCase):
                               (47.22, -68.73),
                               (44.56, -67.10),
                               (30.26, -82.53),
-                              (32.47, -117.20)],
-                             self.vector((38.62, -98.62)))
+                              (32.47, -117.20)])
         self.assertFalse(p.contains(self.vector((53.49, -113.64))))
 
     def test_point_that_should_be_in(self):
@@ -46,8 +44,7 @@ class SphericalPolygonTestCase(TestCase):
                               (-0.41047578, -0.81103224, -0.41681692), 
                               (-0.22731679, -0.87585997, -0.42567169), 
                               (-0.09276682, -0.84144483, -0.53232031), 
-                              (-0.04855812, -0.84643477, -0.53027379)],
-                             (-sqrt(2), -sqrt(2), 0))
+                              (-0.04855812, -0.84643477, -0.53027379)])
         self.assertTrue(p.contains((-0.25916403755485623, -0.7554155674506348, -0.6018150231520483)))
 
     def test_another_point_that_should_be_in(self):
@@ -59,8 +56,7 @@ class SphericalPolygonTestCase(TestCase):
                               ( 0.24508727, -0.95988891, -0.13618192), 
                               ( 0.40681028, -0.88751077, -0.21640245), 
                               ( 0.44190865, -0.81611357, -0.37239145), 
-                              ( 0.47401636, -0.79000325, -0.38884876)],
-                             (-sqrt(2), -sqrt(2), 0))
+                              ( 0.47401636, -0.79000325, -0.38884876)])
         self.assertTrue(p.contains((0.29210493879571187, -0.8867057671346513, -0.35836794954530027)))
                              
 if __name__ == '__main__':

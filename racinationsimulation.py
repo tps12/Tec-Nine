@@ -22,9 +22,9 @@ class Continent(object):
         mini = min(range(3), key=lambda i: abs(self.center[i]))
         self.orientingpt[mini] = 1 if self.center[mini] < 0 else -1
         self.outer = SphericalPolygon([rotate(rotate(self.center, self.orientingpt, self.avgradius*random.uniform(0.9,1.1)), self.center, th)
-                                       for th in [i*pi/8 for i in range(16)]], self.center)
+                                       for th in [i*pi/8 for i in range(16)]])
         self.inner = SphericalPolygon([rotate(rotate(self.center, self.orientingpt, 0.65*self.avgradius*random.uniform(0.9,1.1)), self.center, th)
-                                       for th in [i*pi/8 for i in range(16)]], self.center)
+                                       for th in [i*pi/8 for i in range(16)]])
 
 class RacinationSimulation(object):
     def __init__(self):

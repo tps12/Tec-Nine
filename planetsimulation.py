@@ -93,10 +93,8 @@ class PlanetSimulation(object):
         mini = min(range(len(p)), key=lambda i: abs(p[i]))
         o[mini] = 1 if p[mini] < 0 else -1
 
-        shape = [rotate(rotate(p, o, landr*random.uniform(0.9,1.1)), p, th)
-                 for th in [i*pi/8 for i in range(16)]]
-
-        shape = SphericalPolygon(shape, p)
+        shape = SphericalPolygon([rotate(rotate(p, o, landr*random.uniform(0.9,1.1)), p, th)
+                                  for th in [i*pi/8 for i in range(16)]])
 
         self._shapes = [Group([t for t in self.tiles.values() if shape.contains(t.vector)], v)]
 
