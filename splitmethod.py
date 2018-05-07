@@ -83,9 +83,8 @@ def split(tiles):
     # vectors for the corners of the split-off wedge
     vs = [rotate(fc, c.vector, th) for th in ths]
 
-    # include center and close
+    # include center
     vs.append(c.vector)
-    vs.append(vs[0])
 
     # velocity directions
     va = rotate(fc, c.vector, sum(bs)/2)
