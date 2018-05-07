@@ -4,34 +4,18 @@ from numpy import dot, cross
 from numpy.linalg import norm
 
 from greatcircle import *
-from lonrange import *
-from latrange import *
 
 class GreatCircleArc(object):
     def __init__(self, start, end):
         self._start = start
         self._end = end
-        self._initrange()
+        self._length = acos(dot(self._start, self._end))
         self._circle = GreatCircle(self._start, self._end)
 
     @staticmethod
     def _coords(v):
         return tuple([c * 180/pi for c in
                       (atan2(v[2], sqrt(v[0]*v[0] + v[1]*v[1])), atan2(v[1], v[0]))])
-
-    def _initrange(self):
-        s, e = [self._coords(v) for v in (self._start, self._end)]
-        lonrange = LonRange(s[1], e[1])
-        latrange = LatRange(s[0], e[0])
-
-        if latrange.min != latrange.max and lonrange.min != lonrange.max:
-            inflection = self._coords(GreatCircle(self._start, self._end).inflection())
-            if lonrange.contains(inflection[1]):
-                latrange.max = inflection[0]
-            if lonrange.contains(inflection[1] - 180):
-                latrange.min = -inflection[0]
-
-        self._latrange, self._lonrange = latrange, lonrange
 
     def __str__(self):
         return ' '.join(['GreatCircleArc:', str(self._start), str(self._end)])
@@ -46,4 +30,6 @@ class GreatCircleArc(object):
         return False
 
     def contains(self, v):
-        return self._lonrange.contains(atan2(v[1],v[0])*180/pi)
+        # add pi to distance if it's on the other side
+        dth = pi if dot(cross(self._start, v), self._circle.plane) < 0 else 0
+        return acos(dot(v, self._start)) + dth < self._length
