@@ -9,7 +9,7 @@ class Data(object):
 
     @classmethod
     def loaddata(cls, data):
-        if 'version' not in data or data['version'] < 23:
+        if 'version' not in data or data['version'] < 24:
                 raise ValueError('File version is too old')
 
         races, agricultural = cls._population(data['races'], data['racenames'], data['agriculturalraces'], data['tiles'].items())
@@ -30,10 +30,10 @@ class Data(object):
             return cls.loaddata(load(f))
 
     @classmethod
-    def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet, historyinited, species, terraincap, terrainpop, nationcolors, boundaries, tilespecies, nationspecies, nationlangs):
+    def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet, historyinited, species, terraincap, terrainpop, statecolors, boundaries, tilespecies, languages, statespecies):
         tileindex = cls._index(tiles)
         rs, rnames, rindex, ags = cls._raceagindices(population, agricultural)
-        return {'version': 23,
+        return {'version': 24,
                 'random': random,
                 'gridsize': gridsize,
                 'stage': stage,
@@ -68,11 +68,11 @@ class Data(object):
                 'species': species if historyinited else [],
                 'terraincap': terraincap if historyinited else {},
                 'terrainpop': terrainpop if historyinited else {},
-                'nationcolors': nationcolors if historyinited else [],
+                'nationcolors': statecolors if historyinited else [],
                 'boundaries': boundaries if historyinited else {},
                 'tilespecies': tilespecies if historyinited else {},
-                'nationspecies': nationspecies if historyinited else {},
-                'nationlangs': nationlangs if historyinited else []}
+                'languages': languages if historyinited else [],
+                'statespecies': statespecies if historyinited else []}
 
     @classmethod
     def save(cls, filename, data):

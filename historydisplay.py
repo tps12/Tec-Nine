@@ -39,8 +39,8 @@ def selectednationcolor(sim, f, selectednations):
 def facenationcolor(sim, f):
     if f in sim.boundaries:
         n = sim.boundaries[f]
-        if n < len(sim.nationcolors):
-            return sim.nationcolors[n]
+        if n < len(sim.statecolors):
+            return sim.statecolors[n]
     return None
 
 def nations(sim, rivers, selectednations):

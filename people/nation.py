@@ -1,0 +1,2 @@
+class Nation(object):
+    pass

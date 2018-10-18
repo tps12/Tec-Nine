@@ -1,6 +1,7 @@
 from PySide.QtCore import Qt
 from PySide.QtGui import QGridLayout, QFileDialog
 
+from formatpopulation import percents, popstr
 from historydisplay import HistoryDisplay
 from historysimulation import HistorySimulation
 import language.output
@@ -34,7 +35,7 @@ class HistoryPresenter(object):
         self._view.save.clicked.connect(self.save)
         self._view.done.clicked.connect(self.done)
 
-        self._model = HistorySimulation(6, True)
+        self._model = HistorySimulation(6, False)
         self._worker = SimThread(self._model)
         self._worker.tick.connect(self.tick)
         self._worker.simstarted.connect(self.started)
@@ -68,34 +69,35 @@ class HistoryPresenter(object):
         for f, t in self._model.tiles.items():
             if t is tile:
                 selected = self._model.boundaries[f] if f in self._model.boundaries else None
-                self._display.selectnations(selected, self._model.nationtradepartners(selected), self._model.nationconflictrivals(selected))
+                self._display.selectnations(selected, self._model.statetradepartners(selected), self._model.stateconflictrivals(selected))
                 break
         self._display.invalidate()
         self._view.content.update()
         self._view.details.clear()
         if selected is not None:
-            lang = self._model.language(selected)
-            word = lang.describe('nation', selected)
+            nations = self._model.demographics(selected)
+            lang = self._model.language(nations[0].languages[0].language)
+            word = lang.describe('state', selected)
             name = self._listitemclass([capitalize(language.output.write(word))])
             name.setToolTip(0, '/{}/'.format(language.output.pronounce(word)))
             self._view.details.addTopLevelItem(name)
 
-            tradepartners = self._model.nationtradepartners(selected)
+            tradepartners = self._model.statetradepartners(selected)
             if tradepartners:
                 trade = self._listitemclass(['Trade'])
                 partners = self._listitemclass(['Partners'])
                 for partner in tradepartners:
-                    if lang.describes('nation', partner):
-                        word = lang.describe('nation', partner)
-                    else:
-                        word = self._model.language(partner).describe('nation', partner)
+                    word = lang.describe('state', partner)
                     text = capitalize(language.output.write(word))
                     tip = '/{}/'.format(language.output.pronounce(word))
-                    original = self._model.language(partner).describe('nation', partner)
+
+                    othernations = self._model.demographics(partner)
+                    original = self._model.language(othernations[0].languages[0].language).describe('state', partner)
                     if language.output.write(original) != language.output.write(word):
                         text += ' ({})'.format(capitalize(language.output.write(original)))
                     if language.output.pronounce(original) != language.output.pronounce(word):
                         tip += ' (/{}/)'.format(language.output.pronounce(original))
+
                     name = self._listitemclass([text])
                     name.setToolTip(0, tip)
                     partners.addChild(name)
@@ -107,33 +109,24 @@ class HistoryPresenter(object):
                     values = []
                     resources = resourcesfn(selected).values()
                     for (kind, index) in set.union(*resources) if resources else set():
-                        text, tip = self._model.resource(kind, index).name, None
-                        if lang.describes(kind, index):
-                            word = lang.describe(kind, index)
-                            text += ' ({})'.format(language.output.write(word))
-                            tip = '/{}/'.format(language.output.pronounce(word))
-                        values.append((text, tip))
-                    for (text, tip) in sorted(values):
+                        values.append(self._model.resource(kind, index).name)
+                    for text in sorted(values):
                         name = self._listitemclass([text])
-                        if tip is not None:
-                            name.setToolTip(0, tip)
                         item.addChild(name)
                     trade.addChild(item)
 
                 self._view.details.addTopLevelItem(trade)
 
-            conflictrivals = self._model.nationconflictrivals(selected)
+            conflictrivals = self._model.stateconflictrivals(selected)
             if conflictrivals:
                 conflict = self._listitemclass(['Conflict'])
                 rivals = self._listitemclass(['Rivals'])
                 for rival in conflictrivals:
-                    if lang.describes('nation', rival):
-                        word = lang.describe('nation', rival)
-                    else:
-                        word = self._model.language(rival).describe('nation', rival)
+                    word = lang.describe('state', rival)
                     text = capitalize(language.output.write(word))
                     tip = '/{}/'.format(language.output.pronounce(word))
-                    original = self._model.language(rival).describe('nation', rival)
+                    othernations = self._model.demographics(rival)
+                    original = self._model.language(othernations[0].languages[0].language).describe('state', rival)
                     if language.output.write(original) != language.output.write(word):
                         text += ' ({})'.format(capitalize(language.output.write(original)))
                     if language.output.pronounce(original) != language.output.pronounce(word):
@@ -144,33 +137,67 @@ class HistoryPresenter(object):
                 conflict.addChild(rivals)
                 self._view.details.addTopLevelItem(conflict)
 
-            wordlist = self._listitemclass(['Language'])
-            for word in sorted(lang.lexicon(), key=language.output.write):
-                (kind, index) = lang.define(word)
-                name = language.output.write(word)
-                text = '{} (/{}/): {}'.format(capitalize(name) if kind is 'nation' else name,
-                                              language.output.pronounce(word),
-                                              'nation' if kind == 'nation' else self._model.resource(kind, index).name)
-                entry = self._listitemclass([text])
-                wordorigin = lang.origin(word)
-                if wordorigin is not None:
-                    ultimate = wordorigin.ultimate()
-                    ultimateword = language.output.write(ultimate.word)
-                    if ultimate.language[0] != selected:
-                        origin = 'From {}'.format(capitalize(language.output.write(ultimate.language[1])))
-                        if ultimateword != name:
-                            origin += ' "{}"'.format(capitalize(ultimateword) if kind == 'nation' else ultimateword)
-                        via = wordorigin.pedigree()[1:-1]
-                        if via:
-                            origin += ' via {}'.format(conjoin([capitalize(language.output.write(l[1])) for l in via]))
-                    elif ultimateword != name:
-                        origin = 'From "{}"'.format(capitalize(ultimateword) if kind == 'nation' else ultimateword)
-                    else:
-                        origin = None
-                    if origin is not None:
-                        entry.addChild(self._listitemclass([origin]))
-                wordlist.addChild(entry)
-            self._view.details.addTopLevelItem(wordlist)
+            demolangs = {}
+            nationalities = self._listitemclass(['Nationalities'])
+            nationpops = percents([demo.thousands for demo in nations])
+            for demo in nations:
+                # name nationality using its majority language
+                word = self._model.language(demo.languages[0].language).describe('nation', demo.nation)
+                nationality = self._listitemclass([capitalize(language.output.write(word))])
+                nationality.setToolTip(0, '/{}/'.format(language.output.pronounce(word)))
+                
+                pop = popstr(demo.thousands)
+                nationality.addChild(self._listitemclass(
+                    ['Population: {}({})'.format((pop + ' ') if pop != '0' else '', next(nationpops))]))
+                languages = self._listitemclass(['Languages'])
+                for demolang in demo.languages:
+                    word = self._model.language(demolang.language).describe('language', demolang.language)
+                    langtext = capitalize(language.output.write(word))
+                    demolangs[demolang.language] = langtext
+                    langname = self._listitemclass([
+                        '{}: {}'.format(langtext, popstr(demolang.thousands))
+                        if len(demo.languages) > 1 else langtext])
+                    langname.setToolTip(0, '/{}/'.format(language.output.pronounce(word)))
+                    languages.addChild(langname)
+                nationality.addChild(languages)
+
+                nationalities.addChild(nationality)
+            self._view.details.addTopLevelItem(nationalities)
+                
+            languages = self._listitemclass(['Languages'])
+            for (lang_index, _) in sorted(demolangs.items(), key=lambda langnames: langnames[1]):
+                lang = self._model.language(lang_index)
+                word = lang.describe('language', lang_index)
+                wordlist = self._listitemclass([capitalize(language.output.write(word))])
+                wordlist.setToolTip(0, '/{}/'.format(language.output.pronounce(word)))
+
+                for word in sorted(lang.lexicon(), key=language.output.write):
+                    (kind, index) = lang.define(word)
+                    name = language.output.write(word)
+                    text = '{} (/{}/): {}'.format(capitalize(name) if kind != 'species' else name,
+                                                  language.output.pronounce(word),
+                                                  kind if kind != 'species' else self._model.resource(kind, index).name)
+                    entry = self._listitemclass([text])
+                    wordorigin = lang.origin(word)
+                    if wordorigin is not None:
+                        ultimate = wordorigin.ultimate()
+                        ultimateword = language.output.write(ultimate.word)
+                        if ultimate.language[0] != lang_index:
+                            origin = 'From {}'.format(capitalize(language.output.write(ultimate.language[1])))
+                            if ultimateword != name:
+                                origin += ' "{}"'.format(capitalize(ultimateword) if kind != 'species' else ultimateword)
+                            via = wordorigin.pedigree()[1:-1]
+                            if via:
+                                origin += ' via {}'.format(conjoin([capitalize(language.output.write(l[1])) for l in via]))
+                        elif ultimateword != name:
+                            origin = 'From "{}"'.format(capitalize(ultimateword) if kind != 'species' else ultimateword)
+                        else:
+                            origin = None
+                        if origin is not None:
+                            entry.addChild(self._listitemclass([origin]))
+                    wordlist.addChild(entry)
+                languages.addChild(wordlist)
+            self._view.details.addTopLevelItem(languages)
 
     def rotate(self, value):
         self._display.rotate = value

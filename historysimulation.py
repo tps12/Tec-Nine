@@ -14,6 +14,7 @@ from language.phonemes import phonemes
 import language.stats
 import languagesimulation
 import lifeformsmethod
+import people
 from planetdata import Data
 from pointtree import PointTree
 import populationlevel
@@ -24,11 +25,6 @@ from rock import igneous
 from terrainmethod import terrain, elevation, routerivers
 from tile import *
 from timing import Timing
-
-class Population(object):
-    def __init__(self, heritage, thousands):
-        self.heritage = heritage
-        self.thousands = thousands
 
 colorcount = 6
 minspecies = 20
@@ -77,11 +73,11 @@ class HistorySimulation(object):
         self._species = []
         self._capacity = {}
         self._population = {}
-        self.nationcolors = []
+        self.statecolors = []
         self.boundaries = {}
         self._tilespecies = {}
-        self._nationspecies = {}
-        self._nationlangs = []
+        self._languages = []
+        self._statespecies = []
         self._inited = False
         self._initingnations = None
 
@@ -136,21 +132,30 @@ class HistorySimulation(object):
         self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
         timing.start('determining population')
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
-        timing.start('creating national boundaries')
-        for _ in self.nationalboundaries(self.nationcolors, self.boundaries,
-                                         self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles,
-                                         self._population, self.agricultural):
+        timing.start('creating state boundaries')
+        for _ in self.stateboundaries(self.statecolors, self.boundaries,
+                                      self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles,
+                                      self._population):
             timing = yield
-            timing.start('continuing national boundaries')
+            timing.start('continuing state boundaries')
         timing = yield
+
+        self._states = [people.State() for _ in range(max(self.boundaries.values()))]
+        self._nations = [people.Nation() for _ in range(max(self.boundaries.values()))]
+        # initial language and nationality pegged to state
+        for (f, state_index) in self.boundaries.items():
+            for c in self._population[f].communities:
+                c.language = state_index
+                c.nationality = state_index
+
         self.phase = 'langs'
         start = time.time()
         timing.start('finding populations by location')
         self._tilespecies = self.tilespecies(self._species, self.seasons)
-        self.populatenations(timing)
+        self.populatestates(timing)
         timing.start('naming species')
-        for lang in self.langfromspecies(self._nationspecies):
-            self._nationlangs.append(lang)
+        for lang in self.langfromspecies(self._statespecies):
+            self._languages.append(lang)
             if time.time() - start > 5:
                 timing = yield
                 timing.start('continuing naming species')
@@ -164,11 +169,11 @@ class HistorySimulation(object):
             self.grow(timing)
         self.phase = 'sim'
 
-    def populatenations(self, timing):
-        timing.start('bucketing life by nation')
-        self._nationspecies = self.nationspecies(self.boundaries, self._terrain, self._tilespecies)
-        self.boundaries = {f: i for (f,i) in self.boundaries.items() if len(self._nationspecies[i]) >= minspecies}
-        self._population = {f: (ps if f in self.boundaries else []) for (f,ps) in self._population.items()}
+    def populatestates(self, timing):
+        timing.start('bucketing life by state')
+        self._statespecies = self.statespecies(self.boundaries, self._terrain, self._tilespecies)
+        self.boundaries = {f: i for (f, i) in self.boundaries.items() if len(self._statespecies[i]) >= minspecies}
+        self._population = {f: p for (f, p) in self._population.items() if f in self.boundaries}
 
     def keepiniting(self):
         if not self._initingnations:
@@ -189,14 +194,18 @@ class HistorySimulation(object):
         stept.start('growing populations')
         grow = lambda p0, K: K/(1 + (K-p0)/p0 * math.exp(-0.25)) # k=0.25 pretty arbitrary, aiming for 1% yearly growth
         deltas = {}
-        for f, ps in self._population.items():
-            for p in ps:
-                neighborhood = [f] + [n for n in self._terrainadj[f] if n in self._elevation and self._elevation[n]]
-                nations = {self.boundaries[f]} if f in self.boundaries else {self.boundaries[n] for n in self._terrainadj[f]}
-                capacities = [self._capacity[n][1 if p.heritage in self.agricultural else 0] for n in neighborhood]
-                pops = [sum([np.thousands for np in self._population[n]]) for n in neighborhood]
+        for f, p in self._population.items():
+            for c in p.communities:
+                neighborhood = [f] + [n for n in self._terrainadj[f]
+                                      if n in self._elevation and self._elevation[n]
+                                         and len(self.facespecies(f, self._terrain, self._tilespecies)) >= minspecies]
+                states = {self.boundaries[f]} if f in self.boundaries else {self.boundaries[n] for n in self._terrainadj[f]}
+                capacities = [self._capacity[n][1 if c.culture.agriculture else 0] for n in neighborhood]
+                pops = [sum([nc.thousands for nc in self._population[n].communities])
+                        if n in self._population else 0
+                        for n in neighborhood]
                 K = max(0, sum(capacities) - sum(pops)) + capacities[0]
-                delta = grow(p.thousands, K) - p.thousands if K > 0 else 0
+                delta = grow(c.thousands, K) - c.thousands if K > 0 else 0
                 if delta < 0:
                     continue
                 spaces = [(sum(pops) - pop)/float(sum(pops)) for pop in pops]
@@ -206,54 +215,62 @@ class HistorySimulation(object):
                         n = neighborhood[i]
                         if n not in deltas:
                             deltas[n] = ([], set())
-                        for dp in deltas[n][0]:
-                            if dp.heritage is p.heritage:
-                                dp.thousands += share
-                                break
-                        else:
-                            deltas[n][0].append(Population(p.heritage, share))
-                        deltas[n][1].update(nations)
+                        deltas[n][0].append(people.Community(share, c.nationality, c.racial_mix, c.language, c.culture))
+                        deltas[n][1].update(states)
 
         stept.start('assigning growth values')
-        frontierspecies = {}
-        for f, (dps, nations) in deltas.items():
+        languagefrontierspecies = {}
+        statefrontierspecies = {}
+        for f, (dcs, states) in deltas.items():
             if f not in self._population:
-                self._population[f] = []
-            ps = self._population[f]
-            for dp in dps:
-                for p in ps:
-                    if p.heritage is dp.heritage:
-                        p.thousands += dp.thousands
+                self._population[f] = people.Population([])
+            p = self._population[f]
+            for dc in dcs:
+                for c in p.communities:
+                    if c.nationality == dc.nationality and c.language == dc.language:
+                        c.thousands += dc.thousands
                         break
                 else:
-                    ps.append(dp)
+                    p.communities.append(dc)
+                if dc.language not in languagefrontierspecies:
+                    languagefrontierspecies[dc.language] = set()
             if f not in self.boundaries:
-                i = random.choice(list(nations))
+                i = random.choice(list(states))
                 self.boundaries[f] = i
-                if i not in frontierspecies:
-                    frontierspecies[i] = set()
+                if i not in statefrontierspecies:
+                    statefrontierspecies[i] = set()
 
-        stept.start('getting species in expanded national boundaries')
+        stept.start('getting species in expanded state boundaries')
         for f in deltas:
-            nation_index = self.boundaries[f]
-            if nation_index in frontierspecies:
-                frontierspecies[nation_index] |= self.facespecies(f, self._terrain, self._tilespecies)
+            state_index = self.boundaries[f]
+            if state_index in statefrontierspecies:
+                statefrontierspecies[state_index] |= self.facespecies(f, self._terrain, self._tilespecies)
+
+        stept.start('including species in states')
+        for state_index, species_indices in statefrontierspecies.items():
+            species = self._statespecies[state_index]
+            for species_index in species_indices:
+                species.append(species_index)
+
+        stept.start('getting species in expanded language territory')
+        for f, (dcs, _) in deltas.items():
+            for language_index in [dc.language for dc in dcs]:
+                if language_index in languagefrontierspecies:
+                    languagefrontierspecies[language_index] |= self.facespecies(f, self._terrain, self._tilespecies)
 
         stept.start('naming new species')
-        for nation_index, species_indices in frontierspecies.items():
-            dictionary = self._nationlangs[nation_index]
-            species = self._nationspecies[nation_index]
+        for language_index, species_indices in languagefrontierspecies.items():
+            dictionary = self._languages[language_index]
             unnamed = []
             for species_index in species_indices:
                 if not dictionary.describes('species', species_index):
                     unnamed.append(('species', species_index))
-                    species.append(species_index)
             dictionary.coin(unnamed)
 
         stept.start('removing empty populations')
-        for ps in self._population.values():
-            for i in [i for i in reversed(range(len(ps))) if not ps[i].thousands]:
-                del ps[i]
+        for p in self._population.values():
+            for i in [i for i in reversed(range(len(p.communities))) if not p.communities[i].thousands]:
+                del p.communities[i]
 
     @staticmethod
     def nationalextents(boundaries):
@@ -284,18 +301,18 @@ class HistorySimulation(object):
         return neighbors
 
     @staticmethod
-    def nationalpopulations(extents, population):
-        return [sum([p.thousands for t in extents[n] for p in population[t]]) for n in range(len(extents))]
+    def statepopulations(extents, population):
+        return [sum([c.thousands for t in extents[n] for c in population[t].communities]) for n in range(len(extents))]
 
     @staticmethod
-    def tension(neighbors, nationalpopulations, nationspecies, partners):
+    def tension(neighbors, statepopulations, statespecies, partners):
         tension = [{} for _ in neighbors]
         for n in range(len(neighbors)):
-            native = set(nationspecies[n])
-            pop = nationalpopulations[n]
+            native = set(statespecies[n])
+            pop = statepopulations[n]
             for o in neighbors[n]:
-                dr = len(set(nationspecies[o]) - native)/len(native) # unique foreign resources as a fraction of native
-                opop = nationalpopulations[o]
+                dr = len(set(statespecies[o]) - native)/len(native) # unique foreign resources as a fraction of native
+                opop = statepopulations[o]
                 if not opop:
                     continue
                 dp = (pop - opop)/opop # excess native population as a fraction of foreign
@@ -319,13 +336,13 @@ class HistorySimulation(object):
     def lookupopponents(n, conflicts):
         return {o for (o, p) in conflicts if p == n} | {p for (o, p) in conflicts if o == n}
 
-    def nationconflictrivals(self, n):
+    def stateconflictrivals(self, n):
         return self.lookupopponents(n, self._conflicts)
 
     @staticmethod
-    def victors(conflicts, nationalpopulations, threshold):
-        opps = [HistorySimulation.lookupopponents(n, conflicts) for n in range(len(nationalpopulations))]
-        forces = [nationalpopulations[n]/len(opps[n]) if opps[n] else None for n in range(len(opps))]
+    def victors(conflicts, statepopulations, threshold):
+        opps = [HistorySimulation.lookupopponents(n, conflicts) for n in range(len(statepopulations))]
+        forces = [statepopulations[n]/len(opps[n]) if opps[n] else None for n in range(len(opps))]
         for (n, o) in conflicts:
             if forces[o] and forces[n]/forces[o] > (1 + threshold):
                 yield (n, o)
@@ -333,23 +350,23 @@ class HistorySimulation(object):
                 yield (o, n)
 
     @staticmethod
-    def tradepressure(neighbors, nationspecies, partners):
+    def tradepressure(neighbors, statespecies, partners):
         pressure = [{} for _ in neighbors]
         for n in range(len(neighbors)):
-            native = set(nationspecies[n])
+            native = set(statespecies[n])
             for o in neighbors[n]:
-                ospecies = set(nationspecies[o])
+                ospecies = set(statespecies[o])
                 for partner in HistorySimulation.recursivetradepartners(o, partners, {}):
                     if partner != n:
-                        ospecies |= set(nationspecies[partner])
+                        ospecies |= set(statespecies[partner])
                 p = len(ospecies - native)
                 if p > 0:
                     pressure[n][o] = p
         return pressure
 
     @staticmethod
-    def tradingeligibility(pressure, nationspecies, threshold):
-        return [{o for (o, p) in pressure[n].items() if p >= len(nationspecies[n]) * threshold}
+    def tradingeligibility(pressure, statespecies, threshold):
+        return [{o for (o, p) in pressure[n].items() if p >= len(statespecies[n]) * threshold}
                 for n in range(len(pressure))]
 
     @staticmethod
@@ -392,23 +409,115 @@ class HistorySimulation(object):
         memo[n] = os
         return os
 
-    def nationtradepartners(self, n):
+    def statetradepartners(self, n):
         return self.lookuptradepartners(n, self._tradepartners)
 
     @staticmethod
-    def borrowfrom(resource, langs, src, dest, tradepartners, seen=None):
-        seen = seen if seen is not None else {dest}
-        if langs[dest].describes(*resource):
-            return True
-        if not langs[src].describes(*resource):
-            for partner in HistorySimulation.lookuptradepartners(src, tradepartners):
+    def addpop(dict1, thousands, k1, k2=None):
+        if k2 is None:
+            dict2 = dict1
+            k2 = k1
+        else:
+            if k1 in dict1:
+                dict2 = dict1[k1]
+            else:
+                dict2 = {}
+                dict1[k1] = dict2
+        if k2 in dict2:
+            dict2[k2] += thousands
+        else:
+            dict2[k2] = thousands
+
+    class LanguageShare(object):
+        def __init__(self, thousands, language):
+            self.thousands = thousands
+            self.language = language
+    
+    class NationDemo(object):
+        def __init__(self, thousands, nation, languages):
+            self.thousands = thousands
+            self.nation = nation
+            self.languages = languages
+
+    # ([(lang, [(pop, nation)])],
+    #  [(nation, [(pop, lang)])]) both in descending order of population
+    def demographics(self, state_index):
+        natlangpops, natpops = {}, {}
+        for (t, p) in self._population.items():
+            if t in self.boundaries and self.boundaries[t] == state_index:
+                for c in p.communities:
+                    if c.thousands:
+                        self.addpop(natlangpops, c.thousands, c.nationality, c.language)
+                        self.addpop(natpops, c.thousands, c.nationality)
+        return [self.NationDemo(pop, nation, [self.LanguageShare(pop, lang)
+                                              for (pop, lang) in [(langpop[1], langpop[0])
+                                                                  for langpop in sorted(natlangpops[nation].items(),
+                                                                                        key=lambda langpop: -langpop[1])]])
+                for (nation, pop) in [natpop for natpop in sorted(natpops.items(),
+                                                                  key=lambda natpop: -natpop[1])]]
+
+    # statelangnations: {state: {lang: [nation]}}, where the final list is in descending order
+    #                   of each nationality's number of speakers in the state
+    # statenationlang:  {state: {nation: lang}}, where the final value is the language most
+    #                   spoken by the nationality in the given state
+    # statelangs:       {state: lang}, where the value is the language with the most speakers in the state
+    @staticmethod
+    def populatelanguageindices(extents, population, state_index,
+                                statelangnations, statenationlang, statelangs):
+        if state_index in statelangnations:
+            return
+
+        langnatpops, natlangpops, langpops = {}, {}, {}
+        for t in extents[state_index]:
+            if t not in population:
+                continue
+            for c in population[t].communities:
+                if c.thousands:
+                    HistorySimulation.addpop(langnatpops, c.thousands, c.language, c.nationality)
+                    HistorySimulation.addpop(natlangpops, c.thousands, c.nationality, c.language)
+                    HistorySimulation.addpop(langpops, c.thousands, c.language)
+
+        statelangnations[state_index] = {lang: [natpop[0]
+                                                for natpop in
+                                                sorted(natpops.items(), key=lambda natpop: -natpop[1])]
+                                         for (lang, natpops) in langnatpops.items()}
+        statenationlang[state_index] = {nation: max(langpops.items(), key=lambda langpop: langpop[1])[0]
+                                        for (nation, langpops) in natlangpops.items()}
+        statelangs[state_index] = (max(langpops.items(), key=lambda langpop: langpop[1])[0]
+                                   if langpops else None)
+
+    @staticmethod
+    def bestlanguage(dest_state, dest_lang, src_state,
+                     statelangnations, statenationlang, statelangs):
+        # for each nationality speaking the language, ordered by population
+        for nationality in statelangnations[dest_state][dest_lang]:
+            # borrow from the language most spoken by that nationality
+            if nationality in statenationlang[src_state]:
+                return statenationlang[src_state][nationality]
+        else:
+            # if no nationalities in common, borrow from most spoken language
+            return statelangs[src_state]
+
+    @staticmethod
+    def borrowfrom(resource, langs, src_lang, src_state, dest_lang, dest_state, tradepartners,
+                   extents, population, statelangnations, statenationlang, statelangs,
+                   seen=None):
+        seen = seen if seen is not None else {dest_state}
+        if not langs[src_lang].describes(*resource):
+            for partner in HistorySimulation.lookuptradepartners(src_state, tradepartners):
                 if partner in seen:
                     continue
-                if HistorySimulation.borrowfrom(resource, langs, partner, src, tradepartners, seen | {src}):
-                    break
-            else:
-                return False
-        langs[dest].borrow(resource[0], resource[1], src)
+                HistorySimulation.populatelanguageindices(
+                    extents, population, partner, statelangnations, statenationlang, statelangs)
+                partner_lang = HistorySimulation.bestlanguage(
+                    dest_state, dest_lang, partner, statelangnations, statenationlang, statelangs)
+                if partner_lang is not None and HistorySimulation.borrowfrom(
+                        resource, langs, partner_lang, partner, dest_lang, dest_state, tradepartners,
+                        extents, population, statelangnations, statenationlang, statelangs,
+                        seen | {src_state}):
+                    return True
+            return False
+        langs[dest_lang].borrow(resource[0], resource[1], src_lang)
         return True
 
     @staticmethod
@@ -427,7 +536,7 @@ class HistorySimulation(object):
         stept = self._timing.routine('simulation step')
 
         stept.start('making sound changes')
-        for dictionary in self._nationlangs:
+        for dictionary in self._languages:
             if dictionary is None:
                 continue
             dictionary.changesounds()
@@ -436,39 +545,101 @@ class HistorySimulation(object):
 
         stept.start('finding extents of nations')
         extents = self.nationalextents(self.boundaries)
+        stept.start('borrowing state names for new communities')
+        statelangnations, statenationlang, statelangs = {}, {}, {}
+        for state_index in range(len(extents)):
+            if not extents[state_index]:
+                continue
+            self.populatelanguageindices(extents, self._population, state_index,
+                                         statelangnations, statenationlang, statelangs)
+            for lang_index in statelangnations[state_index]:
+                if not self._languages[lang_index].describes('state', state_index):
+                    self._languages[lang_index].borrow('state', state_index, statelangs[state_index])
         stept.start('identifying neighbors')
         neighbors = self.neighboringnations(extents, self._terrainadj, self.riverroutes, self.boundaries)
         stept.start('determining trade benefit for neighbors')
-        pressure = self.tradepressure(neighbors, self._nationspecies, self._tradepartners)
+        pressure = self.tradepressure(neighbors, self._statespecies, self._tradepartners)
         stept.start('finding eligible trade partners')
-        eligible = self.tradingeligibility(pressure, self._nationspecies, 0.05)
+        eligible = self.tradingeligibility(pressure, self._statespecies, 0.05)
         stept.start('identifying mutually eligible partners')
         mutual = self.mutualpartners(eligible)
         stept.start('establishing trade relationships')
         self._tradepartners |= self.tradepartners(mutual, pressure)
 
-        stept.start('summing national populations')
-        nationalpopulations = self.nationalpopulations(extents, self._population)
+        stept.start('summing state populations')
+        statepopulations = self.statepopulations(extents, self._population)
         stept.start('determining military tension')
-        tension = self.tension(neighbors, nationalpopulations, self._nationspecies, self._tradepartners)
+        tension = self.tension(neighbors, statepopulations, self._statespecies, self._tradepartners)
         stept.start('establishing conflicts')
         self._conflicts |= self.conflicts(tension, self._tradepartners, 1)
 
         stept.start('resolving conflicts')
-        results = set(self.victors(self._conflicts, nationalpopulations, .5))
+        results = set(self.victors(self._conflicts, statepopulations, .5))
         losers = {loser for (_, loser) in results}
         for (winner, loser) in results:
             if winner not in losers:
                 for t in extents[loser]:
                     self.boundaries[t] = winner
-                lang = self._nationlangs[winner]
-                for resource in self.resources(loser):
-                    if lang.describes(*resource):
-                        continue
-                    self.borrowfrom(resource, self._nationlangs, loser, winner, {})
+                # every language spoken in the winning state needs a word for every resource of the loser
+                for dest_lang in statelangnations[winner]:
+                    if dest_lang not in statelangnations[loser]:
+                        lang = self._languages[dest_lang]
+                        source_lang = None
+                        for resource in self.resources(loser):
+                            if lang.describes(*resource):
+                                continue
+                            if source_lang is None:
+                                source_lang = self.bestlanguage(
+                                    winner, dest_lang, loser, statelangnations, statenationlang, statelangs)
+                            self._languages[dest_lang].borrow(resource[0], resource[1], source_lang)
+
             self._conflicts.remove(tuple(sorted([winner, loser])))
 
-        stept.start('breaking up nations')
+        stept.start('loaning words')
+        for dest_state in range(len(statepopulations)):
+            if not statepopulations[dest_state]:
+                continue
+            partner_resources = self.imports(dest_state)
+            for src_state in self.statetradepartners(dest_state):
+                if not statepopulations[src_state]:
+                    continue
+                for dest_lang in statelangnations[dest_state]:
+                    # look at every language spoken in the state
+                    if dest_lang not in statelangnations[src_state]:
+                        lang = self._languages[dest_lang]
+                        source_lang = None
+                        # needs a name for the trading partner
+                        if not lang.describes('state', src_state):
+                            if source_lang is None:
+                                source_lang = self.bestlanguage(
+                                    dest_state, dest_lang, src_state, statelangnations, statenationlang, statelangs)
+                            self._languages[dest_lang].borrow('state', src_state, source_lang)
+                        # needs words for every imported resource
+                        for resource in partner_resources[src_state]:
+                            if lang.describes(*resource):
+                                continue
+                            if source_lang is None:
+                                source_lang = self.bestlanguage(
+                                    dest_state, dest_lang, src_state, statelangnations, statenationlang, statelangs)
+                            self.borrowfrom(resource, self._languages,
+                                            source_lang, src_state, dest_lang, dest_state,
+                                            self._tradepartners, extents, self._population,
+                                            statelangnations, statenationlang, statelangs)
+
+            for src_state in self.stateconflictrivals(dest_state):
+                if not statepopulations[src_state]:
+                    continue
+                for dest_lang in statelangnations[dest_state]:
+                    # look at every language spoken in the state
+                    if dest_lang not in statelangnations[src_state]:
+                        lang = self._languages[dest_lang]
+                        # needs a name for the rival
+                        if not lang.describes('state', src_state):
+                            source_lang = self.bestlanguage(
+                                dest_state, dest_lang, src_state, statelangnations, statenationlang, statelangs)
+                            self._languages[dest_lang].borrow('state', src_state, source_lang)
+
+        stept.start('breaking up states')
         winners = {winner for (winner, _) in results}
         for n in range(len(extents)):
             if n in winners or n in losers:
@@ -478,46 +649,38 @@ class HistorySimulation(object):
                 continue
             if random.random() >= self.splitprobability(len(tiles)):
                 continue
-            cities = self.randomcities(tiles, self._terrain, self.tiles, self._population, self.agricultural)
+            cities = self.randomcities(tiles, self._terrain, self.tiles, self._population)
             if len(cities) < 2:
                 continue
-            self.splitted = n
-            ncount = len(self.nationcolors)
-            for c in cities[1:]:
-                self.nationcolors.append(random.randint(0, colorcount-1))
-                o = len(self._nationlangs)
-                self._nationlangs.append(self._nationlangs[n].clone())
-                self._nationlangs[o].coin([('nation', o)])
+            ncount = len(self.statecolors)
+            statelangpops = [{} for _ in cities]
             for f in tiles:
                 i = HistorySimulation.nearestcity(
-                    f, cities, range(len(cities)), self._elevation, self.riverroutes, self._terrainadj, self._population, self.agricultural)
+                    f, cities, range(len(cities)), self._elevation, self.riverroutes, self._terrainadj, self._population)
+                if i is None:
+                    i = len(cities)
+                    cities.append(f)
+                    statelangpops.append({})
                 if i > 0:
                     self.boundaries[f] = ncount + i-1
+                for c in self._population[f].communities:
+                    if c.language not in statelangpops[i]:
+                        statelangpops[i][c.language] = 0
+                    statelangpops[i][c.language] += c.thousands
+            newstatelangs = [[langpop[0] for langpop in sorted(langpops.items(), key=lambda langpop: -langpop[1])]
+                             for langpops in statelangpops]
+            for i in range(1, len(cities)):
+                c = cities[i]
+                new_state = len(self.statecolors)
+                self.statecolors.append(random.randint(0, colorcount-1))
+                # name the new state in its majority language
+                self._languages[newstatelangs[i][0]].coin([('state', new_state)])
+                # borrow its name into each other language
+                for lang_index in newstatelangs[i][1:]:
+                    self._languages[lang_index].borrow('state', new_state, newstatelangs[i][0])
             for pair in [pair for pair in self._tradepartners if n in pair]:
                 self._tradepartners.remove(pair)
-
-        self.populatenations(stept)
-
-        stept.start('loaning words')
-        for n in range(len(self.nationcolors)):
-            lang = None
-            partners = self.nationtradepartners(n)
-            for partner in partners:
-                if lang is None:
-                    lang = self._nationlangs[n]
-                if not lang.describes('nation', partner):
-                    lang.borrow('nation', partner, partner)
-            for (partner, resources) in self.imports(n).items():
-                for resource in resources:
-                    if lang.describes(*resource):
-                        continue
-                    self.borrowfrom(resource, self._nationlangs, partner, n, self._tradepartners)
-            rivals = self.nationconflictrivals(n)
-            for rival in rivals:
-                if lang is None:
-                    lang = self._nationlangs[n]
-                if not lang.describes('nation', rival):
-                    lang.borrow('nation', rival, rival)
+        self.populatestates(stept)
 
         stept.done()
 
@@ -561,7 +724,7 @@ class HistorySimulation(object):
                 if f in self._capacity and f in self._population else 0)
 
     def facepopulation(self, f):
-        return sum([p.thousands for p in self._population[f]]) if f in self._population else 0
+        return sum([c.thousands for c in self._population[f].communities]) if f in self._population else 0
 
     @classmethod
     def paleocapacity(cls, t, adj, rivers):
@@ -610,6 +773,11 @@ class HistorySimulation(object):
 
     @staticmethod
     def population(grid, tiles, terrain, populated, agricultural):
+        class Population(object):
+            def __init__(self, heritage, thousands):
+                self.heritage = heritage
+                self.thousands = thousands
+
         population = {}
         for f in terrain.faces:
             population[f] = []
@@ -644,14 +812,22 @@ class HistorySimulation(object):
                             break
                     else:
                         ps.append(Population(r, n))
-        return population
+
+        return {f: people.Population([
+                       people.Community(p.thousands,
+                                        -1, # no nation assigned yet
+                                        people.RacialMix([people.RaceContribution(1, p.heritage)]),
+                                        -1, # no language assigned yet
+                                        people.Culture(p.heritage in agricultural))
+                       for p in ps])
+                for (f, ps) in population.items()}
 
     @staticmethod
-    def hasagriculture(f, population, agricultural):
-        return f in population and any([p.heritage in agricultural for p in population[f]])
+    def hasagriculture(f, population):
+        return f in population and any([c.culture.agriculture for c in population[f].communities])
 
     @staticmethod
-    def cityprob(f, terrain, tiles, population, agricultural):
+    def cityprob(f, terrain, tiles, population):
         coarse = terrain.prev.prev
         if f in coarse.vertices:
             # face is a vertex of the coarse grid, get mode climate if there is one
@@ -670,7 +846,7 @@ class HistorySimulation(object):
                 t = [pf for pf in terrain.prev.vertices[f] if pf in coarse.faces][0]
             k = tiles[t].climate.koeppen
         if k[0] == u'E': return 0
-        if not HistorySimulation.hasagriculture(f, population, agricultural): return 0.25
+        if not HistorySimulation.hasagriculture(f, population): return 0.25
         if k in (u'BW', u'BS', u'Af'): return 0.15
         return 0.05
 
@@ -688,13 +864,13 @@ class HistorySimulation(object):
                 colors[c] = random.choice(list(set(range(len(ns))) - set(ncs)))
 
     @staticmethod
-    def randomcities(faces, terrain, tiles, population, agricultural):
+    def randomcities(faces, terrain, tiles, population):
         return list({f for f in faces
                      if f in population and
-                         random.random() < HistorySimulation.cityprob(f, terrain, tiles, population, agricultural)})
+                         random.random() < HistorySimulation.cityprob(f, terrain, tiles, population)})
 
     @staticmethod
-    def nearestcity(f, cities, candidates, elevation, rivers, adj, population, agricultural):
+    def nearestcity(f, cities, candidates, elevation, rivers, adj, population):
         paths, costs = [[f] for _ in candidates], [0 for _ in candidates]
         while True:
             # find the cheapest path so far
@@ -710,11 +886,11 @@ class HistorySimulation(object):
             if step not in elevation or elevation[step] <= 0:
                 # can't cross below sea level
                 costs[i] += float('inf')
-            elif step not in population or sum([p.thousands for p in population[step]]) <= 0:
+            elif step not in population or sum([c.thousands for c in population[step].communities]) <= 0:
                 # can't cross unpopulated terrain
                 costs[i] += float('inf')
-            elif (HistorySimulation.hasagriculture(f, population, agricultural) !=
-                  HistorySimulation.hasagriculture(step, population, agricultural)):
+            elif (HistorySimulation.hasagriculture(f, population) !=
+                  HistorySimulation.hasagriculture(step, population)):
                 # can't include both agricultural and exclusively pre-agricultural people
                 costs[i] += float('inf')
             elif any([step in r for r in rivers]):
@@ -724,18 +900,18 @@ class HistorySimulation(object):
                 costs[i] += 1
 
     @staticmethod
-    def nationalboundaries(colors, boundaries, terrain, elevation, rivers, adj, tiles, population, agricultural):
+    def stateboundaries(colors, boundaries, terrain, elevation, rivers, adj, tiles, population):
         start = time.time()
-        cities = HistorySimulation.randomcities(terrain.faces, terrain, tiles, population, agricultural)
+        cities = HistorySimulation.randomcities(terrain.faces, terrain, tiles, population)
         # save state so the ultimate result isn't dependent on timing
         state = random.getstate()
         def tree():
             return PointTree(dict([[cities[i], i] for i in range(len(cities))]))
         citytree = tree()
         for f in terrain.faces:
-            if f in population and sum([p.thousands for p in population[f]]) > 0:
+            if f in population and sum([c.thousands for c in population[f].communities]) > 0:
                 candidates = citytree.nearest(f, 6)
-                i = HistorySimulation.nearestcity(f, cities, candidates, elevation, rivers, adj, population, agricultural)
+                i = HistorySimulation.nearestcity(f, cities, candidates, elevation, rivers, adj, population)
                 if i is None:
                     # found a new nation
                     cities.append(f)
@@ -788,7 +964,7 @@ class HistorySimulation(object):
         return len(self.facespecies(f, self._terrain, self._tilespecies))
 
     @staticmethod
-    def nationspecies(boundaries, terrain, tilespecies):
+    def statespecies(boundaries, terrain, tilespecies):
         coarse = terrain.prev.prev
         populations = []
         for f, i in boundaries.items():
@@ -799,13 +975,13 @@ class HistorySimulation(object):
 
     def facenationspecies(self, f):
         if f in self.boundaries:
-            return [self._species[s] for s in self._nationspecies[self.boundaries[f]]]
+            return [self._species[s] for s in self._statespecies[self.boundaries[f]]]
         return []
 
     def resources(self, n):
-        if n >= len(self._nationspecies):
+        if n >= len(self._statespecies):
             return set()
-        return {('species', s) for s in self._nationspecies[n]}
+        return {('species', s) for s in self._statespecies[n]}
 
     def imports(self, n):
         native = self.resources(n)
@@ -823,22 +999,25 @@ class HistorySimulation(object):
         raise NotImplementedError("Don't know about {} resources".format(kind))
 
     @staticmethod
-    def langfromspecies(nationspecies):
-        for n in range(len(nationspecies)):
-            ss = nationspecies[n]
+    def langfromspecies(languagespecies):
+        for l in range(len(languagespecies)):
+            ss = languagespecies[l]
             if len(ss) < minspecies:
                 yield None
             else:
-                yield language.lazy.History(HistorySimulation._timing, [('species', s) for s in ss] + [('nation', n)])
+                yield language.lazy.History(HistorySimulation._timing,
+                                            [('species', s) for s in ss] + [('nation', l), ('language', l), ('state', l)])
 
     def language(self, n):
-        return self._nationlangs[n].reify(self._nationlangs)
+        return self._languages[n].reify(self._languages)
 
     def facewordcount(self, f):
-        if f in self.boundaries:
-            n = self.boundaries[f]
-            if n < len(self._nationlangs):
-                return len(self._nationlangs[n])
+        if f in self._population:
+            counts = [len(self._languages[c.language])
+                      if 0 <= c.language < len(self._languages) else 0
+                      for c in self._population[f].communities]
+            if counts:
+                return max(counts)
         return 0
 
     def loaddata(self, data, loadt):
@@ -870,11 +1049,11 @@ class HistorySimulation(object):
         self._species = data['species']
         self._capacity = data['terraincap']
         self._population = data['terrainpop']
-        self.nationcolors = data['nationcolors']
+        self.statecolors = data['nationcolors']
         self.boundaries = data['boundaries']
         self._tilespecies = data['tilespecies']
-        self._nationspecies = data['nationspecies']
-        self._nationlangs = data['nationlangs']
+        self._languages = data['languages']
+        self._statespecies = data['statespecies']
         self.phase = 'sim' if self._inited else 'uninit'
 
     def load(self, filename):
@@ -884,7 +1063,7 @@ class HistorySimulation(object):
         loadt.done()
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._inited, self._species, self._capacity, self._population, self.nationcolors, self.boundaries, self._tilespecies, self._nationspecies, self._nationlangs)
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._inited, self._species, self._capacity, self._population, self.statecolors, self.boundaries, self._tilespecies, self._languages, self._statespecies)
 
     def save(self, filename):
         Data.save(filename, self.savedata())

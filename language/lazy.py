@@ -73,7 +73,7 @@ def reify(langs, index, ticks, borrowsubset, timing, indent):
                     continue
                 timing.start('{}reifying language {}'.format(indent, src))
                 src_dict = reify(langs, src, t+1, concepts, timing, indent + ' ')
-                src_name = src_dict.describe('nation', src)
+                src_name = src_dict.describe('language', src)
                 for concept in concepts:
                     original = src_dict.describe(*concept)
                     borrowed = borrow(original, stats, existing)
@@ -82,7 +82,7 @@ def reify(langs, index, ticks, borrowsubset, timing, indent):
                     origins[concept] = language.dictionary.Origin(original, (src, src_name), src_dict.origin(original))
 
     timing.start('{}setting origins'.format(indent))
-    lang_name = concept_words[('nation', index)]
+    lang_name = concept_words[('language', index)]
     for origin in origins.values():
         if origin.language is None:
             origin.language = (index, lang_name)
