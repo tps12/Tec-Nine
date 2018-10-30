@@ -75,8 +75,13 @@ class HistoryPresenter(object):
         self._view.content.update()
         self._view.details.clear()
         if selected is not None:
+            langcache = {}
+            def getlang(index):
+                if index not in langcache:
+                    langcache[index] = self._model.language(index)
+                return langcache[index]
             nations = self._model.demographics(selected)
-            lang = self._model.language(nations[0].languages[0].language)
+            lang = getlang(nations[0].languages[0].language)
             word = lang.describe('state', selected)
             name = self._listitemclass([capitalize(language.output.write(word))])
             name.setToolTip(0, '/{}/'.format(language.output.pronounce(word)))
@@ -92,7 +97,7 @@ class HistoryPresenter(object):
                     tip = '/{}/'.format(language.output.pronounce(word))
 
                     othernations = self._model.demographics(partner)
-                    original = self._model.language(othernations[0].languages[0].language).describe('state', partner)
+                    original = getlang(othernations[0].languages[0].language).describe('state', partner)
                     if language.output.write(original) != language.output.write(word):
                         text += ' ({})'.format(capitalize(language.output.write(original)))
                     if language.output.pronounce(original) != language.output.pronounce(word):
@@ -126,7 +131,7 @@ class HistoryPresenter(object):
                     text = capitalize(language.output.write(word))
                     tip = '/{}/'.format(language.output.pronounce(word))
                     othernations = self._model.demographics(rival)
-                    original = self._model.language(othernations[0].languages[0].language).describe('state', rival)
+                    original = getlang(othernations[0].languages[0].language).describe('state', rival)
                     if language.output.write(original) != language.output.write(word):
                         text += ' ({})'.format(capitalize(language.output.write(original)))
                     if language.output.pronounce(original) != language.output.pronounce(word):
@@ -142,7 +147,7 @@ class HistoryPresenter(object):
             nationpops = percents([demo.thousands for demo in nations])
             for demo in nations:
                 # name nationality using its majority language
-                word = self._model.language(demo.languages[0].language).describe('nation', demo.nation)
+                word = getlang(demo.languages[0].language).describe('nation', demo.nation)
                 nationality = self._listitemclass([capitalize(language.output.write(word))])
                 nationality.setToolTip(0, '/{}/'.format(language.output.pronounce(word)))
                 
@@ -151,7 +156,7 @@ class HistoryPresenter(object):
                     ['Population: {}({})'.format((pop + ' ') if pop != '0' else '', next(nationpops))]))
                 languages = self._listitemclass(['Languages'])
                 for demolang in demo.languages:
-                    word = self._model.language(demolang.language).describe('language', demolang.language)
+                    word = getlang(demolang.language).describe('language', demolang.language)
                     langtext = capitalize(language.output.write(word))
                     demolangs[demolang.language] = langtext
                     langname = self._listitemclass([
@@ -166,7 +171,7 @@ class HistoryPresenter(object):
                 
             languages = self._listitemclass(['Languages'])
             for (lang_index, _) in sorted(demolangs.items(), key=lambda langnames: langnames[1]):
-                lang = self._model.language(lang_index)
+                lang = getlang(lang_index)
                 word = lang.describe('language', lang_index)
                 wordlist = self._listitemclass([capitalize(language.output.write(word))])
                 wordlist.setToolTip(0, '/{}/'.format(language.output.pronounce(word)))
