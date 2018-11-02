@@ -1005,8 +1005,10 @@ class HistorySimulation(object):
             if len(ss) < minspecies:
                 yield None
             else:
-                yield language.lazy.History(HistorySimulation._timing,
-                                            [('species', s) for s in ss] + [('nation', l), ('language', l), ('state', l)])
+                lang = language.lazy.History(HistorySimulation._timing,
+                                                 [('species', s) for s in ss] + [('nation', l), ('state', l)])
+                lang.derive(('nation', l), ('language', l))
+                yield lang
 
     def language(self, n):
         return self._languages[n].reify(self._languages)

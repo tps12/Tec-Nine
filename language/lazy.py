@@ -7,25 +7,30 @@ import language.phonemes
 import language.stats
 import language.words
 
+def derivefrom(word, stats, existing):
+    # add a new suffix
+    for adapted in languagesimulation.adaptsounds(word, stats.vowels, stats.consonants, stats.stress):
+        for derived in languagesimulation.constrain(adapted, stats.constraints, stats.vowels, stats.stress):
+            derived = language.words.Word(
+                derived.syllables +
+                    language.lexicon.lexicon(list(stats.vowels), list(stats.consonants), 0, stats.onsetp, stats.codap, stats.constraints, 1).pop().syllables,
+                stats.stress)
+            if derived not in existing:
+                return derived
+    raise Exception("Couldn't derive from {}".format(word))  # TODO: handle
+
 def borrow(word, stats, existing):
     for adapted in languagesimulation.adaptsounds(word, stats.vowels, stats.consonants, stats.stress):
         for borrowed in languagesimulation.constrain(adapted, stats.constraints, stats.vowels, stats.stress):
             if borrowed not in existing:
                 return borrowed
-    # nothing unique yet, try adding a new suffix
-    for adapted in languagesimulation.adaptsounds(word, stats.vowels, stats.consonants, stats.stress):
-        for borrowed in languagesimulation.constrain(adapted, stats.constraints, stats.vowels, stats.stress):
-            borrowed = language.words.Word(
-                borrowed.syllables +
-                    language.lexicon.lexicon(list(stats.vowels), list(stats.consonants), 0, stats.onsetp, stats.codap, stats.constraints, 1).pop().syllables,
-                stats.stress)
-            if borrowed not in existing:
-                return borrowed
-    raise Exception("Couldn't borrow {}".format(word))  # TODO: handle
+    # nothing unique yet, try deriving
+    return derivefrom(word, stats, existing)
 
 def reify(langs, index, ticks, borrowsubset, timing, indent):
-    (conceptlist, soundchanges, neologisms, loans) = (
-        langs[index]._concepts, langs[index]._changes, langs[index]._neologisms, langs[index]._loans)
+    (conceptlist, soundchanges, neologisms, loans, derivations) = (
+        langs[index]._concepts, langs[index]._changes, langs[index]._neologisms,
+        langs[index]._loans, langs[index]._derivations)
     concept_words = {}
     origins = {}
     existing = set()
@@ -81,6 +86,20 @@ def reify(langs, index, ticks, borrowsubset, timing, indent):
                     existing.add(borrowed)
                     origins[concept] = language.dictionary.Origin(original, (src, src_name), src_dict.origin(original))
 
+        if t in derivations:
+            timing.start('{}deriving words'.format(indent))
+            if stats is None:
+                stats = language.stats.Language(concept_words.values())
+            for (src_concept, concept_index) in derivations[t]:
+                concept = conceptlist[concept_index]
+                original = concept_words[src_concept]
+                derived = derivefrom(original, stats, existing)
+                concept_words[concept] = derived
+                existing.add(derived)
+                origins[concept] = language.dictionary.Origin(original, None)
+
+    if ('language', index) not in concept_words:
+        import pdb; pdb.set_trace()
     timing.start('{}setting origins'.format(indent))
     lang_name = concept_words[('language', index)]
     for origin in origins.values():
@@ -100,6 +119,7 @@ class History(object):
         self._concepts = []
         self._lookup = {}
         self._loans = {}
+        self._derivations = {}
         self._neologisms = {}
         self._changes = [[]]
         self.coin(concepts)
@@ -144,6 +164,12 @@ class History(object):
             self._loans[t][src] = []
         concept = (kind, index)
         self._loans[t][src].append(self._add(concept))
+
+    def derive(self, src_concept, dest_concept):
+        t = len(self._changes) - 1
+        if t not in self._derivations:
+            self._derivations[t] = []
+        self._derivations[t].append((src_concept, self._add(dest_concept)))
 
     def coin(self, concepts):
         t = len(self._changes) - 1
