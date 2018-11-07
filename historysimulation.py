@@ -272,6 +272,11 @@ class HistorySimulation(object):
             for i in [i for i in reversed(range(len(p.communities))) if not p.communities[i].thousands]:
                 del p.communities[i]
 
+        stept.start('intermingling communities')
+        for p in self._population.values():
+            if p.communities:
+                 p.communities = people.community.intermingle(p.communities)
+
     @staticmethod
     def nationalextents(boundaries):
         extents = []
