@@ -47,3 +47,27 @@ def intermingle(communities):
                            for j in range(len(dimensions)) if new_mixes[i][j] > 0]),
                       communities[i].language, communities[i].culture)
             for i in range(len(communities))]
+
+def assimilate(communities):
+    langpops = {}
+    for c in communities:
+        if c.language not in langpops:
+            langpops[c.language] = 0
+        langpops[c.language] += c.thousands
+    total = sum(langpops.values())
+    # major languages spoken by strictly greater than 25% of the population
+    thresh = total * 0.25
+    maj = sorted([lang for (lang, pop) in langpops.items() if pop > thresh])
+    if not maj:
+        return communities
+    majtotal = sum([langpops[lang] for lang in maj])
+    majprops = {lang: langpops[lang]/majtotal for lang in maj}
+    langthresh = total * 0.01
+    output = []
+    for c in communities:
+        if c.thousands < 1 and langpops[c.language] < langthresh:
+            output += [Community(c.thousands * majprops[lang], c.nationality, c.racial_mix, lang, c.culture)
+                       for lang in maj]
+        else:
+            output.append(c)
+    return output
