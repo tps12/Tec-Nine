@@ -159,9 +159,10 @@ class HistoryPresenter(object):
                     word = getlang(demolang.language).describe('language', demolang.language)
                     langtext = capitalize(language.output.write(word))
                     demolangs[demolang.language] = langtext
+                    pop = popstr(demolang.thousands)
                     langname = self._listitemclass([
-                        '{}: {}'.format(langtext, popstr(demolang.thousands))
-                        if len(demo.languages) > 1 else langtext])
+                        '{}: {}'.format(langtext, pop)
+                        if len(demo.languages) > 1 and pop != '0' else langtext])
                     langname.setToolTip(0, '/{}/'.format(language.output.pronounce(word)))
                     languages.addChild(langname)
                 nationality.addChild(languages)
