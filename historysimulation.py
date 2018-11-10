@@ -252,21 +252,6 @@ class HistorySimulation(object):
             for species_index in species_indices:
                 species.append(species_index)
 
-        stept.start('getting species in expanded language territory')
-        for f, (dcs, _) in deltas.items():
-            for language_index in [dc.language for dc in dcs]:
-                if language_index in languagefrontierspecies:
-                    languagefrontierspecies[language_index] |= self.facespecies(f, self._terrain, self._tilespecies)
-
-        stept.start('naming new species')
-        for language_index, species_indices in languagefrontierspecies.items():
-            dictionary = self._languages[language_index]
-            unnamed = []
-            for species_index in species_indices:
-                if not dictionary.describes('species', species_index):
-                    unnamed.append(('species', species_index))
-            dictionary.coin(unnamed)
-
         stept.start('removing empty populations')
         for p in self._population.values():
             for i in [i for i in reversed(range(len(p.communities))) if not p.communities[i].thousands]:
@@ -496,40 +481,6 @@ class HistorySimulation(object):
                                    if langpops else None)
 
     @staticmethod
-    def bestlanguage(dest_state, dest_lang, src_state,
-                     statelangnations, statenationlang, statelangs):
-        # for each nationality speaking the language, ordered by population
-        for nationality in statelangnations[dest_state][dest_lang]:
-            # borrow from the language most spoken by that nationality
-            if nationality in statenationlang[src_state]:
-                return statenationlang[src_state][nationality]
-        else:
-            # if no nationalities in common, borrow from most spoken language
-            return statelangs[src_state]
-
-    @staticmethod
-    def borrowfrom(resource, langs, src_lang, src_state, dest_lang, dest_state, tradepartners,
-                   extents, population, statelangnations, statenationlang, statelangs,
-                   seen=None):
-        seen = seen if seen is not None else {dest_state}
-        if not langs[src_lang].describes(*resource):
-            for partner in HistorySimulation.lookuptradepartners(src_state, tradepartners):
-                if partner in seen:
-                    continue
-                HistorySimulation.populatelanguageindices(
-                    extents, population, partner, statelangnations, statenationlang, statelangs)
-                partner_lang = HistorySimulation.bestlanguage(
-                    dest_state, dest_lang, partner, statelangnations, statenationlang, statelangs)
-                if partner_lang is not None and HistorySimulation.borrowfrom(
-                        resource, langs, partner_lang, partner, dest_lang, dest_state, tradepartners,
-                        extents, population, statelangnations, statenationlang, statelangs,
-                        seen | {src_state}):
-                    return True
-            return False
-        langs[dest_lang].borrow(resource[0], resource[1], src_lang)
-        return True
-
-    @staticmethod
     def splitprobability(lentiles):
         x = lentiles - 25 # inflection point at 25 tiles
         sign = -1 if x < 0 else 1
@@ -554,16 +505,6 @@ class HistorySimulation(object):
 
         stept.start('finding extents of nations')
         extents = self.nationalextents(self.boundaries)
-        stept.start('borrowing state names for new communities')
-        statelangnations, statenationlang, statelangs = {}, {}, {}
-        for state_index in range(len(extents)):
-            if not extents[state_index]:
-                continue
-            self.populatelanguageindices(extents, self._population, state_index,
-                                         statelangnations, statenationlang, statelangs)
-            for lang_index in statelangnations[state_index]:
-                if not self._languages[lang_index].describes('state', state_index):
-                    self._languages[lang_index].borrow('state', state_index, statelangs[state_index])
         stept.start('identifying neighbors')
         neighbors = self.neighboringnations(extents, self._terrainadj, self.riverroutes, self.boundaries)
         stept.start('determining trade benefit for neighbors')
@@ -589,64 +530,7 @@ class HistorySimulation(object):
             if winner not in losers:
                 for t in extents[loser]:
                     self.boundaries[t] = winner
-                # every language spoken in the winning state needs a word for every resource of the loser
-                for dest_lang in statelangnations[winner]:
-                    if dest_lang not in statelangnations[loser]:
-                        lang = self._languages[dest_lang]
-                        source_lang = None
-                        for resource in self.resources(loser):
-                            if lang.describes(*resource):
-                                continue
-                            if source_lang is None:
-                                source_lang = self.bestlanguage(
-                                    winner, dest_lang, loser, statelangnations, statenationlang, statelangs)
-                            self._languages[dest_lang].borrow(resource[0], resource[1], source_lang)
-
             self._conflicts.remove(tuple(sorted([winner, loser])))
-
-        stept.start('loaning words')
-        for dest_state in range(len(statepopulations)):
-            if not statepopulations[dest_state]:
-                continue
-            partner_resources = self.imports(dest_state)
-            for src_state in self.statetradepartners(dest_state):
-                if not statepopulations[src_state]:
-                    continue
-                for dest_lang in statelangnations[dest_state]:
-                    # look at every language spoken in the state
-                    if dest_lang not in statelangnations[src_state]:
-                        lang = self._languages[dest_lang]
-                        source_lang = None
-                        # needs a name for the trading partner
-                        if not lang.describes('state', src_state):
-                            if source_lang is None:
-                                source_lang = self.bestlanguage(
-                                    dest_state, dest_lang, src_state, statelangnations, statenationlang, statelangs)
-                            self._languages[dest_lang].borrow('state', src_state, source_lang)
-                        # needs words for every imported resource
-                        for resource in partner_resources[src_state]:
-                            if lang.describes(*resource):
-                                continue
-                            if source_lang is None:
-                                source_lang = self.bestlanguage(
-                                    dest_state, dest_lang, src_state, statelangnations, statenationlang, statelangs)
-                            self.borrowfrom(resource, self._languages,
-                                            source_lang, src_state, dest_lang, dest_state,
-                                            self._tradepartners, extents, self._population,
-                                            statelangnations, statenationlang, statelangs)
-
-            for src_state in self.stateconflictrivals(dest_state):
-                if not statepopulations[src_state]:
-                    continue
-                for dest_lang in statelangnations[dest_state]:
-                    # look at every language spoken in the state
-                    if dest_lang not in statelangnations[src_state]:
-                        lang = self._languages[dest_lang]
-                        # needs a name for the rival
-                        if not lang.describes('state', src_state):
-                            source_lang = self.bestlanguage(
-                                dest_state, dest_lang, src_state, statelangnations, statenationlang, statelangs)
-                            self._languages[dest_lang].borrow('state', src_state, source_lang)
 
         stept.start('breaking up states')
         winners = {winner for (winner, _) in results}
@@ -690,6 +574,48 @@ class HistorySimulation(object):
             for pair in [pair for pair in self._tradepartners if n in pair]:
                 self._tradepartners.remove(pair)
         self.populatestates(stept)
+
+        stept.start('finding language extents')
+        langconcepts, statesources = {}, {}
+        for (f, p) in self._population.items():
+            natslangs = [(c.nationality, c.language) for c in p.communities if c.thousands > 0]
+            nlconcepts = {}
+            for (n, l) in natslangs:
+                nlconcepts.update({('language', l): l, ('nation', n): l})
+            for (_, lang) in natslangs:
+                if lang not in langconcepts:
+                    langconcepts[lang] = {}
+                langconcepts[lang].update(nlconcepts)
+                if lang not in statesources:
+                    statesources[lang] = set()
+                statesources[lang].add(self.boundaries[f])
+        stept.start('finding new extents of nations')
+        extents = self.nationalextents(self.boundaries)
+        stept.start('accumulating concepts')
+        statelangnations, statenationlang, statelangs = {}, {}, {}
+        for (lang_index, concepts) in langconcepts.items():
+            for state_index in sorted(statesources[lang_index]):
+                imports = self.imports(state_index)
+                states = [state_index] + list(self.statetradepartners(state_index) |
+                                              self.stateconflictrivals(state_index) |
+                                              set(imports.keys()))
+                for s in states:
+                    self.populatelanguageindices(extents, self._population, s,
+                                                 statelangnations, statenationlang, statelangs)
+                    concepts[('state', s)] = statelangs[s]
+                for (s, resources) in imports.items():
+                    concepts.update({resource: statelangs[s] for resource in resources})
+                state_lang = statelangs[state_index]
+                concepts.update({('species', s): state_lang for s in self._statespecies[state_index]})
+        stept.start('borrowing missing words')
+        for (lang_index, concepts) in langconcepts.items():
+            lang = self._languages[lang_index]
+            for (concept, src_lang) in concepts.items():
+                if not lang.describes(*concept):
+                    if src_lang is not None and self._languages[src_lang].describes(*concept):
+                        lang.borrow(concept[0], concept[1], src_lang)
+                    else:
+                        lang.coin([concept])
 
         stept.done()
 
