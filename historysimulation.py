@@ -496,10 +496,10 @@ class HistorySimulation(object):
         stept = self._timing.routine('simulation step')
 
         stept.start('making sound changes')
-        for dictionary in self._languages:
-            if dictionary is None:
-                continue
-            dictionary.changesounds()
+        for lang_index in sorted(
+                {c.language for p in self._population.values()
+                 for c in p.communities if c.thousands > 0}):
+            self._languages[lang_index].changesounds()
 
         self.grow(stept)
 
