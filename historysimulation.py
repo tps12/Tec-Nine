@@ -3,6 +3,7 @@ import random
 import statistics
 import time
 
+import disjoint
 from dist2 import dist2
 from grid import Grid
 from hexadjacency import Adjacency
@@ -265,6 +266,41 @@ class HistorySimulation(object):
         stept.start('assimilating languages')
         for p in self._population.values():
             p.communities = people.community.assimilate(p.communities)
+
+        stept.start('branching dialects')
+        langlocs = {}
+        for (f, p) in self._population.items():
+            for c in p.communities:
+                if c.thousands > 0:
+                    if c.language not in langlocs:
+                        langlocs[c.language] = set()
+                    langlocs[c.language].add(f)
+        for (lang, locs) in langlocs.items():
+            groups = {f: disjoint.set() for f in locs}
+            for f in sorted(locs):
+                for n in self._terrainadj[f]:
+                    if n in groups:
+                        disjoint.union(groups[f], groups[n])
+            dialects = {}
+            for (f, g) in groups.items():
+                r = g.root()
+                if r not in dialects:
+                    dialects[r] = set()
+                dialects[r].add(f)
+            if len(dialects) > 1:
+                dialects = sorted([sorted(faces) for faces in dialects.values()])
+                source = max(dialects, key=lambda faces: len(faces))
+                for faces in dialects:
+                    if faces is source:
+                        continue
+                    dialect = self._languages[lang].clone()
+                    self._languages.append(dialect)
+                    index = len(self._languages) - 1
+                    dialect.derive(('language', lang), ('language', index))
+                    for f in faces:
+                        for c in self._population[f].communities:
+                            if c.language == lang:
+                                c.language = index
 
     @staticmethod
     def nationalextents(boundaries):
