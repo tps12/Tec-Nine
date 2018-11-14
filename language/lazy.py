@@ -150,6 +150,10 @@ class History(object):
     def __len__(self):
         return len(self._concepts)
 
+    def __iter__(self):
+        for c in self._concepts:
+            yield c
+
     def changesounds(self):
         self._changes.append([random.choice(range(len(languagesimulation.soundchanges))) for _ in self._concepts])
 

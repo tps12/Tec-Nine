@@ -1,6 +1,9 @@
 import people.racial_mix
 import vector
 
+# major languages spoken by strictly greater than 25% of the population
+major_language_threshold = 0.25
+
 class Community(object):
     def __init__(self, thousands, nationality, racial_mix, language, culture):
         self.thousands = float(thousands)
@@ -55,8 +58,7 @@ def assimilate(communities):
             langpops[c.language] = 0
         langpops[c.language] += c.thousands
     total = sum(langpops.values())
-    # major languages spoken by strictly greater than 25% of the population
-    thresh = total * 0.25
+    thresh = total * major_language_threshold
     maj = sorted([lang for (lang, pop) in langpops.items() if pop > thresh])
     if not maj:
         return communities

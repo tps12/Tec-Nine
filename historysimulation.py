@@ -562,11 +562,80 @@ class HistorySimulation(object):
         stept.start('resolving conflicts')
         results = set(self.victors(self._conflicts, statepopulations, .5))
         losers = {loser for (_, loser) in results}
+        conquests = {}
         for (winner, loser) in results:
             if winner not in losers:
+                if winner not in conquests:
+                    conquests[winner] = set()
+                conquests[winner].add(loser)
                 for t in extents[loser]:
                     self.boundaries[t] = winner
             self._conflicts.remove(tuple(sorted([winner, loser])))
+
+        stept.start('adapting monoglot conquests')
+        for winner in sorted(conquests.keys()):
+            winnerlangpops = {}
+            for t in extents[winner]:
+                for c in self._population[t].communities:
+                    if c.thousands > 0:
+                        if c.language not in winnerlangpops:
+                            winnerlangpops[c.language] = 0
+                        winnerlangpops[c.language] += c.thousands
+            winnerlangpops = sorted(winnerlangpops.items(), key=lambda lp: -lp[1])
+            winnerpop = sum([lp[1] for lp in winnerlangpops])
+            (winnerlang, winnerlangpop) = winnerlangpops[0]
+            winnerlangfraction = winnerlangpop/winnerpop
+            # if winning state is polyglot, nothing to do
+            if (winnerlangfraction <= people.community.major_language_threshold or
+                len(winnerlangpops) > 1 and
+                    winnerlangpops[1][1]/winnerpop > people.community.major_language_threshold):
+                continue
+            # total each language's speakers across all conquered states
+            loserlangpops = {}
+            for loser in conquests[winner]:
+                for t in extents[loser]:
+                    for c in self._population[t].communities:
+                        if c.thousands > 0:
+                            if c.language not in winnerlangpops:
+                                loserlangpops[c.language] = 0
+                            loserlangpops[c.language] += c.thousands
+            oldlang = None
+            dialect = None # not referenced after this loop, just to ensure there's only one new language
+            toconvert = set()
+            for (lang, pop) in sorted(loserlangpops.items(), key=lambda lp: -lp[1]):
+                if lang == winnerlang:
+                    continue
+                if pop > winnerlangpop:
+                    # speakers of a conquered language outnumber the conquerors, start speaking a new dialect
+                    if dialect is None:
+                        dialect = self._languages[winnerlang].clone()
+                        self._languages.append(dialect)
+                        index = len(self._languages) - 1
+                        dialect.derive(('language', winnerlang), ('language', index))
+                        oldlang = winnerlang
+                        winnerlang = index
+                    for concept in self._languages[lang]:
+                        if not dialect.describes(*concept):
+                            dialect.borrow(concept[0], concept[1], lang)
+                else:
+                    # speakers of the conquered language outnumbered, switch them over
+                    toconvert.add(lang)
+            for state_index in sorted(conquests[winner]) + [winner]:
+                for t in extents[state_index]:
+                    cs = self._population[t].communities
+                    for i in reversed(range(len(cs))):
+                        c = cs[i]
+                        if c.thousands > 0:
+                            if c.language in toconvert or (state_index == winner and c.language == oldlang):
+                                if winnerlangfraction == 1:
+                                    c.language = winnerlang
+                                else:
+                                    cs.append(people.Community(c.thousands * winnerlangfraction,
+                                                               c.nationality,
+                                                               c.racial_mix,
+                                                               winnerlang,
+                                                               c.culture))
+                                    c.thousands -= cs[-1].thousands
 
         stept.start('breaking up states')
         winners = {winner for (winner, _) in results}
