@@ -266,7 +266,7 @@ class HistorySimulation(object):
             if p.communities:
                  p.communities = people.community.intermingle(p.communities)
 
-        stept.start('assimilating languages')
+        stept.start('assimilating communities')
         for p in self._population.values():
             p.communities = people.community.assimilate(p.communities)
 

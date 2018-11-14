@@ -1,3 +1,4 @@
+import people.culture
 import people.racial_mix
 import vector
 
@@ -51,7 +52,7 @@ def intermingle(communities):
                       communities[i].language, communities[i].culture)
             for i in range(len(communities))]
 
-def assimilate(communities):
+def assimilatelanguages(communities):
     langpops = {}
     for c in communities:
         if c.language not in langpops:
@@ -73,3 +74,19 @@ def assimilate(communities):
         else:
             output.append(c)
     return output
+
+def assimilateculture(communities):
+    # if a non-agricultural community is big enough to care (niche communities can stay niche)
+    # but still outnumbered, it switches over to agriculture
+    agpop, totalpop = 0, 0
+    for c in communities:
+        agpop += c.thousands if c.culture.agriculture else 0
+        totalpop += c.thousands
+    if not totalpop or agpop/totalpop < 0.75:
+        # agriculture not widespread enough to convert anyone
+        return communities
+    return [Community(c.thousands, c.nationality, c.racial_mix, c.language, people.culture.Culture(True))
+            if c.thousands/totalpop > 0.05 else c]
+
+def assimilate(communities):
+    return assimilatelanguages(assimilateculture(communities))
