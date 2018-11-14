@@ -196,20 +196,23 @@ class HistorySimulation(object):
         grow = lambda p0, K: K/(1 + (K-p0)/p0 * math.exp(-0.25)) # k=0.25 pretty arbitrary, aiming for 1% yearly growth
         deltas = {}
         for f, p in self._population.items():
+            neighborhood = [f] + [n for n in self._terrainadj[f]
+                                  if n in self._elevation and self._elevation[n]
+                                     and len(self.facespecies(f, self._terrain, self._tilespecies)) >= minspecies]
+            states = {self.boundaries[f]} if f in self.boundaries else {self.boundaries[n] for n in self._terrainadj[f]}
+            pops = [sum([nc.thousands for nc in self._population[n].communities])
+                    if n in self._population else 0
+                    for n in neighborhood]
+            total = sum(pops)
+            if not total:
+                continue
+            spaces = [(total - pop)/total for pop in pops]
             for c in p.communities:
-                neighborhood = [f] + [n for n in self._terrainadj[f]
-                                      if n in self._elevation and self._elevation[n]
-                                         and len(self.facespecies(f, self._terrain, self._tilespecies)) >= minspecies]
-                states = {self.boundaries[f]} if f in self.boundaries else {self.boundaries[n] for n in self._terrainadj[f]}
                 capacities = [self._capacity[n][1 if c.culture.agriculture else 0] for n in neighborhood]
-                pops = [sum([nc.thousands for nc in self._population[n].communities])
-                        if n in self._population else 0
-                        for n in neighborhood]
-                K = max(0, sum(capacities) - sum(pops)) + capacities[0]
+                K = max(0, sum(capacities) - total) + capacities[0]
                 delta = grow(c.thousands, K) - c.thousands if K > 0 else 0
                 if delta < 0:
                     continue
-                spaces = [(sum(pops) - pop)/float(sum(pops)) for pop in pops]
                 for i in range(len(spaces)):
                     if spaces[i] > 0:
                         share = delta * spaces[i]
@@ -659,15 +662,19 @@ class HistorySimulation(object):
                     i = len(cities)
                     cities.append(f)
                     statelangpops.append({})
-                if i > 0:
-                    self.boundaries[f] = ncount + i-1
                 for c in self._population[f].communities:
+                    if not c.thousands:
+                        continue
                     if c.language not in statelangpops[i]:
                         statelangpops[i][c.language] = 0
                     statelangpops[i][c.language] += c.thousands
+                if i > 0 and statelangpops[i]:
+                    self.boundaries[f] = ncount + i-1
             newstatelangs = [[langpop[0] for langpop in sorted(langpops.items(), key=lambda langpop: -langpop[1])]
                              for langpops in statelangpops]
             for i in range(1, len(cities)):
+                if not newstatelangs[i]:
+                    continue
                 c = cities[i]
                 new_state = len(self.statecolors)
                 self.statecolors.append(random.randint(0, colorcount-1))
