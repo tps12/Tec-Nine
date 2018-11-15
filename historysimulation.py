@@ -911,6 +911,17 @@ class HistorySimulation(object):
                 colors[c] = random.choice(list(set(range(len(ns))) - set(ncs)))
 
     @staticmethod
+    def majority(pop, key):
+        keypops = {}
+        for c in pop.communities:
+            if c.thousands:
+                k = key(c)
+                if k not in keypops:
+                    keypops[k] = 0
+                keypops[k] += c.thousands
+        return max(keypops.items(), key=lambda kp: kp[1])[0]
+
+    @staticmethod
     def randomcities(faces, terrain, tiles, population):
         return list({f for f in faces
                      if f in population and
@@ -943,6 +954,14 @@ class HistorySimulation(object):
             elif any([step in r for r in rivers]):
                 # difficult to span river
                 costs[i] += 10
+            elif (HistorySimulation.majority(population[f], lambda c: c.nationality) !=
+                  HistorySimulation.majority(population[step], lambda c: c.nationality)):
+                # difficult to switch majority nationalities
+                costs[i] += 3
+            elif (HistorySimulation.majority(population[f], lambda c: c.language) !=
+                  HistorySimulation.majority(population[step], lambda c: c.language)):
+                # less difficult to switch majority languages
+                costs[i] += 2
             else:
                 costs[i] += 1
 
