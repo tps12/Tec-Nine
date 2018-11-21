@@ -1,3 +1,4 @@
+import copy
 import random
 
 import languagesimulation
@@ -128,9 +129,10 @@ class History(object):
         clone = History(self._timing, [])
         clone._concepts = list(self._concepts)
         clone._lookup = dict(self._lookup)
-        clone._loans = dict(self._loans)
-        clone._neologisms = dict(self._neologisms)
-        clone._changes = [list(changes) for changes in self._changes]
+        clone._loans = copy.deepcopy(self._loans)
+        clone._derivations = copy.deepcopy(self._derivations)
+        clone._neologisms = copy.deepcopy(self._neologisms)
+        clone._changes = copy.deepcopy(self._changes)
         return clone
 
     @staticmethod
