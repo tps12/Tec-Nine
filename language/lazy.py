@@ -29,9 +29,9 @@ def borrow(word, stats, existing):
     return derivefrom(word, stats, existing)
 
 def reify(langs, index, ticks, borrowsubset, timing, indent):
-    (conceptlist, soundchanges, neologisms, loans, derivations) = (
+    (conceptlist, soundchanges, neologisms, loans, derivations, redefinitions) = (
         langs[index]._concepts, langs[index]._changes, langs[index]._neologisms,
-        langs[index]._loans, langs[index]._derivations)
+        langs[index]._loans, langs[index]._derivations, langs[index]._redefinitions)
     concept_words = {}
     origins = {}
     existing = set()
@@ -99,6 +99,14 @@ def reify(langs, index, ticks, borrowsubset, timing, indent):
                 existing.add(derived)
                 origins[concept] = language.dictionary.Origin(original, None)
 
+        if t in redefinitions:
+            timing.start('{}redefining words'.format(indent))
+            for (src_index, dest_index) in redefinitions[t]:
+                src_concept, dest_concept = conceptlist[src_index], conceptlist[dest_index]
+                for d in (concept_words, origins):
+                    d[dest_concept] = d[src_concept]
+                    del d[src_concept]
+
     if ('language', index) not in concept_words:
         import pdb; pdb.set_trace()
     timing.start('{}setting origins'.format(indent))
@@ -121,6 +129,7 @@ class History(object):
         self._lookup = {}
         self._loans = {}
         self._derivations = {}
+        self._redefinitions = {}
         self._neologisms = {}
         self._changes = [[]]
         self.coin(concepts)
@@ -131,6 +140,7 @@ class History(object):
         clone._lookup = dict(self._lookup)
         clone._loans = copy.deepcopy(self._loans)
         clone._derivations = copy.deepcopy(self._derivations)
+        clone._redefinitions = copy.deepcopy(self._redefinitions)
         clone._neologisms = copy.deepcopy(self._neologisms)
         clone._changes = copy.deepcopy(self._changes)
         return clone
@@ -176,6 +186,12 @@ class History(object):
         if t not in self._derivations:
             self._derivations[t] = []
         self._derivations[t].append((src_concept, self._add(dest_concept)))
+
+    def redefine(self, kind, src_index, dest_index):
+        t = len(self._changes) - 1
+        if t not in self._redefinitions:
+            self._redefinitions[t] = []
+        self._redefinitions[t].append((self._lookup[(kind, src_index)], self._add((kind, dest_index))))
 
     def coin(self, concepts):
         t = len(self._changes) - 1

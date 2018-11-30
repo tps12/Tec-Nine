@@ -299,7 +299,7 @@ class HistorySimulation(object):
                     dialect = self._languages[lang].clone()
                     self._languages.append(dialect)
                     index = len(self._languages) - 1
-                    dialect.derive(('language', lang), ('language', index))
+                    dialect.redefine('language', lang, index)
                     for f in faces:
                         for c in self._population[f].communities:
                             if c.language == lang:
@@ -614,7 +614,7 @@ class HistorySimulation(object):
                         dialect = self._languages[winnerlang].clone()
                         self._languages.append(dialect)
                         index = len(self._languages) - 1
-                        dialect.derive(('language', winnerlang), ('language', index))
+                        dialect.redefine('language', winnerlang, index)
                         oldlang = winnerlang
                         winnerlang = index
                     for concept in self._languages[lang]:
@@ -1072,7 +1072,8 @@ class HistorySimulation(object):
                 yield None
             else:
                 lang = language.lazy.History(HistorySimulation._timing,
-                                                 [('species', s) for s in ss] + [('nation', l), ('state', l)])
+                                                 [('species', s) for s in ss] + [('nation', l)])
+                lang.derive(('nation', l), ('state', l))
                 lang.derive(('nation', l), ('language', l))
                 yield lang
 
