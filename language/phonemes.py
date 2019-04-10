@@ -3,25 +3,26 @@ import itertools
 from random import randint, random, sample
 
 from . import segment
+from . import upsid
 
 vowelpositions = [
   # front   ->   back
-    ['&',  'a',  'A'],  # open
-    ['E',  'V"', 'V'],  # open-mid
-    ['e',  '@',  'o-'], # close-mid
-    ['i',  'i"', 'u-']] # close
+    ['&',  'a"', 'A'], # open
+    ['E',  'V"', 'O'], # open-mid
+    ['e',  '@',  'o'], # close-mid
+    ['i',  'i"', 'u']] # close
 
 vowels = [v for p in vowelpositions for v in p]
 
 # vowels in order of how "schwa-like" they are, for inserting to enforce phonotactic constraints
-anaptyxity = ['@', 'V"', 'o-', 'V', 'e', 'E', 'i"', 'a', 'u-', 'A', 'i', '&']
+anaptyxity = ['@', 'V"', 'o', 'O', 'e', 'E', 'i"', 'a"', 'u', 'A', 'i', '&']
 assert set(vowels) == set(anaptyxity)
 
 consonantplaces = [
     ['m', 'p', 'b', 'P', 'B',],                 # bilabial         (close)
-    ['M', 'f', 'v'],                            # labiodental
-    ['n[', 't[', 'd[', 'T', 'D'],               # dental
-    ['n', 't', 'd', 's', 'z', 'r', 'l', '*'],   # alveolar         (close-mid)
+    ['f', 'v'],                                 # labiodental
+    ['T', 'D'],                                 # dental
+    ['n', 't', 'd', 's', 'z', 'R', 'l', '*'],   # alveolar         (close-mid)
     ['n.', 't.', 'd.', 's.', 'z.', 'l.', '*.'], # retroflex
     ['S', 'Z'],                                 # palato-alveolar  (open-mid)
     ['c', 'J', 'C', 'j', 'l^'],                 # palatal
@@ -90,7 +91,7 @@ def weightedsample(population, weights, k):
         res.append(remaining.pop(bisect.bisect(dist, random() * dist[-1])))
     return res
 
-segmentweights = { s: segment.frequencies[s] if s in segment.frequencies else 1
+segmentweights = { s: segment.frequencies[upsid.symbols[s]]
                    for s in vowels + consonants }
 
 def phonemes(nv = None, nc = None):

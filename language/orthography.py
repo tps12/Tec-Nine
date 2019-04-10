@@ -1,7 +1,6 @@
 vglyphs = dict([
     ('&', 'a'),
     ('V"', 'u'),
-    ('V', 'u'),
     ('@', 'e')])
 
 def getvowelglyph(v):
