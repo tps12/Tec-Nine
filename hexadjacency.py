@@ -25,7 +25,7 @@ class Adjacency(object):
             for face in grid.faces:
                 self._adj[face] = grid.neighbors(face)
 
-            with open(cache, 'w') as f:
+            with open(cache, 'wb') as f:
                 dump(self._adj, f, 0)
 
     def __getitem__(self, v):

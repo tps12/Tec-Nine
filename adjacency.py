@@ -8,7 +8,7 @@ class Adjacency(object):
         cache = self.CACHE.format(len(tiles))
 
         try:
-            with open(cache, 'r') as f:
+            with open(cache, 'rb') as f:
                 self._adj = load(f)
         except Exception as er:
             print('Cached adjacency list failed:', repr(er))
@@ -37,7 +37,7 @@ class Adjacency(object):
                     addadj((j,i),(j-1 if j > 0 else len(tiles[i])-1, i))
                     addadj((j,i),(j+1 if j < len(tiles[i])-1 else 0, i))
 
-            with open(cache, 'w') as f:
+            with open(cache, 'wb') as f:
                 dump(self._adj, f, 0)
 
     def __getitem__(self, coords):
