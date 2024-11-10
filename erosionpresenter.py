@@ -1,5 +1,5 @@
-from PySide.QtCore import Qt
-from PySide.QtGui import QApplication, QGridLayout, QFileDialog
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout, QFileDialog
 
 from erosiondisplay import ErosionDisplay
 from erosionsimulation import ErosionSimulation

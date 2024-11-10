@@ -1,6 +1,7 @@
 from math import sin, cos, pi
 
-from PySide.QtGui import QColor, QGridLayout, QImage, QPainter, QWidget, QSizePolicy
+from PySide6.QtGui import QColor, QImage, QPainter
+from PySide6.QtWidgets import QGridLayout, QWidget, QSizePolicy
 
 from sphereview import SphereView
 

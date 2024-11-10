@@ -1,4 +1,4 @@
-from PySide.QtGui import QGridLayout
+from PySide6.QtWidgets import QGridLayout
 
 from racinationdisplay import RacinationDisplay
 from racinationsimulation import RacinationSimulation

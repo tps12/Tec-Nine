@@ -1,7 +1,7 @@
 from random import choice
 
-from PySide.QtCore import Qt
-from PySide.QtGui import QGridLayout
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout
 
 from movepoints import MovePoints
 from movedisplay import MoveDisplay

@@ -1,5 +1,5 @@
-from PySide.QtCore import Qt
-from PySide.QtGui import QGridLayout, QFileDialog
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout, QFileDialog
 
 from formatpopulation import percents, popstr
 from historydisplay import HistoryDisplay

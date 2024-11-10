@@ -1,7 +1,7 @@
 import math
 import numpy
 from OpenGL import GL, GLU
-from PySide import QtCore, QtOpenGL
+from PySide6 import QtCore, QtOpenGLWidgets
 
 def squared_length(v):
     return sum([vi * vi for vi in v])
@@ -16,17 +16,18 @@ def normal(v):
 def rotate_axes(x, y, z):
     return (-y, z, x)
 
-class SphereView(QtOpenGL.QGLWidget):
+class SphereView(QtOpenGLWidgets.QOpenGLWidget):
     clicked = QtCore.Signal(float, float, float)
 
     def __init__(self, faces, parent):
-        QtOpenGL.QGLWidget.__init__(self, parent)
+        QtOpenGLWidgets.QOpenGLWidget.__init__(self, parent)
 
         self.faces = faces
         self.objects = None
         self.xRot = 0
         self.yRot = 0
         self.zRot = 0
+        self.initialized = False
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
@@ -96,11 +97,14 @@ class SphereView(QtOpenGL.QGLWidget):
         self._colorBuffer = GL.glGenBuffers(1)
         self._colorValues = numpy.zeros(len(vertices), dtype='float32')
         self._colorValues.flags.writeable = True
+        self.initialized = True
 
     def redraw(self):
         self.updateGL()
 
     def paintGL(self):
+        if not self.initialized:
+            return
         if 'glCheckFramebufferStatus' in GL.__dict__:
             if GL.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER) != GL.GL_FRAMEBUFFER_COMPLETE:
                 return

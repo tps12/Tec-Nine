@@ -1,4 +1,4 @@
-from PySide.QtCore import QThread, Signal
+from PySide6.QtCore import QThread, Signal
 
 class SimThread(QThread):
     tick = Signal()

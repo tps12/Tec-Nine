@@ -1,6 +1,6 @@
 from random import choice
 
-from PySide.QtGui import QGridLayout, QMenu
+from PySide6.QtWidgets import QGridLayout, QMenu
 
 from splitpoints import SplitPoints
 from splitdisplay import SplitDisplay

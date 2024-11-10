@@ -440,7 +440,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="create">
+      <widget class="QPushButton" name="create_new">
        <property name="text">
         <string>Create</string>
        </property>

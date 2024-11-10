@@ -1,4 +1,4 @@
-from PySide.QtGui import QTreeWidgetItem
+from PySide6.QtWidgets import QTreeWidgetItem
 from worldpresenter import WorldPresenter
 from uiview import UiView
 

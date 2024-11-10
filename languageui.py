@@ -1,4 +1,4 @@
-from PySide.QtGui import QListWidgetItem
+from PySide6.QtWidgets import QListWidgetItem
 from languagepresenter import LanguagePresenter
 from uiview import UiView
 

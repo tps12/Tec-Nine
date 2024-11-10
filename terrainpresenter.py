@@ -1,5 +1,5 @@
-from PySide.QtCore import Qt
-from PySide.QtGui import QGridLayout, QFileDialog
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout, QFileDialog
 
 from terraindisplay import TerrainDisplay
 from terrainsimulation import TerrainSimulation

@@ -1,5 +1,5 @@
-from PySide.QtGui import QWidget, QGridLayout
-from PySide.QtUiTools import QUiLoader
+from PySide6.QtWidgets import QWidget, QGridLayout
+from PySide6.QtUiTools import QUiLoader
 
 class UiView(QWidget):
     def __init__(self, uifile, presenterclass, *presenterargs):

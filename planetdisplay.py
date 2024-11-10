@@ -1,7 +1,8 @@
 from math import sin, cos, pi
 
-from PySide.QtCore import Qt
-from PySide.QtGui import QColor, QGridLayout, QImage, QPainter, QWidget, QSizePolicy
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor, QImage, QPainter
+from PySide6.QtWidgets import QGridLayout, QWidget, QSizePolicy
 
 import color
 import koeppencolor

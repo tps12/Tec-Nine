@@ -1,4 +1,4 @@
-from PySide.QtGui import QTreeWidgetItem
+from PySide6.QtWidgets import QTreeWidgetItem
 from historypresenter import HistoryPresenter
 from uiview import UiView
 

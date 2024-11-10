@@ -1,4 +1,4 @@
-from PySide.QtGui import QListWidgetItem
+from PySide6.QtWidgets import QListWidgetItem
 from lifeformspresenter import LifeformsPresenter
 from uiview import UiView
 

@@ -1,4 +1,4 @@
-from PySide.QtGui import QGridLayout, QFileDialog
+from PySide6.QtWidgets import QGridLayout, QFileDialog
 
 from prehistorydisplay import PrehistoryDisplay
 from prehistorysimulation import PrehistorySimulation

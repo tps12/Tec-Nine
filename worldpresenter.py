@@ -1,8 +1,8 @@
 import math
 import random
 
-from PySide.QtCore import Qt
-from PySide.QtGui import QApplication, QGridLayout, QFileDialog
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout, QFileDialog
 
 from formatpopulation import popstr
 from planetdata import Data
@@ -63,7 +63,7 @@ class WorldPresenter(object):
     def __init__(self, view, uistack, listitemclass):
         self._view = view
         self._view.randomize.stateChanged.connect(self.randomized)
-        self._view.create.clicked.connect(self.create)
+        self._view.create_new.clicked.connect(self.create)
         self._view.start.clicked.connect(self.start)
         self._view.pause.clicked.connect(self.pause)
         self._view.done.clicked.connect(self.done)

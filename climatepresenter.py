@@ -1,4 +1,4 @@
-from PySide.QtGui import QApplication, QGridLayout, QFileDialog
+from PySide6.QtWidgets import QGridLayout, QFileDialog
 
 from climatedisplay import ClimateDisplay
 from climatesimulation import ClimateSimulation

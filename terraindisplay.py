@@ -1,4 +1,4 @@
-from PySide.QtGui import QGridLayout, QWidget
+from PySide6.QtWidgets import QGridLayout, QWidget
 
 import color
 from sphereview import SphereView
