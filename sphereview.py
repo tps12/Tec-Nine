@@ -1,7 +1,8 @@
 import math
 import numpy
-from OpenGL import GL, GLU
-from PySide6 import QtCore, QtOpenGLWidgets
+
+from nicegui.element import Element
+import color
 
 def squared_length(v):
     return sum([vi * vi for vi in v])
@@ -16,43 +17,39 @@ def normal(v):
 def rotate_axes(x, y, z):
     return (-y, z, x)
 
-class SphereView(QtOpenGLWidgets.QOpenGLWidget):
-    clicked = QtCore.Signal(float, float, float)
-
-    def __init__(self, faces, parent):
-        QtOpenGLWidgets.QOpenGLWidget.__init__(self, parent)
+class SphereView(Element, component='sphereview.js'):
+    def __init__(self, faces):
+        super().__init__()
 
         self.faces = faces
-        self.objects = None
-        self.xRot = 0
-        self.yRot = 0
-        self.zRot = 0
-        self.initialized = False
+        self.on('init', self.on_init)
 
-    def mousePressEvent(self, event):
-        if event.button() == QtCore.Qt.LeftButton:
-            viewport = GL.glGetIntegerv(GL.GL_VIEWPORT)
-            view = GL.glGetDoublev(GL.GL_MODELVIEW_MATRIX)
-            projection = GL.glGetDoublev(GL.GL_PROJECTION_MATRIX)
-            x, y = event.x(), viewport[3] - event.y() - 1
-            depthscale = GL.glGetDoublev(GL.GL_DEPTH_SCALE)
-            z = GL.glReadPixels(x, y, 1, 1, GL.GL_DEPTH_COMPONENT, GL.GL_FLOAT)
-            self.clicked.emit(*GLU.gluUnProject(x, y, z, view.astype('d'), projection.astype('d'), viewport))
 
-    def minimumSizeHint(self):
-        return QtCore.QSize(50, 50)
+    def on_init(self):
+        vertices = []
+        normals = []
+        for t, vs in self.faces.items():
+            t = rotate_axes(*t)
+            vs = [rotate_axes(*v) for v in vs]
+            n = normal(t)
+            for i in range(len(vs)):
+                vertices += t
+                vertices += vs[i-1]
+                vertices += vs[i]
+                normals += 3 * n
+        colors = []
+        i = 0
+        for t, vs in self.faces.items():
+            tile_color = [0.5, 0, i/len(self.faces)]#[v/255.0 for v in color.value(t)]
+            i += 1
+            for _ in range(len(vs)):
+              for _ in range(3):
+                for c in tile_color:
+                  colors.append(c)
 
-    def sizeHint(self):
-        return QtCore.QSize(400, 400)
-
-    def usecolors(self, colors):
-        self.colors = colors
-
-    def rotate(self, angle):
-        angle = self.normalizeAngle(angle * 16)
-        if angle != self.yRot:
-            self.yRot = angle
-            self.updateGL()
+        #self.run_method('test', vertices, normals, colors)
+        print(len(vertices))
+        self.run_method('test', vertices, normals, colors)#[0,1,1]*len(vertices))
 
     def initializeGL(self):
         GL.glEnable(GL.GL_DEPTH_TEST)
