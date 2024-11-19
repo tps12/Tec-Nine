@@ -1,14 +1,6 @@
-from sys import argv, exit
-from PySide6.QtGui import QFont, QFontMetrics
-from PySide6.QtWidgets import QApplication
+from nicegui import ui
 from mainwindow import MainWindow
 
-app = QApplication(argv)
-font = QFont(QApplication.font())
-font.setPointSize(9)
-QApplication.setFont(font)
-w = MainWindow()
-metrics = QFontMetrics(font)
-w.resize(metrics.maxWidth() * 80, metrics.height() * 24)
-w.show()
-exit(app.exec())
+with ui.card().style('width:100%; align-items: normal'):
+    MainWindow()
+ui.run(title='Tec-Nine')

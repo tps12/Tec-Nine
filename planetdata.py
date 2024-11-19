@@ -30,18 +30,20 @@ class Data(object):
             return cls.loaddata(load(f))
 
     @classmethod
-    def savedata(cls, random, gridsize, stage, spin, cells, tilt, dp, build, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet, historyinited, species, terraincap, terrainpop, statecolors, boundaries, tilespecies, languages, statespecies):
+    def savedata(cls, random, gridsize, stage, spin, cells, tilt, dt, dp, build, erode, splitnum, tiles, shapes, glaciationtime, population, agricultural, atmt, lifet, historyinited, species, terraincap, terrainpop, statecolors, boundaries, tilespecies, languages, statespecies):
         tileindex = cls._index(tiles)
         rs, rnames, rindex, ags = cls._raceagindices(population, agricultural)
-        return {'version': 25,
+        return {'version': 26,
                 'random': random,
                 'gridsize': gridsize,
                 'stage': stage,
                 'spin': spin,
                 'cells': cells,
                 'tilt': tilt,
+                'dt': dt,
                 'dp': dp,
                 'build': build,
+                'erode': erode,
                 'splitnum': splitnum,
                 'tiles': {v:
                            { 'lat': t.lat,

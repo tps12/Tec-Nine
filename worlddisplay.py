@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QGridLayout, QWidget
+from nicegui.element import Element
 
 import color
 import koeppencolor
@@ -25,18 +25,17 @@ def population(tile, populated):
       return (192,192,192 - populated[tile] * 1.25)
   return color.value(tile)
 
-class WorldDisplay(QWidget):
+class WorldDisplay(Element):
     _colorfunctions = [climatecolor, colorvalue, population]
 
     def __init__(self, sim, selecthandler):
-        QWidget.__init__(self)
+        super().__init__()
         self._sim = sim
         self._screen = None
         self._rotate = 0
         self._aspect = self._colorfunctions.index(colorvalue)
         self._select = selecthandler
         self.selected = None
-        self.setLayout(QGridLayout())
         self.invalidate()
 
     @property
@@ -65,12 +64,12 @@ class WorldDisplay(QWidget):
     def select(self, x, y, z):
         self.selected = self._sim.nearest((z,-x,y)) if abs(z) < 2 else None
         self._select(self.selected)
+        self.invalidate()
 
     def invalidate(self):
         if self._screen is None:
-            self._screen = SphereView(self._sim.grid.faces, self)
-            self._screen.clicked.connect(self.select)
+            with self:
+                self._screen = SphereView(self._sim.grid.faces, on_click=self.select)
         populated = {t: p for (t, (_, p)) in self._sim.populated.items()}
         self._screen.usecolors({ v: self.tilecolor(t, populated) for (v, t) in self._sim.tiles.items() })
         self._screen.rotate(self._rotate)
-        self.layout().addWidget(self._screen)

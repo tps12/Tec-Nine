@@ -40,16 +40,20 @@ class NextTileValue(object):
 class PlanetSimulation(object):
     temprange = (-25.0, 50.0)
 
-    def __init__(self, r, gridsize, spin, cells, tilt, landr, dt, atmdt, lifedt):
-        """Create a simulation for a planet with the given characteristics. """
-
+    def __init__(self):
         self._timing = Timing()
+        self._climatemappings = {}
+        self._climateprof = None
+
+    def create(self, r, gridsize, spin, cells, tilt, landr, dt, atmdt, lifedt):
+        """Create a simulation for a planet with the given characteristics. """
 
         initt = self._timing.routine('simulation setup')
 
         self.spin, self.cells, self.tilt = spin, cells, tilt
 
         # max speed is 100km per million years
+        self._dt = dt
         self._dp = 100.0/r * dt
 
         self._build = dt/5.0
@@ -129,6 +133,7 @@ class PlanetSimulation(object):
         self._climateprof = None
 
         self.dirty = True
+        return self
 
     def _initgrid(self, gridsize):
         grid = Grid()
@@ -159,7 +164,6 @@ class PlanetSimulation(object):
             self._indexedtiles.append(t)
 
         self.adj = Adjacency(self._grid)
-                
         self._tileadj = dict()
         for v in self._grid.faces:
             self._tileadj[self.tiles[v]] = set([self.tiles[nv] for nv in self.adj[v]])
@@ -182,8 +186,10 @@ class PlanetSimulation(object):
         random.setstate(data['random'])
         self._initgrid(data['gridsize'])
         self.spin, self.cells, self.tilt = [data[k] for k in ['spin', 'cells', 'tilt']]
+        self._dt = data['dt']
         self._dp = data['dp']
         self._build = data['build']
+        self._erode = data['erode']
         self._splitnum = data['splitnum']
         self.tiles = data['tiles']
         self._shapes = data['shapes']
@@ -197,7 +203,7 @@ class PlanetSimulation(object):
         self.loaddata(Data.load(filename))
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, self._dp, self._build, self._splitnum, self.tiles, self._shapes, 0, {}, set(), self._atmosphereticks, self._lifeticks, False, [], {}, {}, [], {}, {}, [], [])
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, self._dt, self._dp, self._build, self._erode, self._splitnum, self.tiles, self._shapes, 0, {}, set(), self._atmosphereticks, self._lifeticks, False, [], {}, {}, [], {}, {}, [], [])
 
     def save(self, filename):
         Data.save(filename, self.savedata())

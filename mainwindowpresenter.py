@@ -3,35 +3,14 @@ from mainmenu import MainMenu
 class MainWindowPresenter(object):
     def __init__(self, view):
         self._view = view
-        self._widgets = []
+        with self._view:
+            self._menu = MainMenu(self.push, self.pop)
 
-        self._view.parent().setWindowTitle(self._view.windowTitle())
-
-        m = MainMenu(self)
-        self.push(m)
-
-    def setwidget(self, widget):
-        layout = self._view.centralwidget.layout()
-        if layout.count():
-            layout.removeItem(layout.itemAt(0))
-        layout.addWidget(widget)
-
-    def push(self, widget):
-        if len(self._widgets):
-            self._widgets[-1].hide()
-        self._widgets.append(widget)
-        self.setwidget(widget)
-
-    def replace(self, widget):
-        self.pop()
-        self.push(widget)
+    def push(self, add_child):
+        self._menu.set_visibility(False)
+        with self._view:
+            self._child = add_child()
 
     def pop(self):
-        widget = self._widgets.pop()
-        widget.deleteLater()
-        if len(self._widgets):
-            widget = self._widgets[-1]
-            widget.show()
-            self.setwidget(widget)
-        else:
-            self._view.parent().close()
+        self._view.remove(self._child)
+        self._menu.set_visibility(True)
