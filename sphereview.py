@@ -43,8 +43,8 @@ class SphereView(Element, component='sphereview.js'):
                   colors.append(c)
         self.run_method('setColors', colors)
 
-    def rotate(self, event):
-        self.run_method('rotate', event.value * math.pi/180)
+    def rotate(self, value):
+        self.run_method('rotate', value * math.pi/180)
 
     def initialize(self):
         vertices = []
