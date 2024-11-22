@@ -11,7 +11,7 @@ function midpoint(buffer, face) {
 }
 
 export default {
-  template: '<div></div>',
+  template: '<div style="display: flex; flex-grow: 1; justify-content: center"></div>',
   mounted() {
     const connectInterval = setInterval(() => {
       if (window.socket.id === undefined) return;
@@ -61,7 +61,8 @@ export default {
 
       this.paint = () => renderer.render(scene, camera);
       const resize = () => {
-        const size = Math.min(window.innerWidth, window.innerHeight);
+        const parent = renderer.domElement.parentElement;
+        const size = Math.min(parent.clientWidth, parent.clientHeight);
         renderer.setSize(size, size);
         this.paint();
       };

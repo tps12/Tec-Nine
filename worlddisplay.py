@@ -68,7 +68,8 @@ class WorldDisplay(Element):
 
     def invalidate(self):
         if self._screen is None:
-            self._screen = SphereView(self._sim.grid.faces, on_click=self.select)
+            with self:
+                self._screen = SphereView(self._sim.grid.faces, on_click=self.select)
         populated = {t: p for (t, (_, p)) in self._sim.populated.items()}
         self._screen.usecolors({ v: self.tilecolor(t, populated) for (v, t) in self._sim.tiles.items() })
         self._screen.rotate(self._rotate)
