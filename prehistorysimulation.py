@@ -38,6 +38,9 @@ class PrehistorySimulation(object):
     glaciationstep = 16
     anthroglacial = 6
 
+    def __init__(self):
+        self._timing = Timing()
+
     def create(self, gridsize, spin, cells, tilt):
         self._timing = Timing()
 
@@ -63,7 +66,6 @@ class PrehistorySimulation(object):
 
         initt.start('building indexes')
         self.shapes = []
-        self.adj = Adjacency(self._grid)
         self._glaciationt = 0
         self.initindexes()
         self.populated = {}
@@ -78,6 +80,7 @@ class PrehistorySimulation(object):
             grid = Grid(grid)
             grid.populate()
         self._grid = grid
+        self.adj = Adjacency(self._grid)
 
     def initindexes(self):
         self._indexedtiles = []
@@ -175,7 +178,7 @@ class PrehistorySimulation(object):
         self.loaddata(Data.load(filename))
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, False, [], {}, {}, [], {}, {}, [], [])
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, False, [], {}, {}, [], {}, {}, [], [])
 
     def save(self, filename):
         Data.save(filename, self.savedata())

@@ -131,13 +131,15 @@ class WorldPresenter(object):
             populated = self._model.populated
             with self._view.details.parent_slot.parent:
                 self._view.details.delete()
+                def ancestors(h):
+                    return {'id': h.name, 'children': [ancestors(a) for a in h.ancestry or []]}
                 self._view.details = ui.tree([
                     {'id': 'Layers', 'children': [{'id': layer.rock['name']} for layer in reversed(tile.layers)]}
                 ] + ([
                     {'id': climatenames[tile.climate.koeppen]}
                 ] if tile.elevation > 0 and tile.climate else [])
                  + ([
-                    {'id': popstr(populated[tile][1])} # TODO: heritage
+                    {'id': popstr(populated[tile][1]), 'children': [ancestors(populated[tile][0])]}
                 ] if tile in populated else []), label_key='id')
 #            rock = self._listitemclass(['Layers'])
 #            for layer in reversed(tile.layers):
