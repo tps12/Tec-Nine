@@ -38,7 +38,7 @@ class PrehistorySimulation(object):
     glaciationstep = 16
     anthroglacial = 6
 
-    def __init__(self, gridsize, spin, cells, tilt):
+    def create(self, gridsize, spin, cells, tilt):
         self._timing = Timing()
 
         initt = self._timing.routine('simulation setup')
@@ -70,6 +70,7 @@ class PrehistorySimulation(object):
         self.agricultural = set()
 
         initt.done()
+        return self
 
     def _initgrid(self, gridsize):
         grid = Grid()

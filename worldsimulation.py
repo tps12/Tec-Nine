@@ -8,14 +8,19 @@ class WorldSimulation(object):
   tecdt = 5
   scales = [tecdt * 1000000, PrehistorySimulation.glaciationstep * 250]
 
-  def __init__(self, radius, gridsize, dayhours, tilt, pangeasize, atmdt, lifedt, peopledt):
+  def __init__(self):
+    self._tectonics = PlanetSimulation()
+    self._prehistory = PrehistorySimulation()
+
+  def create(self, radius, gridsize, dayhours, tilt, pangeasize, atmdt, lifedt, peopledt):
     spin = 24.0/dayhours
     cells = 7 if spin >= 3 else 5 if spin >= 2 else 3 if spin == 1 else 1
-    self._tectonics = PlanetSimulation(radius, gridsize, spin, cells, tilt, pangeasize, self.tecdt, atmdt, lifedt)
-    self._prehistory = PrehistorySimulation(gridsize, spin, cells, tilt)
+    self._tectonics.create(radius, gridsize, spin, cells, tilt, pangeasize, self.tecdt, atmdt, lifedt)
+    self._prehistory.create(gridsize, spin, cells, tilt)
     self._ticks = [0]
     self._stage = 0
     self._peopleticks = peopledt / self.tecdt
+    return self
 
   def nearest(self, loc):
     return self.sim.nearest(loc)
@@ -52,18 +57,22 @@ class WorldSimulation(object):
 
   def loaddata(self, data):
     self._stage = data['stage']
-    self._ticks = [0] * (self._stage+1)
+    self._ticks = data.get('ticks', [0] * (self._stage+1))
     self._peopleticks = data['peoplet']
     self.sim.loaddata(data)
 
   def load(self, filename):
     self.loaddata(Data.load(filename))
 
-  def save(self, filename):
+  def savedata(self):
     data = self.sim.savedata()
     data['stage'] = self._stage
+    data['ticks'] = self._ticks
     data['peoplet'] = self._peopleticks
-    Data.save(filename, data)
+    return data
+
+  def save(self, filename):
+    Data.save(filename, self.savedata())
 
   def update(self):
     self.sim.update()

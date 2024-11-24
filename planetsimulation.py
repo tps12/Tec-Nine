@@ -40,10 +40,11 @@ class NextTileValue(object):
 class PlanetSimulation(object):
     temprange = (-25.0, 50.0)
 
-    def __init__(self, r, gridsize, spin, cells, tilt, landr, dt, atmdt, lifedt):
-        """Create a simulation for a planet with the given characteristics. """
-
+    def __init__(self):
         self._timing = Timing()
+
+    def create(self, r, gridsize, spin, cells, tilt, landr, dt, atmdt, lifedt):
+        """Create a simulation for a planet with the given characteristics. """
 
         initt = self._timing.routine('simulation setup')
 
@@ -129,6 +130,7 @@ class PlanetSimulation(object):
         self._climateprof = None
 
         self.dirty = True
+        return self
 
     def _initgrid(self, gridsize):
         grid = Grid()
@@ -159,7 +161,6 @@ class PlanetSimulation(object):
             self._indexedtiles.append(t)
 
         self.adj = Adjacency(self._grid)
-                
         self._tileadj = dict()
         for v in self._grid.faces:
             self._tileadj[self.tiles[v]] = set([self.tiles[nv] for nv in self.adj[v]])

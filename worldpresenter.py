@@ -1,3 +1,5 @@
+from nicegui import run, ui
+
 import math
 import random
 
@@ -47,6 +49,13 @@ def randomticks():
 def randomtime():
     return WorldSimulation.tecdt * (1 + randomticks())
 
+def created(radius, gridsize, dayhours, tilt, pangeasize, atmdt, lifedt, peopledt):
+    return WorldSimulation().create(radius, gridsize, dayhours, tilt, pangeasize, atmdt, lifedt, peopledt).savedata()
+
+def updated(model):
+    model.update()
+    return model.savedata()
+
 class WorldPresenter(object):
     radii_and_grid_sizes = [
         (2100, 4),
@@ -78,7 +87,7 @@ class WorldPresenter(object):
         for param in [self._view.spin, self._view.tilt, self._view.land, self._view.atmt, self._view.lifet, self._view.peoplet]:
             (param.disable if randomize else param.enable)()
 
-    def create(self, gridsize=None):
+    async def create(self, gridsize=None):
         if self._model is not None:
            self._view.content.clear()
 
@@ -93,7 +102,12 @@ class WorldPresenter(object):
 
         r, g = self.radii_and_grid_sizes[self._view.radius.value]
         land_r = math.sqrt(0.04 * self._view.land.value)
-        self._model = WorldSimulation(r, gridsize or g, self.day_hours[self._view.spin.value], self._view.tilt.value, land_r, self._view.atmt.value, self._view.lifet.value, self._view.peoplet.value)
+
+        self._model = WorldSimulation()
+        self._model.loaddata(Data.loaddata(
+            await run.cpu_bound(created, r, gridsize or g, self.day_hours[self._view.spin.value], self._view.tilt.value, land_r, self._view.atmt.value, self._view.lifet.value, self._view.peoplet.value)))
+        self._view.years.text = self._model.years
+        self._view.population.text = self._model.population
 
         with self._view.content:
           self._display = WorldDisplay(self._model, self.selecttile).style('display: flex').classes('flex-grow')
@@ -114,29 +128,40 @@ class WorldPresenter(object):
         self._view.content.update()
         self._view.details.clear()
         if tile is not None:
-            rock = self._listitemclass(['Layers'])
-            for layer in reversed(tile.layers):
-                name = self._listitemclass([layer.rock['name']])
-                name.setToolTip(0, repr({ 'thickness': layer.thickness,
-                                          'rock': layer.rock }))
-                rock.addChild(name)
-            self._view.details.addTopLevelItem(rock)
-            if tile.elevation > 0 and tile.climate:
-                climate = self._listitemclass([climatenames[tile.climate.koeppen]])
-                climate.setToolTip(0, repr({ 'temperature': tile.climate.temperature,
-                                             'precipitation': tile.climate.precipitation }))
-                self._view.details.addTopLevelItem(climate)
             populated = self._model.populated
-            if tile in populated:
-                heritage, count = populated[tile]
-                population = self._listitemclass([popstr(count)])
-                def ancestors(h, p):
-                    item = self._listitemclass([h.name])
-                    for a in h.ancestry or []:
-                        ancestors(a, item)
-                    p.addChild(item)
-                ancestors(heritage, population)
-                self._view.details.addTopLevelItem(population)
+            with self._view.details.parent_slot.parent:
+                self._view.details.delete()
+                self._view.details = ui.tree([
+                    {'id': 'Layers', 'children': [{'id': layer.rock['name']} for layer in reversed(tile.layers)]}
+                ] + [
+                    {'id': name} for name in (climatenames[tile.climate.koeppen]
+                    if tile.elevation > 0 and tile.climate else [])
+                ] + ([
+                    {'id': popstr(populated[tile][1])} # TODO: heritage
+                ] if tile in populated else []), label_key='id')
+#            rock = self._listitemclass(['Layers'])
+#            for layer in reversed(tile.layers):
+#                name = self._listitemclass([layer.rock['name']])
+#                name.setToolTip(0, repr({ 'thickness': layer.thickness,
+#                                          'rock': layer.rock }))
+#                rock.addChild(name)
+#            self._view.details.addTopLevelItem(rock)
+#            if tile.elevation > 0 and tile.climate:
+#                climate = self._listitemclass([climatenames[tile.climate.koeppen]])
+#                climate.setToolTip(0, repr({ 'temperature': tile.climate.temperature,
+#                                             'precipitation': tile.climate.precipitation }))
+#                self._view.details.addTopLevelItem(climate)
+#            populated = self._model.populated
+#            if tile in populated:
+#                heritage, count = populated[tile]
+#                population = self._listitemclass([popstr(count)])
+#                def ancestors(h, p):
+#                    item = self._listitemclass([h.name])
+#                    for a in h.ancestry or []:
+#                        ancestors(a, item)
+#                    p.addChild(item)
+#                ancestors(heritage, population)
+#                self._view.details.addTopLevelItem(population)
 
     def rotate(self, value):
         if self._model is None: return
@@ -188,16 +213,20 @@ class WorldPresenter(object):
         self._view.pause.setVisible(False)
         self._view.done.setEnabled(True)
 
-    def start(self):
+    async def start(self):
         if self._model is None: return
-        self._view.start.setEnabled(False)
-        self._view.done.setEnabled(False)
-        self._worker.simulate(True)
+        self._view.start.set_visibility(False)
+        self._view.pause.set_visibility(True)
+        while self._view.pause.visible:
+            self._model.loaddata(Data.loaddata(await run.cpu_bound(updated, self._model)))
+            self._view.years.text = self._model.years
+            self._view.population.text = self._model.population
+            self._display.invalidate()
 
     def pause(self):
         if self._model is None: return
-        self._view.pause.setEnabled(False)
-        self._worker.simulate(False)
+        self._view.pause.set_visibility(False)
+        self._view.start.set_visibility(True)
 
     def tick(self):
         self._view.years.setText(self._model.years)

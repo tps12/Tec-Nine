@@ -59,6 +59,7 @@ export default {
         }
       });
 
+      const emit = this.$emit;
       this.paint = () => renderer.render(scene, camera);
       const resize = () => {
         const parent = renderer.domElement.parentElement;
