@@ -133,10 +133,10 @@ class WorldPresenter(object):
                 self._view.details.delete()
                 self._view.details = ui.tree([
                     {'id': 'Layers', 'children': [{'id': layer.rock['name']} for layer in reversed(tile.layers)]}
-                ] + [
-                    {'id': name} for name in (climatenames[tile.climate.koeppen]
-                    if tile.elevation > 0 and tile.climate else [])
                 ] + ([
+                    {'id': climatenames[tile.climate.koeppen]}
+                ] if tile.elevation > 0 and tile.climate else [])
+                 + ([
                     {'id': popstr(populated[tile][1])} # TODO: heritage
                 ] if tile in populated else []), label_key='id')
 #            rock = self._listitemclass(['Layers'])
