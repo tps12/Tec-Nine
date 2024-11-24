@@ -6,14 +6,11 @@ from uiview import UiView
 class World(Element):
     def __init__(self, uistack):
         super().__init__()
-        #self.ui.details.setColumnCount(0)
-        #self.ui.details.setHeaderLabels(['Selection'])
+
         with ui.row().style('align-items: normal').classes('flex-grow'):
             with ui.column().style('align-items: normal').classes('flex-grow'):
                 with ui.row().style('align-items: normal').classes('flex-grow'):
-                    self.content = ui.element('div').style('display: flex').classes('world-content flex-grow')#.style('min-width: 400px; min-height: 400px;')
-                    with self.content:
-                        pass#ui.element('div').style('background-color: yellow').classes('flex-grow')
+                    self.content = ui.element('div').style('display: flex').classes('world-content flex-grow')
                     self.details = ui.tree([])
                 with ui.row():
                     self.rotate = ui.slider(min=-180, max=180, value=-90)
