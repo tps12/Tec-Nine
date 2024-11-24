@@ -134,36 +134,19 @@ class WorldPresenter(object):
                 def ancestors(h):
                     return {'id': h.name, 'children': [ancestors(a) for a in h.ancestry or []]}
                 self._view.details = ui.tree([
-                    {'id': 'Layers', 'children': [{'id': layer.rock['name']} for layer in reversed(tile.layers)]}
+                    {'id': 'Layers', 'children': [
+                        {'id': layer.rock['name'],
+                         'children': [{'id': f'thickness: {layer.thickness}'},
+                                      {'id': f'rock: {layer.rock}'}]}
+                        for layer in reversed(tile.layers)]}
                 ] + ([
-                    {'id': climatenames[tile.climate.koeppen]}
+                    {'id': climatenames[tile.climate.koeppen],
+                     'children': [{'id': f'temperature: {tile.climate.temperature}'},
+                                  {'id': f'precipitation: {tile.climate.precipitation}'}]}
                 ] if tile.elevation > 0 and tile.climate else [])
                  + ([
                     {'id': popstr(populated[tile][1]), 'children': [ancestors(populated[tile][0])]}
                 ] if tile in populated else []), label_key='id')
-#            rock = self._listitemclass(['Layers'])
-#            for layer in reversed(tile.layers):
-#                name = self._listitemclass([layer.rock['name']])
-#                name.setToolTip(0, repr({ 'thickness': layer.thickness,
-#                                          'rock': layer.rock }))
-#                rock.addChild(name)
-#            self._view.details.addTopLevelItem(rock)
-#            if tile.elevation > 0 and tile.climate:
-#                climate = self._listitemclass([climatenames[tile.climate.koeppen]])
-#                climate.setToolTip(0, repr({ 'temperature': tile.climate.temperature,
-#                                             'precipitation': tile.climate.precipitation }))
-#                self._view.details.addTopLevelItem(climate)
-#            populated = self._model.populated
-#            if tile in populated:
-#                heritage, count = populated[tile]
-#                population = self._listitemclass([popstr(count)])
-#                def ancestors(h, p):
-#                    item = self._listitemclass([h.name])
-#                    for a in h.ancestry or []:
-#                        ancestors(a, item)
-#                    p.addChild(item)
-#                ancestors(heritage, population)
-#                self._view.details.addTopLevelItem(population)
 
     def rotate(self, value):
         if self._model is None: return
