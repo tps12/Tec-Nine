@@ -72,11 +72,13 @@ export default {
     },
 
     setColors(colors) {
+      if (!this.geometry) return;
       this.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
       this.paint();
     },
 
     rotate(angle) {
+      if (!this.mesh) return;
       this.mesh.setRotationFromAxisAngle(_yAxis, angle);
       this.paint();
     }

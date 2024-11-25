@@ -1,6 +1,7 @@
 from nicegui import run, ui
 
 import math
+import pickle
 import random
 
 from formatpopulation import popstr
@@ -87,6 +88,24 @@ class WorldPresenter(object):
         for param in [self._view.spin, self._view.tilt, self._view.land, self._view.atmt, self._view.lifet, self._view.peoplet]:
             (param.disable if randomize else param.enable)()
 
+    def set_model_state(self, data):
+        self._model = WorldSimulation()
+        self._model.loaddata(Data.loaddata(data))
+        self._view.years.text = self._model.years
+        self._view.population.text = self._model.population
+        self._view.content.clear()
+        with self._view.content:
+            self._display = WorldDisplay(self._model, self.selecttile).style('display: flex').classes('flex-grow')
+
+        self._view.rotate.value = self._display.rotate
+        self._view.rotate.on_value_change(lambda event: self.rotate(event.value))
+
+        self._view.aspect.set_value(self._display.aspect)
+        self._view.aspect.on_value_change(lambda event: self.aspect(event.value))
+
+        self._view.start.set_visibility(True)
+        self._view.pause.set_visibility(False)
+
     async def create(self, gridsize=None):
         if self._model is not None:
            self._view.content.clear()
@@ -103,24 +122,7 @@ class WorldPresenter(object):
         r, g = self.radii_and_grid_sizes[self._view.radius.value]
         land_r = math.sqrt(0.04 * self._view.land.value)
 
-        self._model = WorldSimulation()
-        self._model.loaddata(Data.loaddata(
-            await run.cpu_bound(created, r, gridsize or g, self.day_hours[self._view.spin.value], self._view.tilt.value, land_r, self._view.atmt.value, self._view.lifet.value, self._view.peoplet.value)))
-        self._view.years.text = self._model.years
-        self._view.population.text = self._model.population
-
-        with self._view.content:
-          self._display = WorldDisplay(self._model, self.selecttile).style('display: flex').classes('flex-grow')
-
-        self._view.rotate.value = self._display.rotate
-        self._view.rotate.on_value_change(lambda event: self.rotate(event.value))
-
-        self._view.aspect.set_value(self._display.aspect)
-        self._view.aspect.on_value_change(lambda event: self.aspect(event.value))
-
-        self._view.start.set_visibility(True)
-        self._view.start.enable()
-        self._view.pause.set_visibility(False)
+        self.set_model_state(await run.cpu_bound(created, r, gridsize or g, self.day_hours[self._view.spin.value], self._view.tilt.value, land_r, self._view.atmt.value, self._view.lifet.value, self._view.peoplet.value))
         self._view.done.enable()
 
     def selecttile(self, tile):
@@ -159,26 +161,27 @@ class WorldPresenter(object):
         self._display.invalidate()
         self._view.content.update()
 
-    def load(self):
-        filename = QFileDialog.getOpenFileName(self._view,
-                                               'Load simulation state',
-                                               '',
-                                               '*{0}'.format(Data.EXTENSION))[0]
-        if len(filename) > 0:
-            data = Data.load(filename)
-            self.create(data['gridsize'])
-            self._model.loaddata(data)
-            self._view.content.update()
-            self.tick()
+    async def load(self):
+        def load(event):
+            self.set_model_state(pickle.loads(event.content.read()))
+            dialog.close()
 
-    def save(self):
-        if self._model is None: return
-        filename = QFileDialog.getSaveFileName(self._view,
-                                               'Save simulation state',
-                                               '',
-                                               '*{0}'.format(Data.EXTENSION))[0]
-        if len(filename) > 0:
-            self._model.save(filename)
+        with ui.dialog() as dialog, ui.card():
+            ui.upload(on_upload=load)
+        await dialog
+
+    async def save(self):
+        with ui.dialog() as dialog, ui.card():
+            with ui.row():
+                ui.label('File name:')
+                filename = ui.input(' ', placeholder='Enter file name')
+            def save():
+                print(filename.value)
+                dialog.submit(filename.value)
+            ui.button('Save', on_click=save, icon='save')
+        filename = await dialog
+        if filename:
+            self._model.save(f'{filename}{Data.EXTENSION}')
 
     def done(self):
         if self._model is not None:
