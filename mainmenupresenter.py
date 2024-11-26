@@ -24,7 +24,7 @@ class MainMenuPresenter(object):
         view.rivers.disable()
         view.erosion.disable()
         view.population.disable()
-        view.lifeforms.disable()
+        view.lifeforms.on_click(lambda: on_create(lambda: Lifeforms(on_done)))
         view.racination.disable()
         view.prehistory.disable()
         view.split.disable()

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QGridLayout, QWidget
+from nicegui.element import Element
 
 import color
 from sphereview import SphereView
@@ -31,7 +31,7 @@ def speciespresence(species, pops, f, i, c):
             return (0, 255, 0)
     return c
 
-class LifeformsDisplay(QWidget):
+class LifeformsDisplay(Element):
     attributeindices = [
         (0,1,2), # life
         (0,), # animals
@@ -39,7 +39,7 @@ class LifeformsDisplay(QWidget):
         (2,)] #trees
 
     def __init__(self, sim, selecthandler):
-        QWidget.__init__(self)
+        super().__init__()
         self._sim = sim
         self._screen = None
         self._rotate = 0
@@ -49,7 +49,6 @@ class LifeformsDisplay(QWidget):
         self._select = selecthandler
         self.selected = None
         self.selectedspecies = None
-        self.setLayout(QGridLayout())
         self.invalidate()
 
     @property
@@ -64,11 +63,12 @@ class LifeformsDisplay(QWidget):
     def select(self, x, y, z):
         self.selected = self._sim.nearest((z,-x,y)) if abs(z) < 2 else None
         self._select(self.selected)
+        self.invalidate()
 
     def invalidate(self):
         if self._screen is None:
-            self._screen = SphereView(self._sim.grid.faces, self)
-            self._screen.clicked.connect(self.select)
+            with self:
+                self._screen = SphereView(self._sim.grid.faces, on_click=self.select)
         pops = self._sim.species()
         if self.selectedspecies:
             fn = lambda v, c: speciespresence(self.selectedspecies, pops, v, self.season, c)
@@ -77,4 +77,3 @@ class LifeformsDisplay(QWidget):
             fn = lambda v, c: lifepop(pops, indices, v, self.season, c)
         self._screen.usecolors({ v: (255,0,0) if t is self.selected else fn(v, snoworrock(t)) for v, t in self._sim.tiles.items() })
         self._screen.rotate(self._rotate)
-        self.layout().addWidget(self._screen)

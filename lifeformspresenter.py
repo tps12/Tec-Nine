@@ -1,37 +1,35 @@
-from PySide6.QtWidgets import QGridLayout, QFileDialog
+from nicegui import ui
+
+import pickle
 
 from lifeformsdisplay import LifeformsDisplay
 from lifeformssimulation import LifeformsSimulation
 from planetdata import Data
 
 class LifeformsPresenter(object):
-    def __init__(self, view, uistack, detailsitemclass):
+    def __init__(self, view, on_done):
         self._view = view
-        self._view.load.clicked.connect(self.load)
-        self._view.done.clicked.connect(self.done)
+        self._view.load.on_click(self.load)
+        self._view.done.on_click(on_done)
 
-        self._model = LifeformsSimulation(6)
+        self._model = None
 
-        self._display = LifeformsDisplay(self._model, self.selecttile)
+    def set_model_state(self, data):
+        self._model = LifeformsSimulation()
+        self._model.loaddata(Data.loaddata(data))
 
-        self._view.details.currentItemChanged.connect(self.currentdetail)
+        with self._view.content:
+            self._display = LifeformsDisplay(self._model, self.selecttile).style('display: flex').classes('flex-grow')
 
-        self._view.attribute.setCurrentIndex(self._display.shownattribute)
-        self._view.attribute.currentIndexChanged[int].connect(self.showattribute)
+        self._view.attribute.set_value(self._display.shownattribute)
+        self._view.attribute.on_value_change(lambda event: self.showattribute(event.value))
 
-        self._view.season.sliderMoved.connect(self.season)
+        self._view.season.on_value_change(lambda event: self.season(event.value))
 
-        self._view.glaciation.valueChanged.connect(self.glaciation)
+        self._view.glaciation.on_value_change(lambda event: self.glaciation(event.value))
 
-        self._view.content.setLayout(QGridLayout())
-        self._view.content.layout().addWidget(self._display)
-
-        self._view.rotate.setValue(self._display.rotate)
-        self._view.rotate.sliderMoved.connect(self.rotate)
-
-        self._detailsitemclass = detailsitemclass
-
-        self._uistack = uistack
+        self._view.rotate.value = self._display.rotate
+        self._view.rotate.on_value_change(lambda event: self.rotate(event.value))
 
     def selecttile(self, tile):
         selected = None
@@ -51,15 +49,14 @@ class LifeformsPresenter(object):
                         species += [s for s in pop[self._display.season]]
                     self.detailspecies = sorted(species, key=lambda s: s.name)
                     for s in self.detailspecies:
-                        item = self._detailsitemclass(s.name)
-                        self._view.details.addItem(item)
+                        with self._view.details:
+                            item = ui.item(s.name, on_click=lambda: self.currentdetail(s))
                         if s == selectedspecies:
                             selected = item
                     break
-        self.currentdetail(selected, None)
+        self.currentdetail(selectedspecies if selected is not None else None)
 
-    def currentdetail(self, selected, prev):
-        s = self.detailspecies[self._view.details.row(selected)] if selected is not None else None
+    def currentdetail(self, s):
         if s == self._display.selectedspecies:
             return
         self._display.selectedspecies = s
@@ -67,11 +64,12 @@ class LifeformsPresenter(object):
         self._view.content.update()
 
     def rotate(self, value):
+        if self._model is None: return
         self._display.rotate = value
-        self._display.invalidate()
         self._view.content.update()
 
     def showattribute(self, value):
+        if self._model is None: return
         self._display.shownattribute = value
         self._display.selectedspecies = None
         self._display.invalidate()
@@ -79,13 +77,15 @@ class LifeformsPresenter(object):
         self.selecttile(self._display.selected)
 
     def season(self, value):
+        if self._model is None: return
         self._display.season = int(round((len(self._model.seasons)-1) * value/100.0))
         self._display.invalidate()
         self._view.content.update()
         self.selecttile(self._display.selected)
 
     def glaciation(self, _):
-        glaciation = 1 - self._view.glaciation.sliderPosition()/100.0
+        if self._model is None: return
+        glaciation = 1 - self._view.glaciation.value/100
         if self._model.glaciation == glaciation:
             return
         self._model.glaciation = glaciation
@@ -93,16 +93,12 @@ class LifeformsPresenter(object):
         self._view.content.update()
         self.selecttile(self._display.selected)
 
-    def load(self):
-        filename = QFileDialog.getOpenFileName(self._view,
-                                               'Load simulation state',
-                                               '',
-                                               '*{0}'.format(Data.EXTENSION))[0]
-        if len(filename) > 0:
-            self._model.load(filename)
-            self._display.invalidate()
-            self._view.content.update()
-            self.selecttile(self._display.selected)
+    async def load(self):
+        def load(event):
+            self.set_model_state(pickle.loads(event.content.read()))
+            dialog.close()
 
-    def done(self):
-        self._uistack.pop()
+        with ui.dialog() as dialog, ui.card():
+            ui.upload(on_upload=load)
+        await dialog
+

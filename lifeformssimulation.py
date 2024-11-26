@@ -16,9 +16,10 @@ class LifeformsSimulation(object):
     mean_temprange = (-25.0, 50.0)
     seasons = [-1, -0.5, 0, 0.5, 1, 0.5, 0, -0.5]
 
-    def __init__(self, gridsize):
+    def __init__(self):
         self._timing = Timing()
 
+    def create(self, gridsize):
         initt = self._timing.routine('simulation setup')
 
         initt.start('building grid')
@@ -62,6 +63,7 @@ class LifeformsSimulation(object):
         for t in self.tiles.values():
             self._indexedtiles.append(t)
 
+        self.adj = Adjacency(self._grid)
         self._tileadj = dict()
         for v in self._grid.faces:
             self._tileadj[self.tiles[v]] = set([self.tiles[nv] for nv in self.adj[v]])
