@@ -33,10 +33,9 @@ def speciespresence(species, pops, f, i, c):
 
 class LifeformsDisplay(Element):
     attributeindices = [
-        (0,1,2), # life
+        (0,1), # life
         (0,), # animals
-        (1,), #plants
-        (2,)] #trees
+        (1,)] #plants
 
     def __init__(self, sim, selecthandler):
         super().__init__()

@@ -1,0 +1,825 @@
+aardwolf	{"temperatureRange": "10-30", "precipitationRange": "15-100", "kind": "small mammal", "sealife": false, "diet": ["insect", "termite"]}
+adouri	{"temperatureRange": "10-30", "precipitationRange": "70-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+african black crake	{"temperatureRange": "10-35", "precipitationRange": "100-250", "kind": "small bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "seed"]}
+african buffalo	{"temperatureRange": "10-40", "precipitationRange": "65-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+african bush squirrel	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["seed", "nut", "fruit", "plant", "insect", "egg", "small reptile"]}
+african clawless otter	{"temperatureRange": "10-30", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["small fish", "crab", "insect", "small reptile", "small amphibian", "egg"]}
+african darter	{"temperatureRange": "10-40", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "insect", "crustacean", "amphibian"]}
+african elephant	{"temperatureRange": "10-40", "precipitationRange": "75-375", "kind": "giant mammal", "sealife": false, "diet": ["plant", "fruit", "bark", "wood", "root"]}
+african fish eagle	{"temperatureRange": "10-40", "precipitationRange": "70-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "large fish", "small reptile", "small bird", "carcass"]}
+african ground squirrel	{"temperatureRange": "20-35", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["seed", "nut", "fruit", "plant", "insect", "small reptile", "egg"]}
+african jacana	{"temperatureRange": "10-35", "precipitationRange": "100-250", "kind": "small bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "plant"]}
+african lion	{"temperatureRange": "-10-45", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["small mammal", "large mammal", "carcass"]}
+african lynx	{"temperatureRange": "-10-45", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "bird", "reptile", "insect"]}
+african pied wagtail	{"temperatureRange": "-5-35", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "carcass"]}
+african polecat	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "insect", "small reptile", "egg", "carcass"]}
+african porcupine	{"temperatureRange": "-5-40", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "root", "bark", "nut", "bone", "carcass"]}
+african red-eyed bulbul	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["fruit", "seed", "insect", "nectar"]}
+african skink	{"temperatureRange": "24-35", "precipitationRange": "25-75", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "egg", "fruit"]}
+african snake	{"temperatureRange": "20-45", "precipitationRange": "20-150", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "large reptile", "small amphibian", "large amphibian", "small bird", "large bird", "small mammal", "egg"]}
+african wild cat	{"temperatureRange": "-5-50", "precipitationRange": "10-100", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "insect", "egg"]}
+african wild dog	{"temperatureRange": "-10-40", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["small mammal", "large mammal", "carcass"]}
+agama lizard	{"temperatureRange": "25-38", "precipitationRange": "25-100", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "seed"]}
+agile wallaby	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["grass", "fruit", "seed", "plant"]}
+agouti	{"temperatureRange": "20-30", "precipitationRange": "150-400", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "leaf", "root", "flower"]}
+alpaca	{"temperatureRange": "-15-25", "precipitationRange": "30-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+amazon parrot	{"temperatureRange": "20-35", "precipitationRange": "150-300", "kind": "large bird", "sealife": false, "diet": ["fruit", "seed", "nut", "plant", "nectar"]}
+american alligator	{"temperatureRange": "23-35", "precipitationRange": "100-150", "kind": "large reptile", "sealife": false, "diet": ["fish", "small mammal", "bird", "reptile", "amphibian", "carcass"]}
+american badger	{"temperatureRange": "-20-35", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "egg", "carcass"]}
+american beaver	{"temperatureRange": "-40-30", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["plant", "wood", "bark", "leaves", "aquatic plants"]}
+american bighorn sheep	{"temperatureRange": "-20-35", "precipitationRange": "25-50", "kind": "large mammal", "sealife": false, "diet": ["plant", "grass", "forb", "sedge"]}
+american bison	{"temperatureRange": "-30-30", "precipitationRange": "30-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+american black bear	{"temperatureRange": "-30-30", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal", "large mammal", "carcass", "plant", "fruit", "seed", "nut", "berry", "honey"]}
+american buffalo	{"temperatureRange": "-30-40", "precipitationRange": "30-120", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+american crow	{"temperatureRange": "-30-40", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal", "egg", "plant", "fruit", "seed", "nut", "carcass"]}
+american marten	{"temperatureRange": "-30-30", "precipitationRange": "75-200", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "insect", "small bird", "egg", "fruit", "nut", "carcass"]}
+american racer	{"temperatureRange": "10-35", "precipitationRange": "50-120", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "egg"]}
+american virginia opossum	{"temperatureRange": "-10-35", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "fruit", "seed", "nut", "carcass"]}
+american woodcock	{"temperatureRange": "-30-30", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "earthworm", "plant", "seed"]}
+anaconda	{"temperatureRange": "20-35", "precipitationRange": "150-400", "kind": "large reptile", "sealife": false, "diet": ["fish", "small mammal", "large mammal", "small reptile", "large reptile", "small bird", "large bird", "egg"]}
+andean goose	{"temperatureRange": "-5-10", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "insect"]}
+ant	{"temperatureRange": "-10-45", "precipitationRange": "25-300", "kind": "insect", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "plant", "fruit", "seed", "nectar", "honeydew", "carcass"]}
+antelope ground squirrel	{"temperatureRange": "10-40", "precipitationRange": "15-40", "kind": "small mammal", "sealife": false, "diet": ["seed", "plant", "fruit", "insect"]}
+arboral spiny rat	{"temperatureRange": "20-30", "precipitationRange": "100-200", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "plant"]}
+arctic fox	{"temperatureRange": "-50-10", "precipitationRange": "15-30", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "bird", "egg", "fish", "carcass", "plant"]}
+arctic ground squirrel	{"temperatureRange": "-30-20", "precipitationRange": "15-30", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "insect", "small mammal", "egg", "carcass"]}
+arctic hare	{"temperatureRange": "-40-10", "precipitationRange": "15-25", "kind": "small mammal", "sealife": false, "diet": ["plant", "berry", "bud", "bark", "moss", "lichen"]}
+arctic lemming	{"temperatureRange": "-30-15", "precipitationRange": "15-50", "kind": "small mammal", "sealife": false, "diet": ["plant", "seed", "fruit", "moss"]}
+arctic tern	{"temperatureRange": "-40-25", "precipitationRange": "13-38", "kind": "small bird", "sealife": false, "diet": ["small fish", "crustaceans", "insects", "mollusks", "worms", "eggs"]}
+argalis	{"temperatureRange": "-30-20", "precipitationRange": "25-75", "kind": "large mammal", "sealife": false, "diet": ["plant", "grass"]}
+asian elephant	{"temperatureRange": "10-35", "precipitationRange": "75-300", "kind": "giant mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "wood", "bark"]}
+asian false vampire bat	{"temperatureRange": "10-30", "precipitationRange": "100-200", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small bird"]}
+asian foreset tortoise	{"temperatureRange": "20-30", "precipitationRange": "150-300", "kind": "large reptile", "sealife": false, "diet": ["plant", "fruit", "seed", "carcass", "insect"]}
+asian lion	{"temperatureRange": "-5-45", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["large mammal", "small mammal", "reptile", "bird", "carcass"]}
+asian openbill	{"temperatureRange": "10-35", "precipitationRange": "100-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "snail", "crab", "insect", "small reptile", "small amphibian"]}
+asian red fox	{"temperatureRange": "-20-45", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small bird", "small mammal", "fruit", "seed", "carcass"]}
+asian water buffalo	{"temperatureRange": "10-40", "precipitationRange": "100-200", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit"]}
+asian water dragon	{"temperatureRange": "22-31", "precipitationRange": "100-250", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "small fish", "egg", "plant", "fruit"]}
+asiatic jackal	{"temperatureRange": "-10-45", "precipitationRange": "10-100", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "large reptile", "small bird", "small mammal", "fruit", "seed", "carcass"]}
+asiatic wild ass	{"temperatureRange": "-15-45", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+australian brush turkey	{"temperatureRange": "10-40", "precipitationRange": "70-200", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "seed"]}
+australian magpie	{"temperatureRange": "-5-45", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small bird", "small mammal", "carcass", "seed", "fruit"]}
+australian masked owl	{"temperatureRange": "-5-35", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["small mammal", "small bird", "insect", "small reptile", "small amphibian"]}
+australian pelican	{"temperatureRange": "-5-45", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "large fish", "crustacean", "amphibian", "small reptile"]}
+australian sea lion	{"temperatureRange": "10-20", "precipitationRange": "50-150", "kind": "large mammal", "sealife": true, "diet": ["small fish", "squid", "octopus", "cuttlefish", "crustacean"]}
+australian spiny anteater	{"temperatureRange": "10-35", "precipitationRange": "20-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "ant", "termite"]}
+azara's zorro	{"temperatureRange": "-10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "bird", "egg", "fruit", "carcass"]}
+bahama pintail	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["plant", "seed", "insect", "small fish", "small amphibian"]}
+bald eagle	{"temperatureRange": "-30-38", "precipitationRange": "25-380", "kind": "large bird", "sealife": false, "diet": ["small fish", "large fish", "small mammal", "carcass", "egg"]}
+baleen whale	{"temperatureRange": "-1-25", "precipitationRange": "50-250", "kind": "giant mammal", "sealife": true, "diet": ["krill", "small fish", "crustaceans"]}
+banded mongoose	{"temperatureRange": "10-40", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "fruit", "seed"]}
+barasingha deer	{"temperatureRange": "10-35", "precipitationRange": "70-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+bare-faced go away bird	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["fruit", "seed", "insect", "small reptile"]}
+barking gecko	{"temperatureRange": "21-32", "precipitationRange": "40-100", "kind": "small reptile", "sealife": false, "diet": ["insect"]}
+barrows goldeneye	{"temperatureRange": "-30-20", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "plant"]}
+bat-eared fox	{"temperatureRange": "-5-45", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "carcass"]}
+bateleur eagle	{"temperatureRange": "10-45", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["small reptile", "large reptile", "small bird", "large bird", "small mammal", "carcass"]}
+bee-eater	{"temperatureRange": "10-35", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["insect", "bee", "wasp", "hornet", "dragonfly", "butterfly"]}
+beisa oryx	{"temperatureRange": "15-45", "precipitationRange": "10-40", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut"]}
+bengal vulture	{"temperatureRange": "10-45", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["carcass"]}
+bennett's wallaby	{"temperatureRange": "-5-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["grass", "leaves", "fruit", "bark"]}
+bent-toed gecko	{"temperatureRange": "21-29", "precipitationRange": "100-200", "kind": "small reptile", "sealife": false, "diet": ["insect"]}
+bird	{"temperatureRange": "-10-35", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "seed", "nectar"]}
+black and white colobus	{"temperatureRange": "10-30", "precipitationRange": "100-300", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "leaf"]}
+black bear	{"temperatureRange": "-40-32", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["insect", "small reptile", "large reptile", "small mammal", "large mammal", "fish", "carcass", "plant", "fruit", "seed", "nut", "honey"]}
+black curlew	{"temperatureRange": "10-35", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "crustacean", "worm"]}
+black kite	{"temperatureRange": "-10-45", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "large reptile", "small amphibian", "small bird", "small mammal", "carcass", "egg"]}
+black rhinoceros	{"temperatureRange": "15-40", "precipitationRange": "25-150", "kind": "giant mammal", "sealife": false, "diet": ["plant"]}
+black spider monkey	{"temperatureRange": "20-30", "precipitationRange": "150-400", "kind": "large mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "leaf", "insect", "egg"]}
+black swan	{"temperatureRange": "-5-35", "precipitationRange": "40-150", "kind": "large bird", "sealife": false, "diet": ["plant", "algae", "seed", "root"]}
+black vulture	{"temperatureRange": "-10-45", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["carcass", "small reptile", "small amphibian", "small mammal", "egg"]}
+black-backed jackal	{"temperatureRange": "-10-45", "precipitationRange": "15-100", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "large reptile", "small mammal", "large mammal", "carcass", "fruit", "seed", "plant"]}
+black-backed magpie	{"temperatureRange": "-15-30", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "carcass", "egg", "fruit", "seed", "nut"]}
+black-capped capuchin	{"temperatureRange": "10-30", "precipitationRange": "150-400", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small bird", "egg", "fruit", "seed", "nut", "plant"]}
+black-capped chickadee	{"temperatureRange": "-40-38", "precipitationRange": "30-100", "kind": "small bird", "sealife": false, "diet": ["insect", "spider", "seed", "nut", "fruit", "berry", "suet"]}
+black-cheeked waxbill	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["seed", "insect"]}
+black-collared barbet	{"temperatureRange": "20-30", "precipitationRange": "100-300", "kind": "small bird", "sealife": false, "diet": ["fruit", "insect", "seed", "nectar"]}
+black-crowned crane	{"temperatureRange": "10-35", "precipitationRange": "75-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "plant", "seed"]}
+black-crowned night heron	{"temperatureRange": "-10-35", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "crustaceans", "insects", "small amphibians", "small reptiles", "small mammals", "egg"]}
+black-eyed bulbul	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["fruit", "seed", "nectar", "insect"]}
+black-faced kangaroo	{"temperatureRange": "-5-40", "precipitationRange": "25-75", "kind": "large mammal", "sealife": false, "diet": ["plant", "grass"]}
+black-footed ferret	{"temperatureRange": "-30-38", "precipitationRange": "25-50", "kind": "small mammal", "sealife": false, "diet": ["prairie dog", "small mammal", "insect", "bird"]}
+black-fronted bulbul	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["fruit", "seed", "insect", "nectar"]}
+black-necked stork	{"temperatureRange": "10-45", "precipitationRange": "70-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "large fish", "small amphibian", "large amphibian", "insect", "small reptile", "crustacean", "mollusc"]}
+black-tailed deer	{"temperatureRange": "-15-35", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "grass", "forb", "lichen"]}
+black-tailed prairie dog	{"temperatureRange": "-30-35", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "insect"]}
+black-tailed tree creeper	{"temperatureRange": "-10-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "spider", "egg"]}
+black-throated butcher bird	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small bird", "small mammal", "carcass"]}
+black-throated cardinal	{"temperatureRange": "10-35", "precipitationRange": "75-150", "kind": "small bird", "sealife": false, "diet": ["insect", "seed", "fruit", "nectar"]}
+black-winged stilt	{"temperatureRange": "10-35", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "crustacean", "mollusk"]}
+blackbuck	{"temperatureRange": "10-45", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+blackish oystercatcher	{"temperatureRange": "-5-25", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["mollusk", "crustacean", "marine worm", "insect", "egg"]}
+blacksmith plover	{"temperatureRange": "10-45", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "seed"]}
+bleeding heart monkey	{"temperatureRange": "15-25", "precipitationRange": "200-400", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "plant", "insect"]}
+blesbok	{"temperatureRange": "-10-35", "precipitationRange": "30-80", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+blue and gold macaw	{"temperatureRange": "20-35", "precipitationRange": "150-300", "kind": "large bird", "sealife": false, "diet": ["fruit", "seed", "nut", "insect", "small reptile"]}
+blue and yellow macaw	{"temperatureRange": "20-35", "precipitationRange": "150-300", "kind": "large bird", "sealife": false, "diet": ["fruit", "seed", "nut", "insect", "small reptile"]}
+blue catfish	{"temperatureRange": "4-32", "precipitationRange": "75-150", "kind": "large fish", "sealife": false, "diet": ["insect", "small fish", "large fish", "carcass"]}
+blue crane	{"temperatureRange": "-10-40", "precipitationRange": "40-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "seed", "plant"]}
+blue duck	{"temperatureRange": "10-25", "precipitationRange": "100-250", "kind": "large bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "plant"]}
+blue fox	{"temperatureRange": "-50-30", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "bird", "egg", "fish", "carcass", "plant", "berry"]}
+blue peacock	{"temperatureRange": "-5-35", "precipitationRange": "75-200", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "seed", "grain", "fruit", "flower", "nectar"]}
+blue racer	{"temperatureRange": "20-30", "precipitationRange": "50-100", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "egg"]}
+blue shark	{"temperatureRange": "7-24", "precipitationRange": "100-250", "kind": "large fish", "sealife": true, "diet": ["small fish", "large fish", "squid", "octopus", "carcass"]}
+blue waxbill	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["seed", "insect"]}
+blue wildebeest	{"temperatureRange": "10-40", "precipitationRange": "30-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+blue-breasted cordon bleu	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["seed", "insect"]}
+blue-faced booby	{"temperatureRange": "20-30", "precipitationRange": "75-150", "kind": "large bird", "sealife": false, "diet": ["small fish"]}
+blue-footed booby	{"temperatureRange": "25-30", "precipitationRange": "0-50", "kind": "large bird", "sealife": false, "diet": ["small fish", "squid"]}
+blue-tongued lizard	{"temperatureRange": "20-35", "precipitationRange": "50-150", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "seed", "carcass"]}
+blue-tongued skink	{"temperatureRange": "20-30", "precipitationRange": "50-100", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "plant", "fruit", "seed", "carcass"]}
+boat-billed heron	{"temperatureRange": "10-35", "precipitationRange": "100-300", "kind": "large bird", "sealife": false, "diet": ["small fish", "crustaceans", "aquatic insects", "small amphibians", "small reptiles"]}
+bobcat	{"temperatureRange": "-30-40", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "large bird", "small reptile", "insect", "carcass"]}
+bohor reedbuck	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["plant"]}
+bonnet macaque	{"temperatureRange": "10-40", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "plant", "fruit", "seed", "nut"]}
+bontebok	{"temperatureRange": "-5-35", "precipitationRange": "30-80", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+bottle-nose dolphin	{"temperatureRange": "10-32", "precipitationRange": "100-250", "kind": "large mammal", "sealife": true, "diet": ["small fish", "large fish", "squid", "shrimp", "crustaceans"]}
+brazilian otter	{"temperatureRange": "10-35", "precipitationRange": "150-300", "kind": "small mammal", "sealife": false, "diet": ["fish", "crustacean", "mollusc", "small reptile", "small mammal", "insect", "egg"]}
+brazilian tapir	{"temperatureRange": "10-30", "precipitationRange": "150-400", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "leaves", "twigs", "aquatic plants"]}
+brindled gnu	{"temperatureRange": "10-35", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+brolga crane	{"temperatureRange": "5-40", "precipitationRange": "40-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "plant", "seed", "bulb", "root"]}
+brown and yellow marshbird	{"temperatureRange": "10-35", "precipitationRange": "100-300", "kind": "small bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "seed"]}
+brown antechinus	{"temperatureRange": "10-25", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "seed"]}
+brown brocket	{"temperatureRange": "20-30", "precipitationRange": "150-400", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut"]}
+brown capuchin	{"temperatureRange": "20-30", "precipitationRange": "150-400", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small bird", "egg", "fruit", "seed", "nut", "nectar"]}
+brown hyena	{"temperatureRange": "-10-45", "precipitationRange": "10-100", "kind": "large mammal", "sealife": false, "diet": ["carcass", "small mammal", "large mammal", "insect", "egg", "fruit", "plant"]}
+brown lemur	{"temperatureRange": "10-30", "precipitationRange": "100-350", "kind": "small mammal", "sealife": false, "diet": ["fruit", "leaves", "flowers", "nectar", "insect"]}
+brown pelican	{"temperatureRange": "10-35", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["small fish"]}
+brush-tailed bettong	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "fungi", "insect"]}
+brush-tailed phascogale	{"temperatureRange": "-5-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small bird", "small mammal", "fruit", "nectar", "seed"]}
+brush-tailed rat kangaroo	{"temperatureRange": "10-35", "precipitationRange": "50-100", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "insect", "fungi"]}
+burchell's gonolek	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "spider"]}
+burmese black mountain tortoise	{"temperatureRange": "20-28", "precipitationRange": "100-200", "kind": "large reptile", "sealife": false, "diet": ["plant", "fruit", "vegetable", "grass", "hay"]}
+burmese brown mountain tortoise	{"temperatureRange": "18-28", "precipitationRange": "100-200", "kind": "large reptile", "sealife": false, "diet": ["plant", "fruit", "vegetable", "carcass"]}
+burrowing owl	{"temperatureRange": "-10-40", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "small mammal", "small reptile", "small bird", "egg"]}
+bush dog	{"temperatureRange": "20-30", "precipitationRange": "150-300", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small reptile", "small bird", "insect"]}
+bushbuck	{"temperatureRange": "10-35", "precipitationRange": "70-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "flower"]}
+bushpig	{"temperatureRange": "10-35", "precipitationRange": "75-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "insect", "small reptile", "small mammal", "carcass", "egg"]}
+butterfly	{"temperatureRange": "10-40", "precipitationRange": "25-200", "kind": "insect", "sealife": false, "diet": ["nectar", "pollen", "fruit", "tree sap"]}
+buttermilk snake	{"temperatureRange": "24-30", "precipitationRange": "75-125", "kind": "small reptile", "sealife": false, "diet": ["small reptile", "small mammal", "egg"]}
+california sea lion	{"temperatureRange": "8-27", "precipitationRange": "0-100", "kind": "large mammal", "sealife": false, "diet": ["small fish", "squid", "octopus", "crustaceans"]}
+campo flicker	{"temperatureRange": "-5-35", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "fruit", "seed"]}
+canada goose	{"temperatureRange": "-40-30", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "grain", "grass", "berry", "insect", "small fish", "small amphibian"]}
+canadian river otter	{"temperatureRange": "-40-30", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["small fish", "large fish", "small mammal", "insect", "small reptile", "small amphibian", "large amphibian", "egg", "carcass"]}
+canadian tiger swallowtail butterfly	{"temperatureRange": "10-30", "precipitationRange": "75-150", "kind": "insect", "sealife": false, "diet": ["nectar", "plant"]}
+cape barren goose	{"temperatureRange": "-15-35", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "fruit", "insect"]}
+cape clawless otter	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["small fish", "crab", "insect", "small reptile", "small amphibian", "egg"]}
+cape cobra	{"temperatureRange": "20-35", "precipitationRange": "25-100", "kind": "large reptile", "sealife": false, "diet": ["small reptile", "large reptile", "small amphibian", "small bird", "small mammal", "egg", "carcass"]}
+cape fox	{"temperatureRange": "-10-40", "precipitationRange": "10-50", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "seed", "carcass"]}
+cape raven	{"temperatureRange": "-5-35", "precipitationRange": "0-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "carcass", "egg", "fruit", "seed"]}
+cape starling	{"temperatureRange": "-5-35", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "seed", "nectar"]}
+cape white-eye	{"temperatureRange": "10-25", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "nectar", "fruit"]}
+cape wild cat	{"temperatureRange": "-5-45", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "large reptile", "insect", "carcass"]}
+capybara	{"temperatureRange": "20-35", "precipitationRange": "100-200", "kind": "giant mammal", "sealife": false, "diet": ["plant", "grass", "aquatic plants", "fruit", "bark"]}
+caracal	{"temperatureRange": "-15-50", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "large bird", "small reptile", "insect"]}
+caracara	{"temperatureRange": "-10-40", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["carcass", "insect", "small reptile", "small amphibian", "small mammal", "egg", "fruit"]}
+caribou	{"temperatureRange": "-55-20", "precipitationRange": "30-120", "kind": "large mammal", "sealife": false, "diet": ["lichen", "plant", "moss", "mushroom"]}
+carmine bee-eater	{"temperatureRange": "20-45", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["insect", "bee", "wasp", "hornet", "flying ant", "locust"]}
+carpet python	{"temperatureRange": "24-32", "precipitationRange": "70-150", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "large bird", "small reptile", "egg"]}
+carpet snake	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "large reptile", "sealife": false, "diet": ["small reptile", "large reptile", "small bird", "large bird", "small mammal", "egg"]}
+cattle egret	{"temperatureRange": "10-40", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal"]}
+cereopsis goose	{"temperatureRange": "-5-25", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "insect"]}
+chacma baboon	{"temperatureRange": "-10-40", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "plant", "fruit", "seed", "nut", "carcass"]}
+chameleon	{"temperatureRange": "24-29", "precipitationRange": "50-150", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "plant", "fruit"]}
+cheetah	{"temperatureRange": "-5-40", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["small mammal", "large mammal", "bird"]}
+chestnut weaver	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["seed", "insect"]}
+chilean flamingo	{"temperatureRange": "-10-35", "precipitationRange": "0-100", "kind": "large bird", "sealife": false, "diet": ["algae", "crustaceans", "insects", "larvae", "mollusks", "small fish"]}
+chimpanzee	{"temperatureRange": "10-30", "precipitationRange": "150-2000", "kind": "large mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "insect", "small mammal", "plant"]}
+chital	{"temperatureRange": "10-40", "precipitationRange": "70-200", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut"]}
+chuckwalla	{"temperatureRange": "20-40", "precipitationRange": "0-25", "kind": "large reptile", "sealife": false, "diet": ["plant", "fruit", "flower", "leaf"]}
+civet	{"temperatureRange": "10-30", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "seed", "egg", "carcass"]}
+civet cat	{"temperatureRange": "10-30", "precipitationRange": "100-250", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "egg", "plant", "fruit", "seed"]}
+clark's nutcracker	{"temperatureRange": "-30-30", "precipitationRange": "40-100", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "plant", "fruit", "seed", "nut", "carcass"]}
+cobra	{"temperatureRange": "24-32", "precipitationRange": "75-150", "kind": "large reptile", "sealife": false, "diet": ["small reptile", "large reptile", "small mammal", "large mammal", "bird", "egg", "carcass"]}
+coke's hartebeest	{"temperatureRange": "10-40", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+collared lemming	{"temperatureRange": "-30-15", "precipitationRange": "30-100", "kind": "small mammal", "sealife": false, "diet": ["plant", "moss", "lichen", "seed", "grass", "bark"]}
+collared lizard	{"temperatureRange": "24-35", "precipitationRange": "25-50", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "egg"]}
+collared peccary	{"temperatureRange": "20-35", "precipitationRange": "50-250", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "root", "bulb", "plant", "insect", "small reptile", "small mammal", "carcass"]}
+columbian rainbow boa	{"temperatureRange": "24-30", "precipitationRange": "150-250", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "large reptile", "small reptile", "amphibian"]}
+comb duck	{"temperatureRange": "10-35", "precipitationRange": "75-150", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "insect", "small fish", "small reptile", "small amphibian"]}
+common boubou shrike	{"temperatureRange": "10-40", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "small bird"]}
+common brushtail possum	{"temperatureRange": "-10-40", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small bird", "egg", "plant", "fruit", "seed", "nectar", "nut"]}
+common dolphin	{"temperatureRange": "10-28", "precipitationRange": "0-200", "kind": "large mammal", "sealife": true, "diet": ["small fish", "squid", "octopus", "crustacean"]}
+common duiker	{"temperatureRange": "15-30", "precipitationRange": "70-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "insect", "small reptile", "small mammal", "carcass"]}
+common eland	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+common genet	{"temperatureRange": "-10-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "insect", "small bird", "small reptile", "egg", "fruit", "carcass"]}
+common goldeneye	{"temperatureRange": "-40-20", "precipitationRange": "30-100", "kind": "large bird", "sealife": false, "diet": ["small fish", "insect", "small crustacean", "small amphibian", "plant"]}
+common green iguana	{"temperatureRange": "24-35", "precipitationRange": "60-180", "kind": "large reptile", "sealife": false, "diet": ["plant", "fruit", "flower", "leaf"]}
+common grenadier	{"temperatureRange": "-1-4", "precipitationRange": "0-50", "kind": "large fish", "sealife": true, "diet": ["small fish", "crustaceans", "cephalopods", "carcass"]}
+common langur	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "flower"]}
+common long-nosed armadillo	{"temperatureRange": "10-35", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "plant", "fruit", "seed"]}
+common melba finch	{"temperatureRange": "20-35", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["seed"]}
+common mynah	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "seed", "nectar", "carcass"]}
+common nighthawk	{"temperatureRange": "-30-40", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect"]}
+common palm civet	{"temperatureRange": "10-30", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["fruit", "insect", "small mammal", "small reptile", "small bird", "egg", "seed", "nectar"]}
+common pheasant	{"temperatureRange": "-10-30", "precipitationRange": "50-100", "kind": "large bird", "sealife": false, "diet": ["insect", "seed", "grain", "fruit", "leaf"]}
+common raccoon	{"temperatureRange": "-30-40", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal", "egg", "plant", "fruit", "seed", "nut", "carcass"]}
+common rhea	{"temperatureRange": "-10-40", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["plant", "fruit", "seed", "insect", "small reptile", "small mammal"]}
+common ringtail	{"temperatureRange": "-10-40", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small bird", "small mammal", "fruit", "nectar", "seed", "nut"]}
+common seal	{"temperatureRange": "-2-20", "precipitationRange": "50-150", "kind": "large mammal", "sealife": true, "diet": ["small fish", "large fish", "crustacean"]}
+common shelduck	{"temperatureRange": "-10-30", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small fish", "small crustacean", "mollusc", "plant", "seed"]}
+common turkey	{"temperatureRange": "-10-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "plant", "fruit", "seed", "nut"]}
+common wallaroo	{"temperatureRange": "-5-40", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant", "grass", "leaves", "fruit", "seed"]}
+common waterbuck	{"temperatureRange": "10-35", "precipitationRange": "70-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+common wolf	{"temperatureRange": "-50-40", "precipitationRange": "25-200", "kind": "large mammal", "sealife": false, "diet": ["large mammal", "small mammal", "carcass"]}
+common wombat	{"temperatureRange": "10-25", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["plant", "grass", "roots", "bark"]}
+common zebra	{"temperatureRange": "10-35", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+common zorro	{"temperatureRange": "-10-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["rodent", "rabbit", "bird", "insect", "reptile", "fruit", "carcass"]}
+cook's tree boa	{"temperatureRange": "24-30", "precipitationRange": "150-250", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "small bird", "large reptile", "egg"]}
+coqui francolin	{"temperatureRange": "20-30", "precipitationRange": "50-100", "kind": "small bird", "sealife": false, "diet": ["seed", "insect", "small reptile"]}
+coqui partridge	{"temperatureRange": "20-30", "precipitationRange": "100-200", "kind": "small bird", "sealife": false, "diet": ["seed", "fruit", "insect"]}
+cormorant	{"temperatureRange": "-20-40", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "large fish"]}
+cottonmouth	{"temperatureRange": "10-32", "precipitationRange": "100-200", "kind": "large reptile", "sealife": false, "diet": ["small fish", "small reptile", "large reptile", "small amphibian", "large amphibian", "small bird", "small mammal", "large mammal", "carcass", "egg"]}
+cougar	{"temperatureRange": "-30-40", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["deer", "elk", "moose", "small mammal", "large reptile", "small bird", "carcass"]}
+coyote	{"temperatureRange": "-40-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "large mammal", "insect", "small reptile", "small bird", "large bird", "fruit", "carcass"]}
+crab	{"temperatureRange": "5-30", "precipitationRange": "0-200", "kind": "small fish", "sealife": true, "diet": ["algae", "plankton", "small fish", "mollusks", "worms", "carcass"]}
+crab-eating fox	{"temperatureRange": "20-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "seed", "carcass", "crab"]}
+crab-eating raccoon	{"temperatureRange": "10-35", "precipitationRange": "150-300", "kind": "small mammal", "sealife": false, "diet": ["crab", "insect", "small reptile", "small amphibian", "small fish", "fruit", "seed", "nut", "egg", "carcass"]}
+crested barbet	{"temperatureRange": "10-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["fruit", "insect", "seed", "nectar"]}
+crested bunting	{"temperatureRange": "-10-35", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["seed", "insect", "plant"]}
+crested porcupine	{"temperatureRange": "-5-40", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "root", "bark", "tuber", "bulb", "crop", "bone"]}
+crested screamer	{"temperatureRange": "10-35", "precipitationRange": "100-250", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "insect", "small reptile", "small amphibian"]}
+crimson-breasted shrike	{"temperatureRange": "0-35", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal"]}
+crown of thorns starfish	{"temperatureRange": "23-29", "precipitationRange": "100-300", "kind": "large fish", "sealife": true, "diet": ["coral"]}
+crowned eagle	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "large bird", "reptile"]}
+crowned hawk-eagle	{"temperatureRange": "20-35", "precipitationRange": "100-300", "kind": "large bird", "sealife": false, "diet": ["small mammal", "large reptile", "small bird", "large bird", "small amphibian", "insect"]}
+cuis	{"temperatureRange": "20-30", "precipitationRange": "70-350", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "insect", "small reptile", "egg"]}
+currasow	{"temperatureRange": "20-30", "precipitationRange": "100-300", "kind": "large bird", "sealife": false, "diet": ["fruit", "seed", "insect", "small reptile", "small amphibian"]}
+curve-billed thrasher	{"temperatureRange": "-10-45", "precipitationRange": "25-75", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "fruit", "seed", "nectar"]}
+dabchick	{"temperatureRange": "0-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "insect", "small amphibian", "crustacean", "mollusc"]}
+dama wallaby	{"temperatureRange": "10-35", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+dark-winged trumpeter	{"temperatureRange": "10-30", "precipitationRange": "150-300", "kind": "large bird", "sealife": false, "diet": ["fruit", "seed", "insect", "small reptile", "small amphibian"]}
+darwin ground finch	{"temperatureRange": "10-30", "precipitationRange": "0-100", "kind": "small bird", "sealife": false, "diet": ["seed", "insect", "plant", "fruit"]}
+dassie	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit"]}
+defassa waterbuck	{"temperatureRange": "10-35", "precipitationRange": "70-180", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+denham's bustard	{"temperatureRange": "10-40", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "seed", "plant"]}
+desert kangaroo rat	{"temperatureRange": "0-40", "precipitationRange": "0-50", "kind": "small mammal", "sealife": false, "diet": ["seed", "plant", "insect"]}
+desert spiny lizard	{"temperatureRange": "20-45", "precipitationRange": "0-25", "kind": "small reptile", "sealife": false, "diet": ["insect", "plant"]}
+desert tortoise	{"temperatureRange": "0-50", "precipitationRange": "10-25", "kind": "large reptile", "sealife": false, "diet": ["plant", "fruit", "flower", "grass", "herb", "cactus"]}
+dingo	{"temperatureRange": "-5-45", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["small mammal", "large mammal", "bird", "reptile", "insect", "fish", "carcass", "fruit"]}
+downy woodpecker	{"temperatureRange": "-30-30", "precipitationRange": "30-200", "kind": "small bird", "sealife": false, "diet": ["insect", "larva", "plant", "fruit", "seed", "nut", "sap"]}
+dromedary camel	{"temperatureRange": "-5-50", "precipitationRange": "0-100", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut"]}
+dusky gull	{"temperatureRange": "-5-30", "precipitationRange": "0-100", "kind": "large bird", "sealife": false, "diet": ["fish", "invertebrate", "carcass", "egg", "garbage"]}
+dusky rattlesnake	{"temperatureRange": "10-35", "precipitationRange": "50-100", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "large reptile", "small reptile", "small bird", "egg"]}
+eagle owl	{"temperatureRange": "-30-45", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "large bird", "reptile", "amphibian", "fish", "insect", "carcass"]}
+eastern boa constrictor	{"temperatureRange": "24-32", "precipitationRange": "100-200", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "large bird", "small reptile", "egg"]}
+eastern box turtle	{"temperatureRange": "10-30", "precipitationRange": "100-150", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "egg", "plant", "fruit", "mushroom"]}
+eastern cottontail rabbit	{"temperatureRange": "-30-35", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "bark", "twig"]}
+eastern diamondback rattlesnake	{"temperatureRange": "24-35", "precipitationRange": "90-160", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "small bird", "large reptile"]}
+eastern dwarf mongoose	{"temperatureRange": "20-35", "precipitationRange": "50-100", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "fruit"]}
+eastern fox squirrel	{"temperatureRange": "-30-40", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["nut", "seed", "fruit", "plant", "insect", "small reptile", "small amphibian", "egg"]}
+eastern grey kangaroo	{"temperatureRange": "10-35", "precipitationRange": "50-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+eastern indigo snake	{"temperatureRange": "17-29", "precipitationRange": "100-150", "kind": "large reptile", "sealife": false, "diet": ["small reptile", "large reptile", "small amphibian", "small mammal", "egg", "carcass"]}
+eastern quoll	{"temperatureRange": "-10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small bird", "small mammal", "carcass", "fruit", "seed"]}
+eastern white pelican	{"temperatureRange": "-20-40", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["small fish", "large fish", "small amphibian", "insect"]}
+egyptian cobra	{"temperatureRange": "20-35", "precipitationRange": "10-50", "kind": "large reptile", "sealife": false, "diet": ["small reptile", "small mammal", "bird", "egg", "carcass"]}
+egyptian goose	{"temperatureRange": "-5-35", "precipitationRange": "0-100", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "fruit", "insect", "small reptile", "small amphibian"]}
+egyptian viper	{"temperatureRange": "20-35", "precipitationRange": "0-25", "kind": "small reptile", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "egg"]}
+egyptian vulture	{"temperatureRange": "10-45", "precipitationRange": "0-100", "kind": "large bird", "sealife": false, "diet": ["carcass", "small reptile", "small mammal", "egg", "insect"]}
+elegant crested tinamou	{"temperatureRange": "10-25", "precipitationRange": "100-200", "kind": "large bird", "sealife": false, "diet": ["seed", "fruit", "insect", "small reptile", "small mammal"]}
+eleven-banded armadillo	{"temperatureRange": "10-38", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "egg", "plant", "fruit", "fungi"]}
+elk, wapiti	{"temperatureRange": "-30-30", "precipitationRange": "50-250", "kind": "large mammal", "sealife": false, "diet": ["plant", "grass", "forb", "bark", "twig"]}
+emerald green tree boa	{"temperatureRange": "24-30", "precipitationRange": "150-500", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "amphibian"]}
+emerald-spotted wood dove	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["seed", "fruit", "insect"]}
+emu	{"temperatureRange": "-5-45", "precipitationRange": "40-100", "kind": "large bird", "sealife": false, "diet": ["plant", "fruit", "seed", "insect", "small reptile"]}
+eurasian badger	{"temperatureRange": "-10-25", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "egg", "plant", "fruit", "seed", "nut", "carcass"]}
+eurasian beaver	{"temperatureRange": "-10-20", "precipitationRange": "75-150", "kind": "large mammal", "sealife": false, "diet": ["wood", "plant"]}
+eurasian hoopoe	{"temperatureRange": "10-35", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian"]}
+eurasian red squirrel	{"temperatureRange": "-30-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["seed", "nut", "fruit", "fungi", "insect", "egg"]}
+euro wallaby	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["plant"]}
+european badger	{"temperatureRange": "-20-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small mammal", "fruit", "seed", "nut", "carcass"]}
+european beaver	{"temperatureRange": "-10-25", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "wood", "bark"]}
+european red squirrel	{"temperatureRange": "-10-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["seed", "nut", "fruit", "fungi", "egg", "insect"]}
+european shelduck	{"temperatureRange": "-5-25", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "plant", "seed"]}
+european spoonbill	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["small fish", "insect", "small amphibian", "small reptile", "crustacean", "mollusc"]}
+european stork	{"temperatureRange": "0-35", "precipitationRange": "40-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "small fish", "egg", "carcass"]}
+european wild cat	{"temperatureRange": "-10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "insect", "egg", "carcass"]}
+fairy penguin	{"temperatureRange": "5-25", "precipitationRange": "50-100", "kind": "small bird", "sealife": false, "diet": ["small fish", "krill", "squid"]}
+fat-tailed dunnart	{"temperatureRange": "10-30", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "seed", "nectar"]}
+feathertail glider	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "nectar", "pollen", "sap", "fruit", "seed"]}
+feral rock pigeon	{"temperatureRange": "-20-40", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["seed", "grain", "fruit", "insect", "small mammal", "carcass"]}
+ferruginous hawk	{"temperatureRange": "-30-40", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["small mammal", "small bird", "large reptile", "small reptile", "insect", "carcass"]}
+field flicker	{"temperatureRange": "-20-40", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "seed", "fruit", "nut"]}
+fisher	{"temperatureRange": "-30-30", "precipitationRange": "100-250", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "snowshoe hare", "carcass", "fruit", "nut"]}
+flightless cormorant	{"temperatureRange": "10-25", "precipitationRange": "75-150", "kind": "large bird", "sealife": false, "diet": ["small fish", "eel"]}
+flying fox	{"temperatureRange": "20-30", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["fruit", "nectar", "flower"]}
+fork-tailed drongo	{"temperatureRange": "20-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian"]}
+four-horned antelope	{"temperatureRange": "10-35", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+four-spotted skimmer	{"temperatureRange": "20-35", "precipitationRange": "50-150", "kind": "insect", "sealife": false, "diet": ["insect"]}
+four-striped grass mouse	{"temperatureRange": "15-30", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["seed", "plant", "insect", "fruit"]}
+frilled dragon	{"temperatureRange": "24-30", "precipitationRange": "70-150", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "spider"]}
+frilled lizard	{"temperatureRange": "24-30", "precipitationRange": "70-150", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "spider"]}
+fringe-eared oryx	{"temperatureRange": "15-50", "precipitationRange": "10-50", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "root"]}
+frog	{"temperatureRange": "4-35", "precipitationRange": "100-200", "kind": "small amphibian", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal"]}
+galah	{"temperatureRange": "0-40", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["seed", "nut", "fruit", "insect", "plant"]}
+galapagos albatross	{"temperatureRange": "15-25", "precipitationRange": "75-150", "kind": "large bird", "sealife": false, "diet": ["fish", "squid", "crustacean"]}
+galapagos dove	{"temperatureRange": "15-30", "precipitationRange": "0-75", "kind": "small bird", "sealife": false, "diet": ["seed", "fruit", "insect", "carcass"]}
+galapagos hawk	{"temperatureRange": "15-30", "precipitationRange": "0-75", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small bird", "egg", "carcass", "galapagos lava lizard", "marine iguana"]}
+galapagos mockingbird	{"temperatureRange": "15-30", "precipitationRange": "0-75", "kind": "small bird", "sealife": false, "diet": ["insect", "fruit", "seed", "nectar", "egg", "carcass"]}
+galapagos penguin	{"temperatureRange": "15-28", "precipitationRange": "0-75", "kind": "small bird", "sealife": false, "diet": ["small fish"]}
+galapagos sea lion	{"temperatureRange": "15-28", "precipitationRange": "25-75", "kind": "large mammal", "sealife": true, "diet": ["small fish", "squid", "octopus"]}
+galapagos tortoise	{"temperatureRange": "20-32", "precipitationRange": "25-75", "kind": "large reptile", "sealife": false, "diet": ["plant", "fruit", "cactus"]}
+gambel's quail	{"temperatureRange": "10-40", "precipitationRange": "25-50", "kind": "small bird", "sealife": false, "diet": ["seed", "fruit", "insect", "plant"]}
+gaur	{"temperatureRange": "20-30", "precipitationRange": "100-400", "kind": "large mammal", "sealife": false, "diet": ["plant", "grass", "fruit"]}
+gecko	{"temperatureRange": "20-40", "precipitationRange": "25-150", "kind": "small reptile", "sealife": false, "diet": ["insect"]}
+gelada baboon	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["grass", "seed", "root", "fruit", "insect", "small mammal"]}
+gemsbok	{"temperatureRange": "10-45", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "root"]}
+genoveva butterfly	{"temperatureRange": "15-30", "precipitationRange": "75-200", "kind": "insect", "sealife": false, "diet": ["nectar", "pollen", "honeydew"]}
+gerbil	{"temperatureRange": "20-30", "precipitationRange": "25-50", "kind": "small mammal", "sealife": false, "diet": ["seed", "nut", "fruit", "plant", "insect"]}
+gerenuk	{"temperatureRange": "20-40", "precipitationRange": "25-75", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "flower"]}
+giant anteater	{"temperatureRange": "20-30", "precipitationRange": "150-250", "kind": "large mammal", "sealife": false, "diet": ["ant", "termite"]}
+giant armadillo	{"temperatureRange": "20-30", "precipitationRange": "100-200", "kind": "large mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "carcass", "fruit", "plant"]}
+giant girdled lizard	{"temperatureRange": "24-30", "precipitationRange": "10-30", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "plant", "fruit", "seed"]}
+giant heron	{"temperatureRange": "15-35", "precipitationRange": "70-200", "kind": "large bird", "sealife": false, "diet": ["fish", "small amphibian", "small reptile", "insect", "small mammal"]}
+giant otter	{"temperatureRange": "20-30", "precipitationRange": "150-300", "kind": "large mammal", "sealife": false, "diet": ["fish", "crab", "snake", "small mammal"]}
+gila monster	{"temperatureRange": "18-32", "precipitationRange": "20-60", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "egg", "carcass"]}
+giraffe	{"temperatureRange": "15-35", "precipitationRange": "25-150", "kind": "giant mammal", "sealife": false, "diet": ["plant", "fruit"]}
+glossy ibis	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal"]}
+glossy starling	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "fruit", "seed", "nectar"]}
+goanna lizard	{"temperatureRange": "20-40", "precipitationRange": "20-100", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "carcass"]}
+golden brush-tailed possum	{"temperatureRange": "10-25", "precipitationRange": "60-120", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nectar", "insect"]}
+golden eagle	{"temperatureRange": "-30-40", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "large bird", "reptile", "carcass"]}
+golden jackal	{"temperatureRange": "-10-45", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small bird", "small mammal", "carcass", "plant", "fruit"]}
+golden-mantled ground squirrel	{"temperatureRange": "0-30", "precipitationRange": "30-150", "kind": "small mammal", "sealife": false, "diet": ["seed", "nut", "fruit", "plant", "insect", "small reptile", "egg"]}
+goliath heron	{"temperatureRange": "10-35", "precipitationRange": "70-150", "kind": "large bird", "sealife": false, "diet": ["fish", "small reptile", "small amphibian", "insect", "small mammal"]}
+grant's gazelle	{"temperatureRange": "20-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["plant"]}
+gray duiker	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "plant"]}
+gray heron	{"temperatureRange": "-10-35", "precipitationRange": "50-250", "kind": "large bird", "sealife": false, "diet": ["small fish", "small amphibian", "insect", "small reptile", "small mammal", "crustacean"]}
+gray langur	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut"]}
+gray rhea	{"temperatureRange": "-10-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["plant", "fruit", "seed", "insect", "small reptile", "small mammal"]}
+great cormorant	{"temperatureRange": "-20-40", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "small amphibian"]}
+great egret	{"temperatureRange": "-10-35", "precipitationRange": "75-150", "kind": "large bird", "sealife": false, "diet": ["small fish", "small reptile", "small amphibian", "insect", "small mammal"]}
+great horned owl	{"temperatureRange": "-30-40", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "large bird", "small reptile", "large reptile", "small amphibian", "insect", "fish", "carcass"]}
+great kiskadee	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "fruit", "seed"]}
+great skua	{"temperatureRange": "-5-10", "precipitationRange": "25-50", "kind": "large bird", "sealife": false, "diet": ["fish", "bird", "small mammal", "carcass", "egg"]}
+great white pelican	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["fish"]}
+greater adjutant stork	{"temperatureRange": "20-35", "precipitationRange": "75-200", "kind": "large bird", "sealife": false, "diet": ["fish", "small reptile", "small mammal", "carcass", "insect", "small amphibian"]}
+greater blue-eared starling	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "fruit", "seed", "nectar"]}
+greater flamingo	{"temperatureRange": "15-45", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["algae", "crustaceans", "mollusks", "insect", "small fish"]}
+greater kudu	{"temperatureRange": "10-40", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+greater rhea	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["plant", "fruit", "seed", "insect", "small reptile", "small mammal"]}
+greater roadrunner	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "seed"]}
+greater sage grouse	{"temperatureRange": "-30-30", "precipitationRange": "25-50", "kind": "large bird", "sealife": false, "diet": ["sagebrush", "insect", "seed"]}
+green heron	{"temperatureRange": "0-35", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "insect", "small reptile", "small amphibian", "crustacean"]}
+green vine snake	{"temperatureRange": "20-35", "precipitationRange": "100-300", "kind": "small reptile", "sealife": false, "diet": ["small amphibian", "small reptile", "insect", "small mammal"]}
+green-backed heron	{"temperatureRange": "10-35", "precipitationRange": "75-250", "kind": "small bird", "sealife": false, "diet": ["small fish", "small amphibian", "insect", "small reptile", "small mammal", "crustacean"]}
+green-winged macaw	{"temperatureRange": "20-35", "precipitationRange": "100-300", "kind": "large bird", "sealife": false, "diet": ["fruit", "seed", "nut", "insect"]}
+green-winged trumpeter	{"temperatureRange": "20-30", "precipitationRange": "200-400", "kind": "large bird", "sealife": false, "diet": ["fruit", "seed", "insect", "small reptile", "small amphibian"]}
+grey fox	{"temperatureRange": "-30-40", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "insect", "fruit", "seed", "nut", "carcass"]}
+grey heron	{"temperatureRange": "-5-35", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "small amphibian", "small reptile", "insect", "small mammal", "crustacean"]}
+grey lourie	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["fruit", "seed", "leaf", "insect"]}
+grey mouse lemur	{"temperatureRange": "20-30", "precipitationRange": "70-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "fruit", "nectar", "small reptile"]}
+grey phalarope	{"temperatureRange": "-5-20", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "crustacean", "small fish"]}
+grey-footed squirrel	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "insect", "bark"]}
+greylag goose	{"temperatureRange": "-10-25", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "grain", "insect"]}
+griffon vulture	{"temperatureRange": "-20-45", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["carcass"]}
+grison	{"temperatureRange": "10-30", "precipitationRange": "50-250", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small reptile", "small bird", "insect", "fruit"]}
+grizzly bear	{"temperatureRange": "-40-20", "precipitationRange": "75-200", "kind": "large mammal", "sealife": false, "diet": ["small mammal", "large mammal", "fish", "insect", "plant", "fruit", "seed", "nut", "carcass"]}
+ground legaan	{"temperatureRange": "25-40", "precipitationRange": "50-150", "kind": "small reptile", "sealife": false, "diet": ["plant", "fruit", "insect"]}
+ground monitor	{"temperatureRange": "25-40", "precipitationRange": "75-200", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "carcass"]}
+groundhog	{"temperatureRange": "-5-30", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "insect"]}
+guanaco	{"temperatureRange": "-10-25", "precipitationRange": "25-75", "kind": "large mammal", "sealife": false, "diet": ["grass", "leaves", "shrubs"]}
+guerza	{"temperatureRange": "20-40", "precipitationRange": "50-150", "kind": "small reptile", "sealife": false, "diet": ["small mammal", "small bird", "egg", "small reptile"]}
+gulls	{"temperatureRange": "-10-30", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "small mammal", "insect", "carcass", "egg"]}
+hanuman langur	{"temperatureRange": "10-40", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["fruit", "leaves", "seeds", "flowers", "insect"]}
+harbor seal	{"temperatureRange": "-40-25", "precipitationRange": "50-250", "kind": "large mammal", "sealife": true, "diet": ["small fish", "large fish", "squid", "octopus"]}
+hawk-headed parrot	{"temperatureRange": "20-35", "precipitationRange": "100-300", "kind": "small bird", "sealife": false, "diet": ["fruit", "seed", "nut", "flower", "insect"]}
+helmeted guinea fowl	{"temperatureRange": "15-40", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["insect", "seed", "plant", "small reptile", "small mammal"]}
+herring gull	{"temperatureRange": "-15-25", "precipitationRange": "40-150", "kind": "large bird", "sealife": false, "diet": ["small fish", "crustacean", "insect", "small mammal", "egg", "carcass", "plant"]}
+hippopotamus	{"temperatureRange": "20-35", "precipitationRange": "75-200", "kind": "giant mammal", "sealife": false, "diet": ["grass", "plant"]}
+hoary marmot	{"temperatureRange": "-10-25", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "insect"]}
+hoffman's sloth	{"temperatureRange": "20-30", "precipitationRange": "200-400", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "leaf"]}
+honey badger	{"temperatureRange": "10-40", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "seed", "nut", "carcass"]}
+honey bee	{"temperatureRange": "10-40", "precipitationRange": "50-200", "kind": "insect", "sealife": false, "diet": ["nectar", "pollen"]}
+horned lark	{"temperatureRange": "-20-30", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["seed", "insect"]}
+horned puffin	{"temperatureRange": "-5-15", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "squid", "zooplankton"]}
+horned rattlesnake	{"temperatureRange": "15-35", "precipitationRange": "25-100", "kind": "small reptile", "sealife": false, "diet": ["small mammal", "small reptile", "small bird", "egg"]}
+hottentot teal	{"temperatureRange": "10-35", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["seed", "plant", "insect", "small amphibian", "small fish"]}
+house crow	{"temperatureRange": "0-40", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "plant", "fruit", "seed", "nut", "carcass"]}
+house sparrow	{"temperatureRange": "-10-40", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["seed", "insect", "small reptile", "plant", "fruit"]}
+hudsonian godwit	{"temperatureRange": "-10-25", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small crustacean", "small fish", "small amphibian", "plant", "seed"]}
+hummingbird	{"temperatureRange": "10-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["nectar", "insect", "spider"]}
+huron	{"temperatureRange": "-2-25", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "insect", "small reptile", "small amphibian", "small fish", "egg"]}
+hyrax	{"temperatureRange": "15-35", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["grass", "leaves", "fruit", "bark"]}
+ibex	{"temperatureRange": "-10-20", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["grass", "leaves", "twigs", "bark"]}
+impala	{"temperatureRange": "10-40", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+indian giant squirrel	{"temperatureRange": "20-35", "precipitationRange": "70-200", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "flower", "bark", "insect"]}
+indian jackal	{"temperatureRange": "10-45", "precipitationRange": "25-200", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small reptile", "small bird", "insect", "fruit", "carcass"]}
+indian leopard	{"temperatureRange": "0-45", "precipitationRange": "50-300", "kind": "large mammal", "sealife": false, "diet": ["small mammal", "large mammal", "small reptile", "bird", "carcass"]}
+indian mynah	{"temperatureRange": "10-40", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "fruit", "seed", "nectar", "small reptile", "small amphibian"]}
+indian peacock	{"temperatureRange": "10-43", "precipitationRange": "65-200", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "seed", "grain", "fruit", "plant"]}
+indian porcupine	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["root", "tuber", "bark", "fruit", "seed", "insect", "small reptile"]}
+indian red admiral	{"temperatureRange": "15-35", "precipitationRange": "50-200", "kind": "insect", "sealife": false, "diet": ["nectar", "pollen", "tree sap"]}
+indian star tortoise	{"temperatureRange": "20-40", "precipitationRange": "50-150", "kind": "small reptile", "sealife": false, "diet": ["plant", "fruit", "flower"]}
+indian tree pie	{"temperatureRange": "15-35", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "seed", "nectar"]}
+jabiru stork	{"temperatureRange": "20-35", "precipitationRange": "100-300", "kind": "large bird", "sealife": false, "diet": ["fish", "small reptile", "small amphibian", "small mammal", "insect", "mollusk", "crustacean"]}
+jaguar	{"temperatureRange": "15-35", "precipitationRange": "100-300", "kind": "large mammal", "sealife": false, "diet": ["large reptile", "small mammal", "large mammal", "fish", "turtle"]}
+jaguarundi	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small reptile", "small bird", "insect"]}
+japanese macaque	{"temperatureRange": "-10-30", "precipitationRange": "100-200", "kind": "small mammal", "sealife": false, "diet": ["insect", "fruit", "seed", "leaf", "bark", "invertebrate"]}
+javan gold-spotted mongoose	{"temperatureRange": "20-30", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small rodent", "fruit", "egg"]}
+javanese cormorant	{"temperatureRange": "10-35", "precipitationRange": "50-250", "kind": "large bird", "sealife": false, "diet": ["small fish", "large fish"]}
+jungle cat	{"temperatureRange": "10-40", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "small amphibian", "insect", "fish", "egg"]}
+jungle kangaroo	{"temperatureRange": "20-35", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+kaffir cat	{"temperatureRange": "0-45", "precipitationRange": "25-200", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "insect"]}
+kafue flats lechwe	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+kalahari scrub robin	{"temperatureRange": "10-40", "precipitationRange": "10-70", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "seed", "fruit"]}
+kelp gull	{"temperatureRange": "-5-15", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["small fish", "small mammal", "carcass", "egg"]}
+killer whale	{"temperatureRange": "-1-15", "precipitationRange": "50-250", "kind": "giant mammal", "sealife": true, "diet": ["large fish", "giant mammal", "seal", "sea lion", "penguin"]}
+king cormorant	{"temperatureRange": "-5-10", "precipitationRange": "100-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "small amphibian"]}
+king vulture	{"temperatureRange": "20-35", "precipitationRange": "150-300", "kind": "large bird", "sealife": false, "diet": ["carcass"]}
+kinkajou	{"temperatureRange": "20-30", "precipitationRange": "150-300", "kind": "small mammal", "sealife": false, "diet": ["fruit", "nectar", "insect", "small mammal", "egg"]}
+kirk's dik dik	{"temperatureRange": "20-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+klipspringer	{"temperatureRange": "10-30", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+knob-nosed goose	{"temperatureRange": "10-35", "precipitationRange": "75-150", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "insect"]}
+koala	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["eucalyptus leaves"]}
+komodo dragon	{"temperatureRange": "25-30", "precipitationRange": "70-100", "kind": "large reptile", "sealife": false, "diet": ["carcass", "deer", "water buffalo", "pig", "small mammal", "large mammal", "egg"]}
+kongoni	{"temperatureRange": "20-30", "precipitationRange": "25-75", "kind": "large mammal", "sealife": false, "diet": ["grass"]}
+kori bustard	{"temperatureRange": "20-35", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "seed", "fruit", "berry"]}
+land iguana	{"temperatureRange": "24-35", "precipitationRange": "50-100", "kind": "large reptile", "sealife": false, "diet": ["plant", "fruit", "cactus", "insect"]}
+lappet-faced vulture	{"temperatureRange": "20-40", "precipitationRange": "0-100", "kind": "large bird", "sealife": false, "diet": ["carcass", "bone marrow"]}
+lapwing	{"temperatureRange": "10-30", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["insect", "earthworm", "small reptile", "small amphibian", "seed"]}
+large cormorant	{"temperatureRange": "-10-25", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["fish"]}
+large-eared bushbaby	{"temperatureRange": "20-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "fruit", "gum"]}
+laughing dove	{"temperatureRange": "15-40", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["seed", "grain"]}
+laughing kookaburra	{"temperatureRange": "10-40", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "small bird", "snake", "fish", "crab"]}
+lava gull	{"temperatureRange": "10-25", "precipitationRange": "0-25", "kind": "small bird", "sealife": false, "diet": ["fish", "egg", "small bird", "carcass", "insect"]}
+leadbeateri's ground hornbill	{"temperatureRange": "15-35", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "small bird", "seed", "fruit"]}
+least chipmunk	{"temperatureRange": "-10-30", "precipitationRange": "30-100", "kind": "small mammal", "sealife": false, "diet": ["seed", "nut", "fruit", "insect", "fungi"]}
+leopard	{"temperatureRange": "0-40", "precipitationRange": "25-200", "kind": "large mammal", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "small reptile"]}
+lesser double-collared sunbird	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["nectar", "insect", "spider"]}
+lesser flamingo	{"temperatureRange": "15-35", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["algae", "small crustaceans", "insects", "mollusks"]}
+lesser masked weaver	{"temperatureRange": "20-40", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["seeds", "insects", "nectar"]}
+lesser mouse lemur	{"temperatureRange": "20-30", "precipitationRange": "70-150", "kind": "small mammal", "sealife": false, "diet": ["fruit", "insects", "flowers", "nectar", "leaves", "small reptiles"]}
+levaillant's barbet	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["fruit", "insects"]}
+lilac-breasted roller	{"temperatureRange": "15-35", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insects", "small reptiles", "small amphibians", "small mammals"]}
+lily trotter	{"temperatureRange": "10-35", "precipitationRange": "100-300", "kind": "small bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "small reptile"]}
+little blue penguin	{"temperatureRange": "5-20", "precipitationRange": "50-150", "kind": "small bird", "sealife": true, "diet": ["small fish", "squid", "krill"]}
+little brown bat	{"temperatureRange": "-5-40", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect"]}
+little brown dove	{"temperatureRange": "10-35", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["seed", "grain", "fruit", "insect"]}
+little cormorant	{"temperatureRange": "5-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["small fish"]}
+little grebe	{"temperatureRange": "10-30", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "insect", "small amphibian", "crustacean"]}
+little heron	{"temperatureRange": "15-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "insect", "small amphibian", "crustacean", "small reptile"]}
+lizard	{"temperatureRange": "20-40", "precipitationRange": "25-150", "kind": "small reptile", "sealife": false, "diet": ["insect", "small amphibian", "plant", "fruit", "seed"]}
+llama	{"temperatureRange": "-20-25", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+long-billed cockatoo	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["seed", "nut", "fruit", "insect", "larvae"]}
+long-billed corella	{"temperatureRange": "0-40", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["seed", "fruit", "nut", "insect", "plant"]}
+long-crested hawk eagle	{"temperatureRange": "15-35", "precipitationRange": "75-200", "kind": "large bird", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "large reptile", "small fish", "insect"]}
+long-finned pilot whale	{"temperatureRange": "5-25", "precipitationRange": "50-250", "kind": "large mammal", "sealife": true, "diet": ["squid", "small fish", "octopus"]}
+long-necked turtle	{"temperatureRange": "15-35", "precipitationRange": "50-200", "kind": "small reptile", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "plant"]}
+long-nosed bandicoot	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "seed", "nut", "plant"]}
+long-tailed jaeger	{"temperatureRange": "-10-10", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["fish", "small bird", "egg", "insect", "small mammal", "carcass"]}
+long-tailed skua	{"temperatureRange": "-10-10", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["fish", "small bird", "egg", "insect", "small mammal", "carcass"]}
+long-tailed spotted cat	{"temperatureRange": "15-30", "precipitationRange": "100-200", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "insect", "fruit"]}
+madagascar fruit bat	{"temperatureRange": "20-30", "precipitationRange": "100-200", "kind": "small mammal", "sealife": false, "diet": ["fruit", "nectar", "pollen", "leaves"]}
+madagascar hawk owl	{"temperatureRange": "15-30", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["small mammal", "small bird", "insect", "reptile"]}
+magellanic penguin	{"temperatureRange": "-15-10", "precipitationRange": "25-75", "kind": "large bird", "sealife": false, "diet": ["small fish", "squid", "krill"]}
+magistrate black colobus	{"temperatureRange": "20-30", "precipitationRange": "150-250", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "leaf", "flower"]}
+magnificent frigate bird	{"temperatureRange": "20-30", "precipitationRange": "100-250", "kind": "large bird", "sealife": false, "diet": ["fish", "squid", "small bird", "egg"]}
+malabar squirrel	{"temperatureRange": "20-35", "precipitationRange": "75-200", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "flower", "insect"]}
+malachite kingfisher	{"temperatureRange": "15-30", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "insect", "crustacean", "small amphibian"]}
+malagasy ground boa	{"temperatureRange": "22-32", "precipitationRange": "75-150", "kind": "small reptile", "sealife": false, "diet": ["small mammal", "small bird", "small reptile"]}
+malay squirrel	{"temperatureRange": "20-30", "precipitationRange": "200-400", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "insect", "egg"]}
+mallard	{"temperatureRange": "-20-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["plant", "seed", "insect", "small fish", "small amphibian"]}
+malleefowl	{"temperatureRange": "10-40", "precipitationRange": "25-75", "kind": "small bird", "sealife": false, "diet": ["seed", "insect", "fruit"]}
+manatee	{"temperatureRange": "20-30", "precipitationRange": "50-250", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+mandras tree shrew	{"temperatureRange": "20-30", "precipitationRange": "150-300", "kind": "small mammal", "sealife": false, "diet": ["insect", "fruit", "seed"]}
+mara	{"temperatureRange": "10-35", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["plant"]}
+marabou stork	{"temperatureRange": "20-35", "precipitationRange": "75-150", "kind": "large bird", "sealife": false, "diet": ["carcass", "small fish", "small reptile", "small amphibian", "insect"]}
+margay	{"temperatureRange": "15-30", "precipitationRange": "150-300", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "insect", "fruit"]}
+marine iguana	{"temperatureRange": "25-35", "precipitationRange": "25-75", "kind": "large reptile", "sealife": false, "diet": ["algae", "seaweed"]}
+masked booby	{"temperatureRange": "10-30", "precipitationRange": "0-100", "kind": "large bird", "sealife": false, "diet": ["fish"]}
+meerkat	{"temperatureRange": "20-40", "precipitationRange": "0-75", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "scorpion", "spider"]}
+mexican beaded lizard	{"temperatureRange": "25-40", "precipitationRange": "25-100", "kind": "large reptile", "sealife": false, "diet": ["egg", "small mammal", "small reptile", "small bird"]}
+mexican boa	{"temperatureRange": "20-35", "precipitationRange": "50-200", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "small bird", "small reptile"]}
+mexican wolf	{"temperatureRange": "-10-35", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["large mammal", "small mammal", "carcass"]}
+miner's cat	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "insect", "fruit"]}
+mississippi alligator	{"temperatureRange": "20-35", "precipitationRange": "100-200", "kind": "large reptile", "sealife": false, "diet": ["fish", "small mammal", "large bird", "small reptile", "large reptile", "carcass"]}
+mocking cliffchat	{"temperatureRange": "15-35", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "fruit", "seed"]}
+monitor legaan	{"temperatureRange": "25-40", "precipitationRange": "50-200", "kind": "large reptile", "sealife": false, "diet": ["insect", "small mammal", "small reptile", "bird", "egg", "carcass", "fruit"]}
+monitor lizard	{"temperatureRange": "25-40", "precipitationRange": "50-200", "kind": "large reptile", "sealife": false, "diet": ["insect", "small mammal", "small reptile", "bird", "egg", "carcass", "fruit"]}
+moose	{"temperatureRange": "-30-20", "precipitationRange": "75-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "aquatic plants", "bark", "twigs"]}
+mouflon	{"temperatureRange": "-20-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["grass", "leaves", "twigs", "fruit", "lichen"]}
+mountain duck	{"temperatureRange": "-10-25", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["aquatic plants", "seeds", "insects", "small fish", "crustaceans", "mollusks"]}
+mountain goat	{"temperatureRange": "-30-20", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["grass", "herbs", "moss", "lichen", "twigs", "bark"]}
+mountain lion	{"temperatureRange": "-30-40", "precipitationRange": "25-200", "kind": "large mammal", "sealife": false, "diet": ["deer", "elk", "bighorn sheep", "small mammal", "carcass"]}
+mourning collared dove	{"temperatureRange": "10-35", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["seed", "grain", "fruit", "insect"]}
+mudskipper	{"temperatureRange": "25-35", "precipitationRange": "100-200", "kind": "small fish", "sealife": false, "diet": ["insect", "small crustacean", "algae"]}
+mule deer	{"temperatureRange": "-20-35", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["grass", "forb", "browse", "fruit", "nut"]}
+musk ox	{"temperatureRange": "-40-10", "precipitationRange": "25-75", "kind": "large mammal", "sealife": false, "diet": ["grass", "sedge", "forb", "woody plant", "lichen", "moss"]}
+native cat	{"temperatureRange": "5-35", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "insect", "carcass"]}
+nelson ground squirrel	{"temperatureRange": "10-35", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["seed", "nut", "fruit", "plant", "insect"]}
+neotropic cormorant	{"temperatureRange": "5-30", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "large fish"]}
+netted rock dragon	{"temperatureRange": "20-40", "precipitationRange": "25-75", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile"]}
+nile crocodile	{"temperatureRange": "25-40", "precipitationRange": "50-200", "kind": "large reptile", "sealife": false, "diet": ["small fish", "large fish", "small mammal", "large mammal", "carcass"]}
+nilgai	{"temperatureRange": "10-40", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit"]}
+nine-banded armadillo	{"temperatureRange": "10-35", "precipitationRange": "75-250", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "egg"]}
+north american beaver	{"temperatureRange": "-40-30", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["wood", "plant", "bark", "leaves", "aquatic plants"]}
+north american porcupine	{"temperatureRange": "-30-30", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["wood", "bark", "leaves", "twigs", "fruit", "nut", "seed", "plant"]}
+north american red fox	{"temperatureRange": "-50-40", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "insect", "fruit", "carcass"]}
+north american river otter	{"temperatureRange": "-40-30", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["fish", "small mammal", "small reptile", "small amphibian", "insect", "crayfish", "crab"]}
+northern elephant seal	{"temperatureRange": "5-25", "precipitationRange": "50-250", "kind": "giant mammal", "sealife": true, "diet": ["squid", "fish", "rays"]}
+northern fur seal	{"temperatureRange": "-5-20", "precipitationRange": "50-250", "kind": "large mammal", "sealife": true, "diet": ["small fish", "squid", "krill"]}
+northern phalarope	{"temperatureRange": "5-25", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "crustaceans", "small fish"]}
+nubian bee-eater	{"temperatureRange": "20-45", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect"]}
+numbat	{"temperatureRange": "10-35", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["termites"]}
+nyala	{"temperatureRange": "10-35", "precipitationRange": "75-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "flower"]}
+ocelot	{"temperatureRange": "20-35", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small reptile", "small bird", "insect", "fish"]}
+old world fruit bat	{"temperatureRange": "15-30", "precipitationRange": "75-200", "kind": "small mammal", "sealife": false, "diet": ["fruit", "nectar", "flower"]}
+olive baboon	{"temperatureRange": "10-40", "precipitationRange": "25-200", "kind": "large mammal", "sealife": false, "diet": ["fruit", "seed", "insect", "small mammal", "plant"]}
+onager	{"temperatureRange": "-10-45", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+openbill stork	{"temperatureRange": "10-35", "precipitationRange": "100-250", "kind": "large bird", "sealife": false, "diet": ["mollusc", "snail", "crab", "frog", "fish", "insect", "small reptile"]}
+orca	{"temperatureRange": "-1-25", "precipitationRange": "50-250", "kind": "giant mammal", "sealife": true, "diet": ["fish", "seal", "sea lion", "penguin", "shark", "dolphin", "whale"]}
+oribi	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+oriental short-clawed otter	{"temperatureRange": "15-30", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["mollusc", "crab", "fish", "insect", "frog", "small reptile", "small bird", "small mammal"]}
+oriental white-backed vulture	{"temperatureRange": "10-40", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["carcass"]}
+ornate rock dragon	{"temperatureRange": "20-35", "precipitationRange": "25-75", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile"]}
+osprey	{"temperatureRange": "-10-35", "precipitationRange": "50-250", "kind": "large bird", "sealife": false, "diet": ["fish"]}
+ostrich	{"temperatureRange": "15-45", "precipitationRange": "0-100", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "insect", "small reptile", "small mammal"]}
+ovenbird	{"temperatureRange": "10-30", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["insect", "spider", "small amphibian", "small reptile"]}
+paca	{"temperatureRange": "20-30", "precipitationRange": "150-300", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "leaf", "flower"]}
+pacific gull	{"temperatureRange": "-10-35", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["fish", "crustacean", "mollusk", "insect", "small bird", "small mammal", "carcass", "egg"]}
+paddy heron	{"temperatureRange": "10-35", "precipitationRange": "100-250", "kind": "small bird", "sealife": false, "diet": ["fish", "insect", "small amphibian", "small reptile", "crustacean"]}
+painted stork	{"temperatureRange": "20-40", "precipitationRange": "75-200", "kind": "large bird", "sealife": false, "diet": ["fish", "small amphibian", "crustacean", "insect", "small reptile"]}
+pale white-eye	{"temperatureRange": "15-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "nectar", "fruit"]}
+pale-throated three-toed sloth	{"temperatureRange": "20-35", "precipitationRange": "200-400", "kind": "small mammal", "sealife": false, "diet": ["plant", "leaf", "bud", "fruit"]}
+pallas's fish eagle	{"temperatureRange": "-30-30", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["fish", "small bird", "small mammal", "small reptile", "small amphibian"]}
+palm squirrel	{"temperatureRange": "10-40", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "insect", "flower"]}
+pampa gray fox	{"temperatureRange": "0-35", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "insect", "fruit", "carcass"]}
+paradoxure	{"temperatureRange": "15-30", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["fruit", "insect", "small mammal", "small bird", "egg"]}
+peregrine falcon	{"temperatureRange": "-20-45", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["small bird", "small mammal", "insect", "small reptile"]}
+pied avocet	{"temperatureRange": "10-35", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["insect", "small fish", "small crustacean", "mollusk"]}
+pied butcher bird	{"temperatureRange": "15-40", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small bird", "small mammal", "spider", "centipede"]}
+pied cormorant	{"temperatureRange": "5-35", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["fish"]}
+pied crow	{"temperatureRange": "0-45", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "carcass", "fruit", "seed", "grain"]}
+pied kingfisher	{"temperatureRange": "15-40", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["small fish", "insect", "crustacean", "small amphibian", "small reptile"]}
+pig-tailed macaque	{"temperatureRange": "10-30", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "insect", "small reptile", "small bird", "egg", "plant"]}
+pine siskin	{"temperatureRange": "-10-25", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["seed", "insect", "nectar"]}
+pine snake	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "egg", "small bird"]}
+pine squirrel	{"temperatureRange": "-20-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["seed", "nut", "fruit", "insect", "egg", "small bird"]}
+plains zebra	{"temperatureRange": "10-35", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+platypus	{"temperatureRange": "5-30", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "shrimp", "yabbies"]}
+pocket gopher	{"temperatureRange": "10-30", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "root", "tuber", "seed"]}
+polar bear	{"temperatureRange": "-40-10", "precipitationRange": "15-50", "kind": "large mammal", "sealife": false, "diet": ["seal", "walrus", "fish", "carcass"]}
+potoroo	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "insect", "fungi"]}
+prairie falcon	{"temperatureRange": "-20-40", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["small mammal", "small bird", "insect", "reptile"]}
+praying mantis	{"temperatureRange": "20-38", "precipitationRange": "75-150", "kind": "insect", "sealife": false, "diet": ["insect"]}
+prehensile-tailed porcupine	{"temperatureRange": "20-30", "precipitationRange": "150-300", "kind": "small mammal", "sealife": false, "diet": ["fruit", "leaf", "flower", "nut", "bark"]}
+pronghorn	{"temperatureRange": "-20-40", "precipitationRange": "25-75", "kind": "large mammal", "sealife": false, "diet": ["plant", "forb", "shrub", "cactus"]}
+puku	{"temperatureRange": "15-35", "precipitationRange": "75-150", "kind": "large mammal", "sealife": false, "diet": ["grass", "forb"]}
+puma	{"temperatureRange": "-40-40", "precipitationRange": "25-200", "kind": "large mammal", "sealife": false, "diet": ["deer", "elk", "moose", "bighorn sheep", "rabbit", "rodent", "armadillo"]}
+puna ibis	{"temperatureRange": "-5-20", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "plant", "seed"]}
+purple grenadier	{"temperatureRange": "2-6", "precipitationRange": "0-50", "kind": "large fish", "sealife": true, "diet": ["small fish", "crustacean", "cephalopod"]}
+purple moorhen	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small fish", "plant", "seed"]}
+pygmy possum	{"temperatureRange": "5-25", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "nectar", "pollen", "fruit", "seed"]}
+python	{"temperatureRange": "20-35", "precipitationRange": "50-250", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "large bird", "small reptile", "large reptile", "egg"]}
+raccoon dog	{"temperatureRange": "-20-30", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal", "fruit", "seed", "nut", "carcass"]}
+racer snake	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "egg"]}
+radiated tortoise	{"temperatureRange": "20-35", "precipitationRange": "50-100", "kind": "small reptile", "sealife": false, "diet": ["plant", "fruit", "cactus"]}
+rainbow lory	{"temperatureRange": "20-30", "precipitationRange": "100-300", "kind": "small bird", "sealife": false, "diet": ["nectar", "pollen", "fruit", "insect"]}
+red and blue macaw	{"temperatureRange": "20-35", "precipitationRange": "100-300", "kind": "large bird", "sealife": false, "diet": ["fruit", "nut", "seed", "insect"]}
+red brocket	{"temperatureRange": "10-30", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "plant"]}
+red deer	{"temperatureRange": "-10-25", "precipitationRange": "75-200", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut"]}
+red hartebeest	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+red howler monkey	{"temperatureRange": "20-30", "precipitationRange": "150-300", "kind": "large mammal", "sealife": false, "diet": ["fruit", "leaf", "flower", "insect"]}
+red kangaroo	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+red lava crab	{"temperatureRange": "20-30", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "algae", "insect"]}
+red meerkat	{"temperatureRange": "20-40", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "fruit", "seed"]}
+red phalarope	{"temperatureRange": "-5-20", "precipitationRange": "25-75", "kind": "small bird", "sealife": false, "diet": ["insect", "crustacean", "small fish"]}
+red sheep	{"temperatureRange": "-10-30", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+red squirrel	{"temperatureRange": "-30-30", "precipitationRange": "40-100", "kind": "small mammal", "sealife": false, "diet": ["nut", "seed", "fruit", "insect", "egg"]}
+red-billed buffalo weaver	{"temperatureRange": "10-40", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["insect", "seed", "fruit"]}
+red-billed hornbill	{"temperatureRange": "20-35", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["fruit", "insect", "small reptile", "small mammal", "egg"]}
+red-billed toucan	{"temperatureRange": "15-30", "precipitationRange": "150-300", "kind": "large bird", "sealife": false, "diet": ["fruit", "insect", "small reptile", "small amphibian", "egg", "small bird"]}
+red-billed tropic bird	{"temperatureRange": "20-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "squid"]}
+red-breasted cockatoo	{"temperatureRange": "15-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["seed", "fruit", "nut", "insect", "larvae"]}
+red-breasted nuthatch	{"temperatureRange": "-30-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "seed", "nut"]}
+red-capped cardinal	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "seed", "fruit"]}
+red-cheeked cordon bleu	{"temperatureRange": "20-35", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["seed", "insect"]}
+red-headed woodpecker	{"temperatureRange": "-20-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "nut", "seed", "fruit"]}
+red-knobbed coot	{"temperatureRange": "0-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["plant", "insect", "small fish", "small amphibian"]}
+red-legged pademelon	{"temperatureRange": "10-30", "precipitationRange": "100-200", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+red-necked phalarope	{"temperatureRange": "-5-20", "precipitationRange": "25-75", "kind": "small bird", "sealife": false, "diet": ["insect", "small fish", "crustacean"]}
+red-necked wallaby	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+red-shouldered glossy starling	{"temperatureRange": "20-35", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["insect", "fruit", "seed"]}
+red-tailed cockatoo	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["seed", "nut", "fruit", "insect", "larvae"]}
+red-tailed hawk	{"temperatureRange": "-30-40", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["small mammal", "small bird", "large reptile", "small reptile", "carcass"]}
+red-tailed phascogale	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "small bird", "spider"]}
+red-tailed wambenger	{"temperatureRange": "15-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["nectar", "pollen", "insect"]}
+red-winged blackbird	{"temperatureRange": "-20-40", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["seed", "insect", "small fish", "small amphibian"]}
+red-winged hawk	{"temperatureRange": "0-35", "precipitationRange": "100-250", "kind": "large bird", "sealife": false, "diet": ["small reptile", "small amphibian", "small mammal", "insect", "small fish", "large fish", "carcass"]}
+reindeer	{"temperatureRange": "-40-15", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["lichen", "moss", "grass", "leaves", "twigs"]}
+rhesus macaque	{"temperatureRange": "0-40", "precipitationRange": "50-250", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "insect", "small reptile", "small amphibian", "leaf", "root", "bark"]}
+rhesus monkey	{"temperatureRange": "0-40", "precipitationRange": "50-250", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "insect", "small reptile", "small amphibian", "leaf", "root", "bark"]}
+richardson's ground squirrel	{"temperatureRange": "-10-30", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["grass", "seed", "fruit", "insect"]}
+ring dove	{"temperatureRange": "0-35", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["seed", "grain", "fruit", "insect"]}
+ring-necked pheasant	{"temperatureRange": "-10-30", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["seed", "grain", "insect", "fruit", "berry", "leaf"]}
+ring-tailed coatimundi	{"temperatureRange": "10-30", "precipitationRange": "75-250", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "fruit", "nut", "egg", "carcass"]}
+ring-tailed gecko	{"temperatureRange": "20-35", "precipitationRange": "50-150", "kind": "small reptile", "sealife": false, "diet": ["insect"]}
+ring-tailed lemur	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["fruit", "leaf", "flower", "insect"]}
+ring-tailed possum	{"temperatureRange": "5-30", "precipitationRange": "75-200", "kind": "small mammal", "sealife": false, "diet": ["leaf", "flower", "fruit", "insect", "small reptile", "egg"]}
+ringtail	{"temperatureRange": "10-38", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["insect", "small mammal", "fruit", "nectar"]}
+ringtail cat	{"temperatureRange": "10-38", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["insect", "small mammal", "fruit", "nectar"]}
+river wallaby	{"temperatureRange": "10-35", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["plant"]}
+roan antelope	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+rock dove	{"temperatureRange": "-10-40", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["seed", "fruit", "insect"]}
+roe deer	{"temperatureRange": "-20-30", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "wood"]}
+rose-ringed parakeet	{"temperatureRange": "10-40", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["fruit", "seed", "nut", "flower", "bud", "nectar"]}
+roseat flamingo	{"temperatureRange": "15-35", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["algae", "small crustaceans", "insects", "mollusks", "small fish"]}
+roseate cockatoo	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["seed", "nut", "fruit", "root", "insect", "larvae"]}
+royal tern	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["small fish", "small crustaceans", "insect"]}
+rufous tree pie	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "seed", "nut", "egg"]}
+rufous-collared sparrow	{"temperatureRange": "0-25", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["seed", "insect", "fruit"]}
+russian dragonfly	{"temperatureRange": "15-30", "precipitationRange": "50-150", "kind": "insect", "sealife": false, "diet": ["insect"]}
+sable antelope	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+sacred ibis	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal", "carcass"]}
+saddle-billed stork	{"temperatureRange": "20-35", "precipitationRange": "75-200", "kind": "large bird", "sealife": false, "diet": ["fish", "amphibian", "small reptile", "crab", "insect"]}
+sage grouse	{"temperatureRange": "-30-35", "precipitationRange": "25-75", "kind": "large bird", "sealife": false, "diet": ["insect", "sagebrush"]}
+sage hen	{"temperatureRange": "-30-35", "precipitationRange": "25-75", "kind": "large bird", "sealife": false, "diet": ["insect", "sagebrush"]}
+sally lightfoot crab	{"temperatureRange": "15-25", "precipitationRange": "0-100", "kind": "insect", "sealife": false, "diet": ["algae", "plant"]}
+salmon pink bird eater tarantula	{"temperatureRange": "25-35", "precipitationRange": "70-150", "kind": "insect", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal"]}
+sambar	{"temperatureRange": "10-35", "precipitationRange": "75-250", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "grass", "bark", "leaves"]}
+sandhill crane	{"temperatureRange": "-20-30", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal", "grain", "seed", "berry", "plant"]}
+sarus crane	{"temperatureRange": "10-40", "precipitationRange": "75-200", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "plant", "seed", "root"]}
+savanna baboon	{"temperatureRange": "10-40", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "seed", "leaf", "root", "grass"]}
+savanna fox	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "carcass"]}
+savannah deer	{"temperatureRange": "10-35", "precipitationRange": "75-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+scaly-breasted lorikeet	{"temperatureRange": "15-30", "precipitationRange": "100-300", "kind": "small bird", "sealife": false, "diet": ["nectar", "pollen", "fruit", "insect", "seed"]}
+scarlet macaw	{"temperatureRange": "20-30", "precipitationRange": "150-300", "kind": "large bird", "sealife": false, "diet": ["fruit", "seed", "nut", "flower", "insect"]}
+scottish highland cow	{"temperatureRange": "-10-25", "precipitationRange": "70-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+sea birds	{"temperatureRange": "-10-20", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "squid", "crustacean", "krill"]}
+secretary bird	{"temperatureRange": "10-45", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "small bird", "egg"]}
+serval	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small bird", "small reptile", "insect", "small fish"]}
+seven-banded armadillo	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit"]}
+short-beaked echidna	{"temperatureRange": "5-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["ant", "termite", "earthworm"]}
+short-nosed bandicoot	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "seed", "nut", "fungi"]}
+sidewinder	{"temperatureRange": "20-45", "precipitationRange": "0-25", "kind": "small reptile", "sealife": false, "diet": ["small mammal", "small reptile"]}
+silkworm	{"temperatureRange": "20-30", "precipitationRange": "50-150", "kind": "insect", "sealife": false, "diet": ["mulberry leaves"]}
+silver gull	{"temperatureRange": "-10-30", "precipitationRange": "25-200", "kind": "small bird", "sealife": false, "diet": ["fish", "crustacean", "insect", "carcass", "plant", "seed"]}
+silver-backed fox	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small mammal", "fruit", "seed"]}
+silver-backed jackal	{"temperatureRange": "20-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["insect", "small mammal", "large mammal", "fruit", "carcass"]}
+slender loris	{"temperatureRange": "20-30", "precipitationRange": "100-250", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small bird", "fruit", "nectar", "gum"]}
+slender-billed cockatoo	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["seed", "nut", "fruit", "insect", "larvae"]}
+sloth bear	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "large mammal", "sealife": false, "diet": ["insect", "fruit", "honey", "termite", "ant"]}
+small indian mongoose	{"temperatureRange": "20-40", "precipitationRange": "50-200", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small rodent", "small bird", "egg", "carcass"]}
+small-clawed otter	{"temperatureRange": "15-30", "precipitationRange": "100-250", "kind": "small mammal", "sealife": false, "diet": ["crab", "mollusk", "small fish", "insect", "small amphibian", "small reptile"]}
+small-spotted genet	{"temperatureRange": "10-30", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small bird", "small mammal", "fruit"]}
+small-toothed palm civet	{"temperatureRange": "20-30", "precipitationRange": "100-250", "kind": "small mammal", "sealife": false, "diet": ["fruit", "nectar", "insect", "small reptile", "small bird", "small mammal"]}
+smith's bush squirrel	{"temperatureRange": "20-35", "precipitationRange": "50-100", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "insect"]}
+snake	{"temperatureRange": "15-40", "precipitationRange": "25-200", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small bird", "small mammal", "egg"]}
+snake-necked turtle	{"temperatureRange": "20-30", "precipitationRange": "75-200", "kind": "small reptile", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "crustacean", "mollusk", "carcass"]}
+snow goose	{"temperatureRange": "-30-10", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "grain", "aquatic plants"]}
+snowy egret	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "small amphibian", "insect", "crustacean", "small reptile"]}
+snowy owl	{"temperatureRange": "-50-10", "precipitationRange": "25-75", "kind": "large bird", "sealife": false, "diet": ["lemming", "small mammal", "small bird", "fish"]}
+snowy sheathbill	{"temperatureRange": "-15-5", "precipitationRange": "50-100", "kind": "small bird", "sealife": false, "diet": ["carcass", "invertebrate", "egg", "plant material", "seal placenta"]}
+sociable weaver	{"temperatureRange": "10-40", "precipitationRange": "10-75", "kind": "small bird", "sealife": false, "diet": ["insect", "seed"]}
+sockeye salmon	{"temperatureRange": "3-10", "precipitationRange": "100-300", "kind": "large fish", "sealife": true, "diet": ["insect", "small fish", "zooplankton"]}
+south african hedgehog	{"temperatureRange": "10-35", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "egg", "fruit"]}
+south american meadowlark	{"temperatureRange": "10-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "seed"]}
+south american puma	{"temperatureRange": "-10-35", "precipitationRange": "50-250", "kind": "large mammal", "sealife": false, "diet": ["small mammal", "large mammal", "carcass"]}
+south american sea lion	{"temperatureRange": "5-25", "precipitationRange": "50-200", "kind": "large mammal", "sealife": true, "diet": ["small fish", "large fish", "squid", "crustacean"]}
+southern black-backed gull	{"temperatureRange": "-10-25", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["fish", "crustacean", "mollusk", "insect", "egg", "carcass"]}
+southern boubou	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit"]}
+southern brown bandicoot	{"temperatureRange": "5-25", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "fruit", "seed", "nut", "fungi"]}
+southern elephant seal	{"temperatureRange": "-5-15", "precipitationRange": "50-200", "kind": "giant mammal", "sealife": true, "diet": ["fish", "squid", "octopus"]}
+southern ground hornbill	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "small bird", "egg", "carcass"]}
+southern hairy-nosed wombat	{"temperatureRange": "10-35", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["grass", "roots", "bark"]}
+southern lapwing	{"temperatureRange": "0-30", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "small invertebrate", "seed"]}
+southern right whale	{"temperatureRange": "-2-18", "precipitationRange": "100-250", "kind": "giant mammal", "sealife": true, "diet": ["krill", "copepods"]}
+southern screamer	{"temperatureRange": "5-25", "precipitationRange": "100-200", "kind": "large bird", "sealife": false, "diet": ["aquatic plants", "seeds", "leaves"]}
+southern sea lion	{"temperatureRange": "-5-15", "precipitationRange": "100-200", "kind": "large mammal", "sealife": true, "diet": ["small fish", "squid", "crustaceans"]}
+southern tamandua	{"temperatureRange": "15-35", "precipitationRange": "100-200", "kind": "small mammal", "sealife": false, "diet": ["ant", "termite", "bee", "honey", "fruit"]}
+southern white-crowned shrike	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "seed", "fruit"]}
+spectacled caiman	{"temperatureRange": "20-35", "precipitationRange": "150-300", "kind": "large reptile", "sealife": false, "diet": ["fish", "small mammal", "small bird", "small reptile", "large reptile", "carcass"]}
+sportive lemur	{"temperatureRange": "20-30", "precipitationRange": "70-150", "kind": "small mammal", "sealife": false, "diet": ["leaves", "fruit", "flowers", "bark", "sap"]}
+spotted deer	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "large mammal", "sealife": false, "diet": ["grass", "leaves", "fruit", "bark", "seed"]}
+spotted hyena	{"temperatureRange": "10-40", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["large mammal", "small mammal", "carcass", "bone"]}
+spotted wood sandpiper	{"temperatureRange": "5-25", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "small crustacean"]}
+spotted-tailed quoll	{"temperatureRange": "10-30", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small bird", "small mammal", "fruit", "nectar"]}
+springbok	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["plant", "succulent", "herb", "grass"]}
+springbuck	{"temperatureRange": "10-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["plant", "succulent", "herb", "grass"]}
+springhare	{"temperatureRange": "10-35", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["plant", "seed", "fruit", "insect"]}
+spur-winged goose	{"temperatureRange": "10-40", "precipitationRange": "75-150", "kind": "large bird", "sealife": false, "diet": ["plant", "seed", "insect", "small fish", "small reptile", "small amphibian"]}
+square-lipped rhinoceros	{"temperatureRange": "20-40", "precipitationRange": "50-150", "kind": "giant mammal", "sealife": false, "diet": ["plant"]}
+squirrel glider	{"temperatureRange": "10-30", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "nectar", "pollen", "sap", "fruit", "seed"]}
+stanley bustard	{"temperatureRange": "15-35", "precipitationRange": "25-100", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "seed", "fruit"]}
+stanley crane	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "small reptile", "seed", "plant"]}
+steenbok	{"temperatureRange": "15-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+steenbuck	{"temperatureRange": "15-40", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+steller sea lion	{"temperatureRange": "-1-15", "precipitationRange": "50-200", "kind": "large mammal", "sealife": true, "diet": ["small fish", "large fish", "squid", "octopus"]}
+steller's sea lion	{"temperatureRange": "-1-15", "precipitationRange": "50-200", "kind": "large mammal", "sealife": true, "diet": ["small fish", "large fish", "squid", "octopus"]}
+stick insect	{"temperatureRange": "20-30", "precipitationRange": "70-200", "kind": "insect", "sealife": false, "diet": ["plant"]}
+stone sheep	{"temperatureRange": "-20-20", "precipitationRange": "30-100", "kind": "large mammal", "sealife": false, "diet": ["grass", "forb", "lichen", "moss"]}
+striated heron	{"temperatureRange": "10-35", "precipitationRange": "50-250", "kind": "small bird", "sealife": false, "diet": ["small fish", "crustacean", "insect"]}
+striped dolphin	{"temperatureRange": "10-25", "precipitationRange": "50-250", "kind": "large mammal", "sealife": true, "diet": ["small fish", "squid", "octopus"]}
+striped hyena	{"temperatureRange": "0-45", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["small mammal", "large mammal", "carcass", "insect", "fruit"]}
+striped skunk	{"temperatureRange": "-15-35", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small mammal", "egg", "fruit", "nut", "carcass"]}
+sugar glider	{"temperatureRange": "15-30", "precipitationRange": "100-200", "kind": "small mammal", "sealife": false, "diet": ["insect", "nectar", "sap", "pollen", "fruit"]}
+sulfur-crested cockatoo	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["seed", "nut", "fruit", "insect", "larvae"]}
+sun gazer	{"temperatureRange": "20-40", "precipitationRange": "25-100", "kind": "small reptile", "sealife": false, "diet": ["insect"]}
+superb starling	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "fruit", "seed", "nectar"]}
+suricate	{"temperatureRange": "20-45", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "plant", "fruit", "seed"]}
+swainson's francolin	{"temperatureRange": "10-40", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["insect", "seed", "plant"]}
+swallow	{"temperatureRange": "0-35", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["insect"]}
+swallow-tail gull	{"temperatureRange": "-5-15", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["small fish", "small mammal", "carcass"]}
+swamp deer	{"temperatureRange": "10-40", "precipitationRange": "75-200", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit"]}
+tailless tenrec	{"temperatureRange": "15-30", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "earthworm", "other invertebrates"]}
+tammar wallaby	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["grass", "leaves", "shrubs"]}
+tarantula	{"temperatureRange": "20-35", "precipitationRange": "25-100", "kind": "insect", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal"]}
+tasmanian devil	{"temperatureRange": "5-25", "precipitationRange": "60-120", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "large mammal", "carcass", "bird", "reptile", "insect", "amphibian"]}
+tawny eagle	{"temperatureRange": "0-40", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["small mammal", "large mammal", "small bird", "large bird", "small reptile", "large reptile", "carcass"]}
+tawny frogmouth	{"temperatureRange": "10-35", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "small bird", "large insect"]}
+tayra	{"temperatureRange": "20-30", "precipitationRange": "150-400", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "fruit", "honey", "insect", "egg", "carcass"]}
+thirteen-lined squirrel	{"temperatureRange": "-30-35", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["insect", "seed", "nut", "fruit", "small bird", "egg"]}
+thomson's gazelle	{"temperatureRange": "20-40", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["plant"]}
+three-banded plover	{"temperatureRange": "15-35", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "small invertebrate"]}
+tiger	{"temperatureRange": "-20-40", "precipitationRange": "75-300", "kind": "large mammal", "sealife": false, "diet": ["large mammal", "small mammal", "large reptile", "small reptile", "large bird", "small bird", "large fish", "small fish", "carcass"]}
+tiger cat	{"temperatureRange": "10-30", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small reptile", "small bird", "insect", "fruit"]}
+tiger snake	{"temperatureRange": "15-35", "precipitationRange": "50-200", "kind": "large reptile", "sealife": false, "diet": ["small mammal", "small reptile", "small bird", "frog", "egg"]}
+timber wolf	{"temperatureRange": "-40-30", "precipitationRange": "30-200", "kind": "large mammal", "sealife": false, "diet": ["large mammal", "small mammal", "carcass"]}
+toddy cat	{"temperatureRange": "20-35", "precipitationRange": "100-300", "kind": "small mammal", "sealife": false, "diet": ["small mammal", "small reptile", "small bird", "insect", "fruit", "nectar"]}
+tokay gecko	{"temperatureRange": "22-32", "precipitationRange": "100-250", "kind": "small reptile", "sealife": false, "diet": ["insect", "small reptile", "small mammal"]}
+topi	{"temperatureRange": "20-40", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+tree porcupine	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "small mammal", "sealife": false, "diet": ["fruit", "leaf", "flower", "bark", "root", "seed", "nut"]}
+tropical buckeye butterfly	{"temperatureRange": "20-35", "precipitationRange": "75-200", "kind": "insect", "sealife": false, "diet": ["nectar", "plant"]}
+trumpeter swan	{"temperatureRange": "-20-30", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["plant", "small fish", "insect", "small amphibian"]}
+tsessebe	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+turkey vulture	{"temperatureRange": "-20-45", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["carcass"]}
+turtle	{"temperatureRange": "15-35", "precipitationRange": "50-250", "kind": "small reptile", "sealife": false, "diet": ["insect", "small fish", "plant", "fruit"]}
+two-banded monitor	{"temperatureRange": "25-40", "precipitationRange": "100-250", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "carcass"]}
+two-toed sloth	{"temperatureRange": "20-35", "precipitationRange": "200-400", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "bud", "leaf"]}
+two-toed tree sloth	{"temperatureRange": "20-30", "precipitationRange": "250-400", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "bud", "leaf"]}
+tyrant flycatcher	{"temperatureRange": "10-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "spider", "small fruit"]}
+uinta ground squirrel	{"temperatureRange": "-10-30", "precipitationRange": "30-100", "kind": "small mammal", "sealife": false, "diet": ["seed", "nut", "fruit", "plant", "insect", "egg"]}
+urial	{"temperatureRange": "-15-30", "precipitationRange": "20-100", "kind": "large mammal", "sealife": false, "diet": ["grass", "herb", "leaf", "twig"]}
+verreaux's sifaka	{"temperatureRange": "10-35", "precipitationRange": "70-150", "kind": "large mammal", "sealife": false, "diet": ["leaf", "fruit", "flower", "bark", "seed"]}
+vervet monkey	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small bird", "egg", "plant", "fruit", "seed", "nut"]}
+vicuna	{"temperatureRange": "-15-20", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["plant"]}
+vine snake	{"temperatureRange": "20-35", "precipitationRange": "75-200", "kind": "small reptile", "sealife": false, "diet": ["small reptile", "small amphibian", "small bird", "small mammal", "egg"]}
+violet-crested turaco	{"temperatureRange": "20-30", "precipitationRange": "100-250", "kind": "small bird", "sealife": false, "diet": ["fruit", "seed", "insect"]}
+violet-eared waxbill	{"temperatureRange": "20-30", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["seed", "insect"]}
+wapiti elk	{"temperatureRange": "-30-25", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["plant", "grass", "forbs", "bark", "twigs"]}
+warthog	{"temperatureRange": "10-40", "precipitationRange": "25-150", "kind": "large mammal", "sealife": false, "diet": ["plant", "grass", "roots", "tubers", "fruit", "insect", "carcass"]}
+water legaan	{"temperatureRange": "25-40", "precipitationRange": "50-150", "kind": "large reptile", "sealife": false, "diet": ["plant", "fruit", "insect", "small reptile", "small mammal", "egg", "carcass"]}
+water moccasin	{"temperatureRange": "15-35", "precipitationRange": "100-200", "kind": "large reptile", "sealife": false, "diet": ["small fish", "small amphibian", "small reptile", "small mammal", "large fish", "egg"]}
+water monitor	{"temperatureRange": "20-35", "precipitationRange": "100-250", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal", "fish", "egg", "carcass", "crustacean"]}
+wattled crane	{"temperatureRange": "10-30", "precipitationRange": "100-250", "kind": "large bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "plant", "seed"]}
+waved albatross	{"temperatureRange": "10-25", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["fish", "squid"]}
+weeper capuchin	{"temperatureRange": "20-35", "precipitationRange": "150-300", "kind": "small mammal", "sealife": false, "diet": ["fruit", "insect", "small reptile", "small amphibian", "small bird", "egg", "seed", "nut"]}
+western bearded dragon	{"temperatureRange": "25-40", "precipitationRange": "25-75", "kind": "small reptile", "sealife": false, "diet": ["insect", "small mammal", "plant", "fruit"]}
+western grey kangaroo	{"temperatureRange": "10-35", "precipitationRange": "25-100", "kind": "large mammal", "sealife": false, "diet": ["grass", "leaves", "shrubs"]}
+western lowland gorilla	{"temperatureRange": "20-30", "precipitationRange": "150-250", "kind": "large mammal", "sealife": false, "diet": ["fruit", "plant", "insect", "small reptile", "small mammal"]}
+western palm tanager	{"temperatureRange": "15-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "fruit", "nectar"]}
+western patch-nosed snake	{"temperatureRange": "20-35", "precipitationRange": "25-100", "kind": "small reptile", "sealife": false, "diet": ["small reptile", "small mammal", "egg"]}
+western pygmy possum	{"temperatureRange": "10-25", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "nectar", "pollen"]}
+western spotted skunk	{"temperatureRange": "-10-35", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small mammal", "egg", "fruit", "plant"]}
+whip-tailed wallaby	{"temperatureRange": "10-35", "precipitationRange": "50-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed"]}
+white rhinoceros	{"temperatureRange": "20-40", "precipitationRange": "50-150", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+white spoonbill	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "small amphibian", "insect", "crustacean"]}
+white stork	{"temperatureRange": "10-35", "precipitationRange": "50-200", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal", "earthworm"]}
+white-bellied sea eagle	{"temperatureRange": "15-35", "precipitationRange": "100-300", "kind": "large bird", "sealife": false, "diet": ["large fish", "small fish", "small bird", "small mammal", "carcass"]}
+white-browed owl	{"temperatureRange": "-10-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "small mammal", "small reptile", "small bird"]}
+white-browed sparrow weaver	{"temperatureRange": "15-40", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["seed", "insect"]}
+white-cheeked pintail	{"temperatureRange": "0-35", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["plant", "seed", "insect", "small fish", "small amphibian"]}
+white-faced tree rat	{"temperatureRange": "10-30", "precipitationRange": "75-200", "kind": "small mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "insect"]}
+white-faced whistling duck	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["plant", "seed", "insect", "small fish", "small amphibian"]}
+white-fronted bee-eater	{"temperatureRange": "10-40", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["insect", "bee"]}
+white-fronted capuchin	{"temperatureRange": "20-30", "precipitationRange": "150-300", "kind": "small mammal", "sealife": false, "diet": ["fruit", "insect", "small reptile", "small amphibian", "small bird", "egg", "seed", "nut"]}
+white-headed vulture	{"temperatureRange": "10-45", "precipitationRange": "25-200", "kind": "large bird", "sealife": false, "diet": ["carcass"]}
+white-lipped peccary	{"temperatureRange": "20-35", "precipitationRange": "100-300", "kind": "large mammal", "sealife": false, "diet": ["fruit", "seed", "nut", "root", "insect", "small reptile", "small amphibian"]}
+white-mantled colobus	{"temperatureRange": "20-30", "precipitationRange": "100-300", "kind": "large mammal", "sealife": false, "diet": ["leaf", "fruit", "seed", "flower"]}
+white-necked raven	{"temperatureRange": "10-35", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "carcass", "fruit", "seed", "nut"]}
+white-necked stork	{"temperatureRange": "20-35", "precipitationRange": "75-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "small amphibian", "large insect", "small reptile", "small mammal", "carcass"]}
+white-nosed coatimundi	{"temperatureRange": "15-30", "precipitationRange": "100-250", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "egg", "carcass"]}
+white-rumped vulture	{"temperatureRange": "20-40", "precipitationRange": "25-150", "kind": "large bird", "sealife": false, "diet": ["carcass"]}
+white-tailed deer	{"temperatureRange": "-20-35", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "nut", "seed"]}
+white-tailed jackrabbit	{"temperatureRange": "-30-40", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["plant", "grass", "bark", "twigs", "seed", "fruit"]}
+white-throated kingfisher	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["small fish", "insect", "small reptile", "small amphibian", "small mammal", "crustacean"]}
+white-throated monitor	{"temperatureRange": "25-40", "precipitationRange": "50-200", "kind": "large reptile", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "egg", "carcass"]}
+white-throated robin	{"temperatureRange": "0-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["insect", "worm", "spider", "small reptile", "fruit", "seed"]}
+white-throated toucan	{"temperatureRange": "15-30", "precipitationRange": "150-300", "kind": "large bird", "sealife": false, "diet": ["fruit", "insect", "small reptile", "small amphibian", "egg"]}
+white-winged black tern	{"temperatureRange": "10-30", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["insect", "small fish", "small amphibian", "small crustacean"]}
+white-winged dove	{"temperatureRange": "15-35", "precipitationRange": "25-150", "kind": "small bird", "sealife": false, "diet": ["seed", "fruit", "nut", "grain"]}
+white-winged tern	{"temperatureRange": "10-30", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["small fish", "insect", "crustacean"]}
+wild boar	{"temperatureRange": "-20-40", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["plant", "fruit", "nut", "root", "insect", "small reptile", "small amphibian", "small mammal", "carcass"]}
+wild turkey	{"temperatureRange": "-20-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["seed", "nut", "fruit", "insect", "small reptile", "small amphibian"]}
+wild water buffalo	{"temperatureRange": "10-35", "precipitationRange": "70-200", "kind": "large mammal", "sealife": false, "diet": ["plant"]}
+wolf spider	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "insect", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small mammal"]}
+wood pigeon	{"temperatureRange": "-10-30", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["seed", "fruit", "nut", "plant"]}
+woodchuck	{"temperatureRange": "-10-30", "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "nut", "insect"]}
+woodrat	{"temperatureRange": "10-35", "precipitationRange": "25-100", "kind": "small mammal", "sealife": false, "diet": ["plant", "fruit", "seed", "nut", "insect"]}
+woolly-necked stork	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "large bird", "sealife": false, "diet": ["fish", "frog", "insect", "small reptile", "small mammal", "carcass"]}
+worm snake	{"temperatureRange": "15-30", "precipitationRange": "50-150", "kind": "small reptile", "sealife": false, "diet": ["insect", "earthworm", "ant", "termite larvae"]}
+woylie	{"temperatureRange": "10-35", "precipitationRange": "25-50", "kind": "small mammal", "sealife": false, "diet": ["seed", "fruit", "insect", "fungi"]}
+yak	{"temperatureRange": "-40-15", "precipitationRange": "25-50", "kind": "large mammal", "sealife": false, "diet": ["grass", "forb", "herb"]}
+yellow baboon	{"temperatureRange": "10-40", "precipitationRange": "50-200", "kind": "large mammal", "sealife": false, "diet": ["fruit", "seed", "flower", "leaf", "insect", "small mammal", "egg"]}
+yellow mongoose	{"temperatureRange": "10-40", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small rodent", "small bird", "egg", "fruit"]}
+yellow-bellied marmot	{"temperatureRange": "-10-25", "precipitationRange": "25-75", "kind": "small mammal", "sealife": false, "diet": ["plant", "grass", "seed", "fruit", "insect"]}
+yellow-billed hornbill	{"temperatureRange": "15-40", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["insect", "small reptile", "small mammal", "fruit", "seed"]}
+yellow-billed stork	{"temperatureRange": "15-40", "precipitationRange": "75-200", "kind": "large bird", "sealife": false, "diet": ["small fish", "small amphibian", "crustacean", "insect", "small reptile", "small mammal"]}
+yellow-brown sungazer	{"temperatureRange": "20-40", "precipitationRange": "25-75", "kind": "small reptile", "sealife": false, "diet": ["insect", "plant"]}
+yellow-crowned night heron	{"temperatureRange": "10-35", "precipitationRange": "75-200", "kind": "small bird", "sealife": false, "diet": ["crustaceans", "small fish", "small reptile", "small amphibian", "insect"]}
+yellow-headed caracara	{"temperatureRange": "20-35", "precipitationRange": "50-150", "kind": "large bird", "sealife": false, "diet": ["carcass", "insect", "small reptile", "small mammal", "egg", "fruit"]}
+yellow-necked spurfowl	{"temperatureRange": "15-35", "precipitationRange": "50-150", "kind": "small bird", "sealife": false, "diet": ["seed", "insect", "plant"]}
+yellow-rumped siskin	{"temperatureRange": "-10-25", "precipitationRange": "50-200", "kind": "small bird", "sealife": false, "diet": ["seed", "insect", "nectar"]}
+yellow-throated sandgrouse	{"temperatureRange": "15-40", "precipitationRange": "25-100", "kind": "small bird", "sealife": false, "diet": ["seed", "plant"]}
+zorilla	{"temperatureRange": "10-35", "precipitationRange": "25-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small rodent", "small reptile", "small bird", "egg", "fruit", "berry"]}

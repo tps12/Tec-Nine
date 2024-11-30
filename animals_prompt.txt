@@ -1,0 +1,23 @@
+Please give me a JSON object with information about a list of animals that I will provide below.
+
+I want to know what kind of enviroment each animal can live in, and what it needs to survive.
+
+The object should have a key for each animal, and an value object with its information.
+
+Fields to provide in the JSON value object are:
+
+  - temperatureRange: a string like "$LOW-$HIGH" that represents the temperature range where the animal could live, in Celsius.
+  - precipitationRange: a string like "$LOW-$HIGH" that represents the range of annual precipitation where the animal could live, in centimeters.
+  - kind: what kind of animal the animal is; one of {quoted_animal_kinds}.
+  - sealife: true if the animal lives under the sea, false otherwise.
+  - diet: array of kinds of thing the animal can eat; can include {quoted_food_kinds} or any specific species that it needs to consume or almost exclusively consumes.
+
+For example, if I were asking about the animals ["humpback whale", "raccoon", "giant panda"], you might reply:
+
+{{
+  "humpback whale": {{ "temperatureRange": "-1-25", "precipitationRange": "50-250", "kind": "giant mammal", "sealife": true, "diet": ["small fish", "krill"] }},
+  "raccoon": {{ "temperatureRange": "-30-40",  "precipitationRange": "75-150", "kind": "small mammal", "sealife": false, "diet": ["insect", "small reptile", "small amphibian", "small fish", "small mammal", "egg", "plant", "fruit", "seed", "nut", "carcass"] }},
+  "giant panda": {{ "temperatureRange": "-5-20", "precipitationRange": "80-200", "kind": "giant mammal", "sealife": false, "diet": ["bamboo"] }}
+}}
+
+Now please give me the answer as JSON for these animals: {animal_list}

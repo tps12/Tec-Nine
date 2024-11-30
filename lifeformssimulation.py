@@ -46,7 +46,6 @@ class LifeformsSimulation(object):
         self.agricultural = set()
         self.fauna = []
         self.plants = []
-        self.trees = []
         self._species = None
 
         initt.done()
@@ -91,8 +90,7 @@ class LifeformsSimulation(object):
 
         self.fauna = []
         self.plants = []
-        self.trees = []
-        lifeformsmethod.settle(self.fauna, self.plants, self.trees, self.tiles, self.adj, timing)
+        lifeformsmethod.settle(self.fauna, self.plants, self.tiles, self.adj, timing)
 
         self._species = None
         timing.done()
@@ -100,7 +98,7 @@ class LifeformsSimulation(object):
     def species(self):
         if not self._species:
             timing = self._timing.routine('indexing species')
-            types = self.fauna, self.plants, self.trees
+            types = self.fauna, self.plants
             pops = [{} for _ in types]
             for t in range(len(types)):
                 p = pops[t]

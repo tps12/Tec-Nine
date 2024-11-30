@@ -754,12 +754,12 @@ class HistorySimulation(object):
 
     @staticmethod
     def settlespecies(tiles, adj):
-        fauna, plants, trees = [], [], []
+        fauna, plants = [], []
         timing = yield
         skip = 0
         while True:
-           skip = lifeformsmethod.settle(fauna, plants, trees, tiles, adj, timing, 5, skip)
-           timing = yield fauna + plants + trees
+           skip = lifeformsmethod.settle(fauna, plants, tiles, adj, timing, 5, skip)
+           timing = yield fauna + plants
            if skip is None:
                break
 

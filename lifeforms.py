@@ -16,7 +16,7 @@ class Lifeforms(Row):
                             self.details = ui.list()
                 with ui.row():
                     self.rotate = ui.slider(min=-180, max=180, value=-90)
-                    self.attribute = ui.select(dict(enumerate(['Life', 'Animals', 'Plants', 'Trees'])), value=0)
+                    self.attribute = ui.select(dict(enumerate(['Life', 'Animals', 'Plants'])), value=0)
                 with ui.row():
                     ui.label('Season:')
                     self.season = ui.slider(min=0, max=100)

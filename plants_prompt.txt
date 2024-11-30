@@ -1,0 +1,24 @@
+Please give me a JSON object with information about a list of plants that I will provide below.
+
+I want to know what kind of enviroment each plant can live in, and what it needs to survive.
+
+The object should have a key for each plant, and a value object with its information.
+
+Fields to provide in the JSON value object are:
+
+  - temperatureRange: a string like "$LOW-$HIGH" that represents the temperature range where the plant could live, in Celsius.
+  - precipitationRange: a string like "$LOW-$HIGH" that represents the range of annual precipitation where the plant could live, in centimeters.
+  - sunlightRange: a string like "$LOW-$HIGH" that represents the amount of annual sunlight the plant needs to survive, in hours.
+  - kind: what kind of plant the plant is; one of {quoted_plant_kinds}.
+  - maximumHeight: how tall the plant can grow, in meters.
+  - evergreen: true if the plant is green all year.
+  - sealife: true if the plant grows underwater.
+  - carnivorous: true if the plant eats bugs.
+  - flower: true if the plant grows flowers.
+  - fruits: true if the plant grows fruit.
+  - nuts: true if the plant produces nuts.
+  - seeds: true if the plant produces seeds.
+  - cones: true if the plant produces cones.
+  - tuber: true if the plant grows tubers.
+
+Now please give me the answer as JSON for these plants: {plant_list}
