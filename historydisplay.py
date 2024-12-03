@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QGridLayout, QWidget
+from nicegui.element import Element
 
 import color
 from sphereview import SphereView
@@ -113,11 +113,11 @@ def capacity(sim, rivers, _):
             colors[f] = color.warm(p/17.0) if p else (128, 128, 128)
     return colors
 
-class HistoryDisplay(QWidget):
+class HistoryDisplay(Element):
     _colorfunctions = [nations, species, population, capacity]
 
     def __init__(self, sim, selecthandler):
-        QWidget.__init__(self)
+        super().__init__()
         self._sim = sim
         self._screen = None
         self._rotate = 0
@@ -125,7 +125,6 @@ class HistoryDisplay(QWidget):
         self._rivers = True
         self._select = selecthandler
         self._selectednations = (None, set(), set())
-        self.setLayout(QGridLayout())
         self.invalidate()
 
     @property
@@ -161,18 +160,18 @@ class HistoryDisplay(QWidget):
 
     def select(self, x, y, z):
         self._select(self._sim.nearest((z,-x,y)) if abs(z) < 2 else None)
+        self.invalidate()
 
     def selectnations(self, n, ps, cs):
         self._selectednations = (n, ps, cs)
 
     def invalidate(self):
         if self._sim.terrainchanged and self._screen is not None:
-            self.layout().removeItem(self.layout().itemAt(0))
+            self._screen.delete()
             self._screen = None
             self._sim.terrainchanged = False
         if self._screen is None:
-            self._screen = SphereView(self._sim.faces, self)
-            self._screen.clicked.connect(self.select)
+            with self:
+                self._screen = SphereView(self._sim.faces, on_click=self.select)
         self._screen.usecolors(self._colorfunctions[self._aspect](self._sim, self._rivers, self._selectednations))
         self._screen.rotate(self._rotate)
-        self.layout().addWidget(self._screen)

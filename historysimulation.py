@@ -38,7 +38,7 @@ class HistorySimulation(object):
 
     _timing = Timing()
 
-    def __init__(self, gridsize, pauseafterinit):
+    def create(self, gridsize, pauseafterinit):
         initt = self._timing.routine('simulation setup')
 
         initt.start('building grid')
@@ -95,6 +95,7 @@ class HistorySimulation(object):
             grid = Grid(grid)
             grid.populate()
         self._grid = grid
+        self.adj = Adjacency(self._grid)
 
     def initindexes(self):
         self._indexedtiles = []
@@ -115,32 +116,20 @@ class HistorySimulation(object):
     def initialized(self):
         return self._inited
 
-    def initnations(self):
-        timing = yield
+    def initnations(self, timing):
         self.phase = 'species'
-        settle = self.settlespecies(self.tiles, self.adj)
-        next(settle)
-        settle.send(timing)
-        while True:
-            try:
-                timing = yield
-                self._species = settle.send(timing)
-                self._tilespecies = self.tilespecies(self._species, self.seasons)
-            except StopIteration:
-                break
+        self._species = self.settlespecies(self.tiles, self.adj, timing)
+        self._tilespecies = self.tilespecies(self._species, self.seasons)
+
         self.phase = 'nations'
         timing.start('determining carrying capacities')
         self._capacity = self.capacity(self.grid, self.tiles, self._terrain, self._tileadj, self.rivers)
         timing.start('determining population')
         self._population = self.population(self.grid, self.tiles, self._terrain, self.populated, self.agricultural)
         timing.start('creating state boundaries')
-        for _ in self.stateboundaries(self.statecolors, self.boundaries,
-                                      self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles,
-                                      self._population):
-            timing = yield
-            timing.start('continuing state boundaries')
-        timing = yield
-
+        self.stateboundaries(self.statecolors, self.boundaries,
+                             self._terrain, self._elevation, self.riverroutes, self._terrainadj, self.tiles,
+                             self._population)
         self._states = [people.State() for _ in range(max(self.boundaries.values()))]
         self._nations = [people.Nation() for _ in range(max(self.boundaries.values()))]
         # initial language and nationality pegged to state
@@ -150,22 +139,16 @@ class HistorySimulation(object):
                 c.nationality = state_index
 
         self.phase = 'langs'
-        start = time.time()
         timing.start('finding populations by location')
         self._tilespecies = self.tilespecies(self._species, self.seasons)
         self.populatestates(timing)
         timing.start('naming species')
         for lang in self.langfromspecies(self._statespecies):
             self._languages.append(lang)
-            if time.time() - start > 5:
-                timing = yield
-                timing.start('continuing naming species')
-                start = time.time()
 
         # to fill in coast at terrain scale
         self.phase = 'coasts'
         for _ in range(2):
-            timing = yield
             timing.start('populating coasts')
             self.grow(timing)
         self.phase = 'sim'
@@ -177,18 +160,9 @@ class HistorySimulation(object):
         self._population = {f: p for (f, p) in self._population.items() if f in self.boundaries}
 
     def keepiniting(self):
-        if not self._initingnations:
-            timing = self._timing.routine('initializing history')
-            self._initingnations = self.initnations()
-            next(self._initingnations)
-        else:
-            timing = self._timing.routine('continuing initialization')
-
-        try:
-            self._initingnations.send(timing)
-        except StopIteration:
-            self._initingnations = None
-            self._inited = True
+        timing = self._timing.routine('initializing history')
+        self.initnations(timing)
+        self._inited = True
         timing.done()
 
     def grow(self, stept):
@@ -753,15 +727,10 @@ class HistorySimulation(object):
         return igneous.extrusive(0.5)
 
     @staticmethod
-    def settlespecies(tiles, adj):
+    def settlespecies(tiles, adj, timing):
         fauna, plants = [], []
-        timing = yield
-        skip = 0
-        while True:
-           skip = lifeformsmethod.settle(fauna, plants, tiles, adj, timing, 5, skip)
-           timing = yield fauna + plants
-           if skip is None:
-               break
+        lifeformsmethod.settle(fauna, plants, tiles, adj, timing)
+        return fauna + plants
 
     def faceelevation(self, f):
         return self._elevation[f] if f in self._elevation else 0
@@ -967,10 +936,7 @@ class HistorySimulation(object):
 
     @staticmethod
     def stateboundaries(colors, boundaries, terrain, elevation, rivers, adj, tiles, population):
-        start = time.time()
         cities = HistorySimulation.randomcities(terrain.faces, terrain, tiles, population)
-        # save state so the ultimate result isn't dependent on timing
-        state = random.getstate()
         def tree():
             return PointTree(dict([[cities[i], i] for i in range(len(cities))]))
         citytree = tree()
@@ -985,11 +951,6 @@ class HistorySimulation(object):
                     boundaries[f] = len(cities)-1
                 else:
                     boundaries[f] = candidates[i]
-            if time.time() - start > 5:
-                HistorySimulation.colornations(colors, cities, citytree, boundaries)
-                yield
-                start = time.time()
-        random.setstate(state)
         HistorySimulation.colornations(colors, cities, citytree, boundaries)
 
     @staticmethod
@@ -1132,7 +1093,7 @@ class HistorySimulation(object):
         loadt.done()
 
     def savedata(self):
-        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._inited, self._species, self._capacity, self._population, self.statecolors, self.boundaries, self._tilespecies, self._languages, self._statespecies)
+        return Data.savedata(random.getstate(), self._grid.size, 0, self.spin, self.cells, self.tilt, None, None, None, None, None, self.tiles, self.shapes, self._glaciationt, self.populated, self.agricultural, True, True, self._inited, self._species, self._capacity, self._population, self.statecolors, self.boundaries, self._tilespecies, self._languages, self._statespecies)
 
     def save(self, filename):
         Data.save(filename, self.savedata())

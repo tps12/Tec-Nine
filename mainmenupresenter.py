@@ -18,7 +18,7 @@ class MainMenuPresenter(object):
         view.start.on_click(lambda: on_create(lambda: World(on_done)))
         view.tectonics.disable()
         view.terrain.disable()
-        view.history.disable()
+        view.history.on_click(lambda: on_create(lambda: History(on_done)))
         view.language.disable()
         view.climate.disable()
         view.rivers.disable()
