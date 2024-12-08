@@ -4,14 +4,14 @@ from worldpresenter import WorldPresenter
 
 class World(Row):
     def __init__(self, on_done):
-        super().__init__()
+        super().__init__(wrap=False)
 
-        with self.style('align-items: normal').classes('flex-grow'):
-            with ui.column().style('align-items: normal').classes('flex-grow'):
-                with ui.row().style('align-items: normal').classes('flex-grow'):
+        with self.classes('flex-grow'):
+            with ui.column().classes('flex-grow'):
+                with ui.row().classes('flex-grow'):
                     self.content = ui.element('div').style('display: flex').classes('world-content flex-grow')
                     self.details = ui.tree([])
-                with ui.row():
+                with ui.row().style('align-self: stretch'):
                     self.rotate = ui.slider(min=-180, max=180, value=-90)
                     self.aspect = ui.select(dict(enumerate(['Climate', 'Color', 'Population'])), value=0)
             with ui.column():

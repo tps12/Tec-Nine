@@ -4,14 +4,14 @@ from historypresenter import HistoryPresenter
 
 class History(Row):
     def __init__(self, on_done):
-        super().__init__()
+        super().__init__(wrap=False)
 
-        with self.style('align-items: normal').classes('flex-grow'):
-            with ui.column().style('align-items: normal').classes('flex-grow'):
+        with self.classes('flex-grow'):
+            with ui.column().classes('flex-grow'):
                 self.content = ui.element('div').style('display: flex').classes('world-content flex-grow')
                 ui.label('Selection')
                 self.details = ui.tree([])
-                with ui.row():
+                with ui.row().style('align-self: stretch'):
                     self.rotate = ui.slider(min=-180, max=180, value=-90)
                     self.aspect = ui.select(dict(enumerate(['States', 'Species', 'Population', 'Capacity'])), value=0)
                     self.rivers = ui.checkbox('Rivers')

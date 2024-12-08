@@ -11,7 +11,7 @@ function midpoint(buffer, face) {
 }
 
 export default {
-  template: '<div style="display: flex; flex-grow: 1; justify-content: center"></div>',
+  template: '<div><canvas style="aspect-ratio: 1; width: 100%"></canvas></div>',
   mounted() {
     const connectInterval = setInterval(() => {
       if (window.socket.id === undefined) return;
@@ -21,8 +21,6 @@ export default {
   },
   methods: {
     initialize(vertices, normals) {
-      const container = this.$el;
-
       const camera = new THREE.OrthographicCamera(-1.1, 1.1, 1.1, -1.1, 0, 11);
       camera.position.z = 11;
 
@@ -43,15 +41,14 @@ export default {
       this.mesh = new THREE.Mesh(this.geometry, material);
       scene.add(this.mesh);
 
-      const renderer = new THREE.WebGLRenderer({antialias: true});
+      const renderer = new THREE.WebGLRenderer({canvas: this.$el.firstElementChild, antialias: true});
       renderer.setPixelRatio(window.devicePixelRatio);
-      container.appendChild(renderer.domElement);
 
       renderer.domElement.addEventListener('click', (event) => {
         const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(
-          new THREE.Vector2((event.offsetX/event.srcElement.width) * 2 - 1,
-                            -(event.offsetY/event.srcElement.height) * 2 + 1),
+          new THREE.Vector2((event.offsetX/event.srcElement.offsetWidth) * 2 - 1,
+                            -(event.offsetY/event.srcElement.offsetHeight) * 2 + 1),
           camera);
         const intersect = raycaster.intersectObject(this.mesh, false)[0];
         if (intersect) {
@@ -62,9 +59,7 @@ export default {
       const emit = this.$emit;
       this.paint = () => renderer.render(scene, camera);
       const resize = () => {
-        const parent = renderer.domElement.parentElement;
-        const size = Math.min(parent.clientWidth, parent.clientHeight);
-        renderer.setSize(size, size);
+        renderer.setSize(renderer.domElement.clientWidth, renderer.domElement.clientHeight, false);
         this.paint();
       };
       window.addEventListener('resize', resize);

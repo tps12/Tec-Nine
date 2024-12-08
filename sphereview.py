@@ -18,6 +18,7 @@ def rotate_axes(x, y, z):
 class SphereView(Element, component='sphereview.js'):
     def __init__(self, faces, on_click=None):
         super().__init__()
+        self.style('display: flex; flex-grow: 1; align-items: center; justify-content: center').classes('sphereview')
 
         self.faces = faces
         self.colors = { v: (128, 128, 128) for v in self.faces }
